@@ -9,11 +9,7 @@ export type PreviewerProps = {
   onSelectionChange?: (selectedElement: HTMLElement, range?: IRange) => void
 }
 
-export const Previewer = ({
-  markdown,
-  className,
-  onSelectionChange,
-}: PreviewerProps) => {
+export const Previewer = ({ markdown, onSelectionChange }: PreviewerProps) => {
   const previewerRef = useRef<HTMLDivElement>(null)
   const data = useRemark(markdown)
 
@@ -30,12 +26,7 @@ export const Previewer = ({
   const { html, meta } = data
 
   return (
-    <div
-      className={className}
-      id="rejume-preview"
-      ref={previewerRef}
-      onMouseUp={mouseupHandler}
-    >
+    <div id="rejume-preview" ref={previewerRef} onMouseUp={mouseupHandler}>
       <div className="text-center">
         <h1 className="text-[2em] font-bold">{meta.name}</h1>
         <div>
