@@ -1,24 +1,45 @@
 import { useRemark } from '@/hooks/useRemark'
+import { getSelectedElement, parsePositionAttribute } from '@/lib/utils'
+import { IRange } from 'monaco-editor'
+import { useCallback, useRef } from 'react'
+
+export type PreviewerProps = {
+  markdown: string
+  className?: string
+  onSelectionChange?: (selectedElement: HTMLElement, range?: IRange) => void
+}
 
 export const Previewer = ({
   markdown,
   className,
-}: {
-  markdown: string
-  className?: string
-}) => {
+  onSelectionChange,
+}: PreviewerProps) => {
+  const previewerRef = useRef<HTMLDivElement>(null)
   const data = useRemark(markdown)
+
+  const mouseupHandler = useCallback(() => {
+    const selectedElement = getSelectedElement()
+    if (!selectedElement) return
+
+    const range = parsePositionAttribute(selectedElement)
+    onSelectionChange?.(selectedElement, range)
+  }, [onSelectionChange])
 
   if (!data) return null
 
   const { html, meta } = data
 
   return (
-    <div className={className} id="rejume-preview">
+    <div
+      className={className}
+      id="rejume-preview"
+      ref={previewerRef}
+      onMouseUp={mouseupHandler}
+    >
       <div className="text-center">
         <h1 className="text-[2em] font-bold">{meta.name}</h1>
         <div>
-          <span className="text-xl">{meta.title}</span>
+          <span className="text-xl font-medium">{meta.title}</span>
         </div>
         <div>
           <span>{meta.email}</span> | <span>{meta.phone}</span> |{' '}
@@ -39,7 +60,7 @@ export const Previewer = ({
           </a>
         </div>
       </div>
-      <div dangerouslySetInnerHTML={{ __html: html }} />
+      <div dangerouslySetInnerHTML={{ __html: html }} className="mt-2" />
     </div>
   )
 }
