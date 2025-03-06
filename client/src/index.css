@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
+
 @import "tailwindcss";
 
 @plugin "tailwindcss-animate";
@@ -114,11 +116,50 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+@theme {
+  --font-nunito-sans: 'Nunito Sans', sans-serif;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+
+#rejume-preview {
+  @apply text-pretty selection:bg-amber-100;
+
+  h1, h2, li, span, td, strong {
+    @apply select-all;
+  }
+
+  h2 {
+    @apply text-white bg-black w-fit pr-3 pl-1 my-3;
+  }
+
+  ul {
+    @apply list-[circle] pl-6;
+  }
+
+  table {
+    @apply w-full;
+
+    thead {
+      @apply hidden;
+    }
+
+    tbody {
+      tr {
+        @apply flex;
+
+        td {
+          @apply not-last-of-type:flex-[1_1_0];
+        }
+      }
+    }
   }
 }
