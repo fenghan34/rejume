@@ -1,7 +1,8 @@
 import type { IRange } from 'monaco-editor'
+import { useAutoScale } from '@/hooks/useAutoScale'
 import { useRemark } from '@/hooks/useRemark'
 import { getSelectedElement, parsePositionAttribute } from '@/lib/utils'
-import { useCallback, useRef } from 'react'
+import { useCallback } from 'react'
 
 export interface PreviewerProps {
   markdown: string
@@ -10,8 +11,8 @@ export interface PreviewerProps {
 }
 
 export function Previewer({ markdown, onSelectionChange }: PreviewerProps) {
-  const previewerRef = useRef<HTMLDivElement>(null)
   const data = useRemark(markdown)
+  const previewerRef = useAutoScale()
 
   const mouseupHandler = useCallback(() => {
     const selectedElement = getSelectedElement()
