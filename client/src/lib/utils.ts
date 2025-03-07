@@ -1,15 +1,17 @@
-import { clsx, type ClassValue } from "clsx"
-import { IRange } from 'monaco-editor'
+import type { ClassValue } from 'clsx'
+import type { IRange } from 'monaco-editor'
+import { clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import { POSITION_ATTRIBUTE } from './md2html'
 
-export const cn = (...inputs: ClassValue[]) => {
+export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export const getSelectedElement = () => {
+export function getSelectedElement() {
   const selection = window.getSelection()
-  if (!selection || selection.rangeCount === 0) return null
+  if (!selection || selection.rangeCount === 0)
+    return null
 
   const range = selection.getRangeAt(0)
   let selectedElement = range.commonAncestorContainer
@@ -21,9 +23,10 @@ export const getSelectedElement = () => {
   return selectedElement as HTMLElement
 }
 
-export const parsePositionAttribute = (element: HTMLElement) => {
+export function parsePositionAttribute(element: HTMLElement) {
   const position = element.getAttribute(POSITION_ATTRIBUTE)
-  if (!position) return
+  if (!position)
+    return
 
   const [start, end] = position.split('-')
   const [startLine, startColumn] = start.split(':').map(Number)
@@ -31,8 +34,8 @@ export const parsePositionAttribute = (element: HTMLElement) => {
 
   return {
     startLineNumber: startLine,
-    startColumn: startColumn,
+    startColumn,
     endLineNumber: endLine,
-    endColumn: endColumn,
+    endColumn,
   } satisfies IRange
 }

@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
 
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @plugin "tailwindcss-animate";
 
@@ -129,19 +129,23 @@
   }
 }
 
-
 #rejume-preview {
   @apply w-[210mm] aspect-[calc(210/297)] p-[15mm] overflow-y-auto rounded font-nunito-sans text-pretty;
-  @apply bg-white ;
+  @apply bg-white;
   @apply dark:bg-black dark:text-gray-300;
 
-  h1, h2, li, span, td, strong {
+  h1,
+  h2,
+  li,
+  span,
+  td,
+  strong {
     @apply select-all;
   }
 
   h2 {
     @apply w-fit pr-3 pl-1 mt-4 mb-2;
-    @apply text-white bg-black ;
+    @apply text-white bg-black;
     @apply dark:bg-gray-700;
   }
 

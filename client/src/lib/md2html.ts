@@ -1,14 +1,15 @@
-import { Element } from 'hast'
+import type { Element } from 'hast'
+import type { Plugin } from 'unified'
 import rehypeStringify from 'rehype-stringify'
 import remarkFrontmatter from 'remark-frontmatter'
 import remarkGfm from 'remark-gfm'
 import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
-import { Plugin, unified } from 'unified'
+import { unified } from 'unified'
 import { visit } from 'unist-util-visit'
 import { matter } from 'vfile-matter'
 
-export type FrontMatter = {
+export interface FrontMatter {
   name: string
   title: string
   email: string
@@ -30,10 +31,11 @@ const extractFrontmatter: Plugin = () => {
 const wrapTextWithSpan: Plugin = () => {
   return (tree) => {
     visit(tree, 'element', (node: Element) => {
-      if (!node.children) return
+      if (!node.children)
+        return
 
       const hasStrongSibling = node.children.some(
-        (child) => child.type === 'element' && child.tagName === 'strong'
+        child => child.type === 'element' && child.tagName === 'strong',
       )
 
       if (hasStrongSibling) {
@@ -71,7 +73,7 @@ const addPositionAttribute: Plugin = () => {
   }
 }
 
-export const parseMarkdown = async (markdown: string) => {
+export async function parseMarkdown(markdown: string) {
   return await unified()
     .use(remarkParse)
     .use(remarkGfm)

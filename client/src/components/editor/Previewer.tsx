@@ -1,27 +1,29 @@
+import type { IRange } from 'monaco-editor'
 import { useRemark } from '@/hooks/useRemark'
 import { getSelectedElement, parsePositionAttribute } from '@/lib/utils'
-import { IRange } from 'monaco-editor'
 import { useCallback, useRef } from 'react'
 
-export type PreviewerProps = {
+export interface PreviewerProps {
   markdown: string
   className?: string
   onSelectionChange?: (selectedElement: HTMLElement, range?: IRange) => void
 }
 
-export const Previewer = ({ markdown, onSelectionChange }: PreviewerProps) => {
+export function Previewer({ markdown, onSelectionChange }: PreviewerProps) {
   const previewerRef = useRef<HTMLDivElement>(null)
   const data = useRemark(markdown)
 
   const mouseupHandler = useCallback(() => {
     const selectedElement = getSelectedElement()
-    if (!selectedElement) return
+    if (!selectedElement)
+      return
 
     const range = parsePositionAttribute(selectedElement)
     onSelectionChange?.(selectedElement, range)
   }, [onSelectionChange])
 
-  if (!data) return null
+  if (!data)
+    return null
 
   const { html, meta } = data
 
@@ -33,7 +35,13 @@ export const Previewer = ({ markdown, onSelectionChange }: PreviewerProps) => {
           <span className="text-xl font-medium">{meta.title}</span>
         </div>
         <div>
-          <span>{meta.email}</span> | <span>{meta.phone}</span> |{' '}
+          <span>{meta.email}</span>
+          {' '}
+          |
+          <span>{meta.phone}</span>
+          {' '}
+          |
+          {' '}
           <a href={meta.github} target="_blank">
             <svg
               xmlns="http://www.w3.org/2000/svg"

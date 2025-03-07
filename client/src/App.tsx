@@ -1,12 +1,13 @@
+import type { IRange } from 'monaco-editor'
+import type { EditorRef } from './components/editor/editor'
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable'
-import { IRange } from 'monaco-editor'
 import { useCallback, useRef, useState } from 'react'
-import { Editor, EditorRef } from './components/editor/Editor'
-import { Previewer } from './components/editor/Previewer'
+import { Editor } from './components/editor/editor'
+import { Previewer } from './components/editor/previewer'
 import { ModeToggle } from './components/theme/mode-toggle'
 import { ThemeProvider } from './components/theme/theme-provider'
 
@@ -21,11 +22,12 @@ function App() {
     (selectedElement: HTMLElement, range?: IRange) => {
       if (range) {
         editorRef.current?.selectRange(range)
-      } else {
-        editorRef.current?.searchAndSelectFirstMatch(selectedElement.innerText)
+      }
+      else {
+        editorRef.current?.searchAndSelectFirstMatch(selectedElement.textContent!)
       }
     },
-    []
+    [],
   )
 
   return (
