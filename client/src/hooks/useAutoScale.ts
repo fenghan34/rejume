@@ -16,15 +16,9 @@ export function useAutoScale(): RefCallback<HTMLDivElement> {
     if (!parent)
       return
 
-    // Store original dimensions and styles
     const originalWidth = container.offsetWidth
-    const originalHeight = container.offsetHeight
     const originalTransform = container.style.transform
     const originalTransformOrigin = container.style.transformOrigin
-
-    // Set base dimensions for content layout
-    container.style.width = `${originalWidth}px`
-    container.style.height = `${originalHeight}px`
 
     const updateScale = () => {
       const parentWidth = parent.clientWidth
@@ -42,9 +36,6 @@ export function useAutoScale(): RefCallback<HTMLDivElement> {
 
     return () => {
       resizeObserver.disconnect()
-      // Restore original styles
-      container.style.width = ''
-      container.style.height = ''
       container.style.transform = originalTransform
       container.style.transformOrigin = originalTransformOrigin
     }
