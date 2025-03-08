@@ -1,4 +1,5 @@
 import type { EditorRef } from './components/editor/editor'
+import type { PreviewerRef } from './components/editor/previewer'
 import {
   ResizableHandle,
   ResizablePanel,
@@ -15,6 +16,7 @@ const defaultMarkdown = localStorage.getItem('markdown') || ''
 
 function App() {
   const editorRef = useRef<EditorRef>(null)
+  const previewerRef = useRef<PreviewerRef>(null)
   const [markdown, setMarkdown] = useState(defaultMarkdown)
 
   const handlePreviewerSelectionChange = useCallback(
@@ -58,6 +60,7 @@ function App() {
 
           <ResizablePanel>
             <Previewer
+              ref={previewerRef}
               markdown={markdown}
               onSelectionChange={handlePreviewerSelectionChange}
             />

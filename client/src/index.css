@@ -130,7 +130,13 @@
 }
 
 body {
-  overflow: hidden;
+  @apply overflow-hidden;
+}
+
+@media print {
+  #rejume-preview {
+    @apply overflow-visible! h-fit! transform-[scale(1)]!;
+  }
 }
 
 #rejume-preview {
@@ -142,11 +148,11 @@ body {
     @apply dark:bg-black dark:text-gray-300;
 
     #header {
-      @apply text-center;
+      @apply text-center mb-4;
     }
 
     #section {
-      @apply mt-4;
+      @apply mb-4;
     }
   }
 
