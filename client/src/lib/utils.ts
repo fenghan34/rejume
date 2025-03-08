@@ -10,7 +10,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export function getSelectedElement() {
   const selection = window.getSelection()
-  if (!selection || selection.rangeCount === 0)
+  if (!selection || selection.isCollapsed || selection.rangeCount === 0)
     return null
 
   const range = selection.getRangeAt(0)
@@ -23,7 +23,7 @@ export function getSelectedElement() {
   return selectedElement as HTMLElement
 }
 
-export function parsePositionAttribute(element: HTMLElement) {
+export function parsePositionAttribute(element: HTMLElement): IRange | undefined {
   const position = element.getAttribute(POSITION_ATTRIBUTE)
   if (!position)
     return
@@ -37,5 +37,5 @@ export function parsePositionAttribute(element: HTMLElement) {
     startColumn,
     endLineNumber: endLine,
     endColumn,
-  } satisfies IRange
+  }
 }

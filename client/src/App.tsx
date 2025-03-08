@@ -1,4 +1,3 @@
-import type { IRange } from 'monaco-editor'
 import type { EditorRef } from './components/editor/editor'
 import {
   ResizableHandle,
@@ -9,6 +8,7 @@ import { useCallback, useRef, useState } from 'react'
 import { Editor } from './components/editor/editor'
 import { Previewer } from './components/editor/previewer'
 import { ThemeProvider } from './components/theme/theme-provider'
+import { parsePositionAttribute } from './lib/utils'
 
 const MIN_SIZE = 30
 const defaultMarkdown = localStorage.getItem('markdown') || ''
@@ -18,9 +18,10 @@ function App() {
   const [markdown, setMarkdown] = useState(defaultMarkdown)
 
   const handlePreviewerSelectionChange = useCallback(
-    (selectedElement: HTMLElement, range?: IRange) => {
-      if (range) {
-        editorRef.current?.selectRange(range)
+    (selectedElement: HTMLElement) => {
+      const sourceRange = parsePositionAttribute(selectedElement)
+      if (sourceRange) {
+        editorRef.current?.selectRange(sourceRange)
       }
       else {
         editorRef.current?.searchAndSelectFirstMatch(selectedElement.textContent!)

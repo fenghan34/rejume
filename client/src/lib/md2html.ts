@@ -9,7 +9,7 @@ import { unified } from 'unified'
 import { visit } from 'unist-util-visit'
 import { matter } from 'vfile-matter'
 
-export interface FrontMatter {
+export interface Frontmatter {
   name: string
   title: string
   email: string
@@ -25,32 +25,55 @@ const extractFrontmatter: Plugin = () => {
   }
 }
 
+const splitIntoSections: Plugin = () => {
+  return (_tree) => {
+    const tree = _tree as Element
+    const children = tree.children as Element[]
+    const chunks: Element[] = []
+
+    while (children.length) {
+      const current = children.shift()!
+      if (current.tagName === 'h2') {
+        chunks.push({
+          type: 'element',
+          tagName: 'div',
+          children: [],
+          properties: {
+            id: 'section',
+          },
+        })
+      }
+
+      const last = chunks.at(-1)
+      if (last?.properties.id === 'section') {
+        last.children.push(current)
+      }
+      else {
+        chunks.push(current)
+      }
+    }
+
+    tree.children = chunks
+  }
+}
+
 /**
- * Wrap all text nodes in a <span> tag when they have <strong> tag siblings
+ * Wrap td content with span tag
  */
-const wrapTextWithSpan: Plugin = () => {
+const ProcessTdTag: Plugin = () => {
   return (tree) => {
     visit(tree, 'element', (node: Element) => {
       if (!node.children)
         return
 
-      const hasStrongSibling = node.children.some(
-        child => child.type === 'element' && child.tagName === 'strong',
-      )
-
-      if (hasStrongSibling) {
-        node.children = node.children.map((child) => {
-          if (child.type === 'text') {
-            return {
-              type: 'element',
-              tagName: 'span',
-              properties: {},
-              children: [child],
-              position: child.position,
-            }
-          }
-          return child
-        })
+      if (node.tagName === 'td') {
+        node.children = [{
+          type: 'element',
+          tagName: 'span',
+          properties: {},
+          children: node.children,
+          position: node.position,
+        }]
       }
     })
   }
@@ -80,14 +103,13 @@ export async function parseMarkdown(markdown: string) {
     .use(remarkFrontmatter)
     .use(extractFrontmatter)
     .use(remarkRehype)
-    .use(wrapTextWithSpan)
+    .use(ProcessTdTag)
     .use(addPositionAttribute)
+    .use(splitIntoSections)
     .use(rehypeStringify)
     .process(markdown)
-    .then((file) => {
-      return {
-        meta: file.data.matter as FrontMatter,
-        html: String(file),
-      }
-    })
+    .then(file => ({
+      frontmatter: file.data.matter as Frontmatter,
+      html: String(file),
+    }))
 }
