@@ -8,7 +8,6 @@ import {
 import { useCallback, useRef, useState } from 'react'
 import { Editor } from './components/editor/editor'
 import { Previewer } from './components/editor/previewer'
-import { ModeToggle } from './components/theme/mode-toggle'
 import { ThemeProvider } from './components/theme/theme-provider'
 
 const MIN_SIZE = 30
@@ -31,9 +30,8 @@ function App() {
   )
 
   return (
-    <ThemeProvider defaultTheme="system" storageKey="theme">
-      <ModeToggle />
-      <div className="h-screen p-10 bg-gray-200">
+    <div className="h-screen p-4 bg-gray-200">
+      <ThemeProvider defaultTheme="system" storageKey="theme">
         <ResizablePanelGroup direction="horizontal">
           <ResizablePanel minSize={MIN_SIZE}>
             <ResizablePanelGroup direction="vertical">
@@ -64,8 +62,8 @@ function App() {
             />
           </ResizablePanel>
         </ResizablePanelGroup>
-      </div>
-    </ThemeProvider>
+      </ThemeProvider>
+    </div>
   )
 }
 

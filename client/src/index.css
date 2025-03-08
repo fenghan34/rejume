@@ -129,16 +129,24 @@
   }
 }
 
+body {
+  overflow: hidden;
+}
+
 #rejume-preview {
-  @apply w-[210mm] aspect-[calc(210/297)] p-[15mm] overflow-y-auto rounded font-nunito-sans text-pretty;
-  @apply bg-white;
-  @apply dark:bg-black dark:text-gray-300;
+  @apply overflow-y-auto rounded font-nunito-sans text-pretty;
+
+  #rejume-preview-page {
+    @apply not-first:mt-2;
+    @apply bg-white;
+    @apply dark:bg-black dark:text-gray-300;
+  }
 
   h1,
   h2,
+  p,
   li,
   span,
-  td,
   strong {
     @apply select-all;
   }
