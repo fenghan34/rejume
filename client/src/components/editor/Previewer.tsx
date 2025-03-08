@@ -58,7 +58,7 @@ export function Header({ data }: { data?: Frontmatter }) {
     return
 
   return (
-    <div className="header text-center">
+    <div id="header">
       <h1 className="text-[2em] font-bold">{data.name}</h1>
       <div>
         <span className="text-xl font-medium">{data.title}</span>

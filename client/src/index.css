@@ -140,6 +140,14 @@ body {
     @apply not-first:mt-2;
     @apply bg-white;
     @apply dark:bg-black dark:text-gray-300;
+
+    #header {
+      @apply text-center;
+    }
+
+    #section {
+      @apply mt-4;
+    }
   }
 
   h1,
@@ -152,13 +160,13 @@ body {
   }
 
   h2 {
-    @apply w-fit pr-3 pl-1 mt-4 mb-2;
+    @apply w-fit pr-3 pl-1 mb-2;
     @apply text-white bg-black;
     @apply dark:bg-gray-700;
   }
 
   ul {
-    @apply list-[circle] pl-6;
+    @apply list-[circle] pl-6 mb-1;
   }
 
   table {
