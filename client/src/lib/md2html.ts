@@ -10,11 +10,11 @@ import { visit } from 'unist-util-visit'
 import { matter } from 'vfile-matter'
 
 export interface Frontmatter {
-  name: string
-  title: string
-  email: string
-  phone: string
-  github: string
+  name?: string
+  title?: string
+  email?: string
+  phone?: string
+  github?: string
 }
 
 export const POSITION_ATTRIBUTE = 'data-source-pos'
