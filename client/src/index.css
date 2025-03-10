@@ -3,6 +3,7 @@
 @import 'tailwindcss';
 
 @plugin "tailwindcss-animate";
+@plugin "@iconify/tailwind4";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -125,12 +126,8 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground overflow-hidden;
   }
-}
-
-body {
-  @apply overflow-hidden;
 }
 
 @media print {
@@ -145,6 +142,7 @@ body {
   #rejume-preview-page {
     @apply not-first:mt-2;
     @apply bg-white;
+    /* @apply dark:text-gray-black; */
     @apply dark:bg-black dark:text-gray-300;
 
     #header {

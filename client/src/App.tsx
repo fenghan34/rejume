@@ -8,6 +8,7 @@ import {
 import { useCallback, useRef, useState } from 'react'
 import { Editor } from './components/editor/editor'
 import { Previewer } from './components/editor/previewer'
+import { ModeToggle } from './components/theme/mode-toggle'
 import { ThemeProvider } from './components/theme/theme-provider'
 import { parsePositionAttribute } from './lib/utils'
 
@@ -32,29 +33,37 @@ function App() {
   )
 
   return (
-    <div className="h-screen p-4 bg-gray-200">
-      <ThemeProvider defaultTheme="system" storageKey="theme">
+    <div className="h-screen bg-accent">
+      <ThemeProvider>
+        {/* <ModeToggle /> */}
         <ResizablePanelGroup direction="horizontal">
-          <ResizablePanel>
-            <Editor
-              className="overflow-hidden rounded-md"
-              ref={editorRef}
-              value={markdown}
-              onChange={(value) => {
-                setMarkdown(value || '')
-                localStorage.setItem('markdown', value || '')
-              }}
-            />
+          <ResizablePanel defaultSize={40}>
+            <div className="">
+              <Previewer
+                ref={previewerRef}
+                markdown={markdown}
+                onSelectionChange={handlePreviewerSelectionChange}
+              />
+            </div>
           </ResizablePanel>
 
-          <ResizableHandle className="mx-2" withHandle />
+          <ResizableHandle withHandle />
 
           <ResizablePanel>
-            <Previewer
-              ref={previewerRef}
-              markdown={markdown}
-              onSelectionChange={handlePreviewerSelectionChange}
-            />
+            <div className="h-full px-4 bg-white dark:bg-black">
+              <div className="py-2">
+                <ModeToggle />
+              </div>
+              <Editor
+                className="overflow-hidden rounded-sm bg-accent"
+                ref={editorRef}
+                value={markdown}
+                onChange={(value) => {
+                  setMarkdown(value || '')
+                  localStorage.setItem('markdown', value || '')
+                }}
+              />
+            </div>
           </ResizablePanel>
         </ResizablePanelGroup>
       </ThemeProvider>

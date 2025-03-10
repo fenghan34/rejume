@@ -44,6 +44,8 @@
     "vfile-matter": "^5.0.0"
   },
   "devDependencies": {
+    "@iconify-json/mdi": "^1.2.3",
+    "@iconify/tailwind4": "^1.0.6",
     "@types/hast": "^3.0.4",
     "@types/lodash": "^4.17.16",
     "@types/react": "^19.0.10",

@@ -10,6 +10,7 @@ import {
   useImperativeHandle,
   useRef,
 } from 'react'
+import { useTheme } from '../theme/theme-provider'
 import { setUpSpellcheck } from './spellcheck'
 
 export interface EditorRef {
@@ -25,6 +26,7 @@ export function Editor({
 }: Pick<EditorProps, 'value' | 'onChange' | 'className'> & { ref: Ref<EditorRef> }) {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>(null)
   const monacoRef = useRef<typeof monaco>(null)
+  const { theme } = useTheme()
 
   const selectRange = useCallback((range: monaco.IRange) => {
     editorRef.current?.setPosition({
@@ -73,7 +75,7 @@ export function Editor({
     <MonacoEditor
       {...props}
       language="markdown"
-      theme="vs-dark"
+      theme={theme === 'light' ? 'vs' : 'vs-dark'}
       path="resume.md"
       onMount={(editor, monaco) => {
         editorRef.current = editor
@@ -85,7 +87,11 @@ export function Editor({
         lineHeight: 1.5,
         wordWrap: 'on',
         padding: { top: 10, bottom: 10 },
-        lineNumbers: 'interval',
+        lineNumbers: 'off',
+        minimap: {
+          enabled: true,
+          autohide: true,
+        },
       }}
     />
   )
