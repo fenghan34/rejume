@@ -1,0 +1,12 @@
+diff --git a/package.json b/package.json
+index c4f45c7c66ec198ccabc0b7cce6c040d2d6a8d74..fb35e46a3b685e2b5d558e86f4c92ccafcc7f41c 100644
+--- a/package.json
++++ b/package.json
+@@ -3,7 +3,6 @@
+   "version": "4.0.2",
+   "description": "WebAssembly based Javascript bindings for hunspell spellchecker",
+   "main": "./dist/cjs/index.js",
+-  "module": "./dist/esm/index.js",
+   "types": "./dist/types/index.d.ts",
+   "browser": {
+     "./dist/cjs/lib/node/hunspell.js": "./dist/cjs/lib/browser/hunspell.js",

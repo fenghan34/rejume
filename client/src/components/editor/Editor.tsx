@@ -10,10 +10,13 @@ import {
   useImperativeHandle,
   useRef,
 } from 'react'
+import { setUpSpellcheck } from './spellcheck'
 
 export interface EditorRef {
   selectRange: (range: monaco.IRange) => void
   searchAndSelectFirstMatch: (target: string) => void
+  editor: monaco.editor.IStandaloneCodeEditor
+  monaco: typeof monaco
 }
 
 export function Editor({
@@ -21,6 +24,7 @@ export function Editor({
   ...props
 }: Pick<EditorProps, 'value' | 'onChange' | 'className'> & { ref: Ref<EditorRef> }) {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>(null)
+  const monacoRef = useRef<typeof monaco>(null)
 
   const selectRange = useCallback((range: monaco.IRange) => {
     editorRef.current?.setPosition({
@@ -32,11 +36,10 @@ export function Editor({
   }, [])
 
   const searchAndSelectFirstMatch = useCallback((target: string) => {
-    const editor = editorRef.current
-    if (!editor)
+    if (!editorRef.current)
       return
 
-    const model = editor.getModel()
+    const model = editorRef.current.getModel()
     const matches = model!.findMatches(
       target,
       true,
@@ -57,6 +60,8 @@ export function Editor({
     ref,
     () => {
       return {
+        editor: editorRef.current!,
+        monaco: monacoRef.current!,
         selectRange,
         searchAndSelectFirstMatch,
       }
@@ -68,15 +73,19 @@ export function Editor({
     <MonacoEditor
       {...props}
       language="markdown"
-      theme="vs"
+      theme="vs-dark"
       path="resume.md"
-      onMount={editor => (editorRef.current = editor)}
+      onMount={(editor, monaco) => {
+        editorRef.current = editor
+        monacoRef.current = monaco
+        setUpSpellcheck(editor, monaco, { lang: 'en_us' })
+      }}
       options={{
         fontSize: 16,
         lineHeight: 1.5,
         wordWrap: 'on',
         padding: { top: 10, bottom: 10 },
-        lineNumbers: 'off',
+        lineNumbers: 'interval',
       }}
     />
   )

@@ -21,6 +21,11 @@
     "simple-git-hooks": "^2.11.1",
     "typescript": "~5.7.2"
   },
+  "pnpm": {
+    "patchedDependencies": {
+      "hunspell-asm@4.0.2": "patches/hunspell-asm@4.0.2.patch"
+    }
+  },
   "simple-git-hooks": {
     "pre-commit": "pnpm lint-staged"
   },
