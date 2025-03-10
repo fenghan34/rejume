@@ -92,10 +92,10 @@ export function setUpSpellcheck(editor: Monaco.editor.IStandaloneCodeEditor, mon
         })
 
         actions.push({
-          title: `Add "${word}" to dictionary`,
+          title: `Add to dictionary`,
           kind: 'quickfix',
           command: {
-            title: `Add "${word}" to dictionary`,
+            title: `Add to dictionary`,
             id: SPELLCHEK_ADD_TO_DIC_ID,
             arguments: [word],
           },
