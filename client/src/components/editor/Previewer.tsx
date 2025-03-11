@@ -20,7 +20,7 @@ export interface PreviewerProps {
   ref: Ref<PreviewerRef>
 }
 
-export function Previewer({ markdown, onSelectionChange, ref }: PreviewerProps) {
+export function Previewer({ className, markdown, onSelectionChange, ref }: PreviewerProps) {
   const contentRef = useRef<HTMLDivElement>(null)
 
   const { html: bodyHtml, frontmatter } = useRemark(markdown)
@@ -51,6 +51,7 @@ export function Previewer({ markdown, onSelectionChange, ref }: PreviewerProps) 
   return (
     <div
       id="rejume-preview"
+      className={className}
       style={{ width: A4_WIDTH, height: A4_HEIGHT }}
       onMouseUp={mouseupHandler}
       ref={contentRef}

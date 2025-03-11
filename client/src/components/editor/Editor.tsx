@@ -84,10 +84,17 @@ export function Editor({
       }}
       options={{
         fontSize: 16,
-        lineHeight: 1.5,
+        fontFamily: `"Fira Code", monospace`,
         wordWrap: 'on',
         padding: { top: 10, bottom: 10 },
         lineNumbers: 'off',
+        smoothScrolling: true,
+        scrollbar: {
+          verticalScrollbarSize: 0,
+        },
+        stickyScroll: {
+          enabled: true,
+        },
         minimap: {
           enabled: true,
           autohide: true,
