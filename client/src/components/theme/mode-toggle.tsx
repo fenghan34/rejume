@@ -6,7 +6,7 @@ export function ModeToggle() {
   const { theme, setTheme } = useTheme()
 
   return (
-    <Button variant="ghost" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
+    <Button className="cursor-pointer" variant="ghost" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
       {theme === 'light' ? <Sun /> : <Moon />}
     </Button>
   )

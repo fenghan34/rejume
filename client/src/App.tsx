@@ -74,8 +74,9 @@ function App() {
 
           <ResizablePanel>
             <>
-              <div className="p-2 flex dark:bg-black space-x-2">
+              <div className="p-2 flex dark:bg-black">
                 <Button
+                  className="cursor-pointer"
                   variant="ghost"
                   onClick={() => previewerRef.current?.print()}
                 >
