@@ -6,11 +6,13 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable'
+import { Printer } from 'lucide-react'
 import { useCallback, useLayoutEffect, useRef, useState } from 'react'
 import { Editor } from './components/editor/editor'
 import { Previewer } from './components/editor/previewer'
 import { ModeToggle } from './components/theme/mode-toggle'
 import { ThemeProvider } from './components/theme/theme-provider'
+import { Button } from './components/ui/button'
 import { A4_HEIGHT, A4_WIDTH } from './consts'
 import { parsePositionAttribute } from './lib/utils'
 
@@ -36,13 +38,22 @@ function App() {
   )
 
   useLayoutEffect(() => {
-    const bodyWidth = document.body.clientWidth
-    const bodyHeight = document.body.clientHeight
-    const margin = bodyWidth >= 1536 ? 80 : 40
-    const leftPanelWidth = (bodyHeight + margin) * (A4_WIDTH / A4_HEIGHT)
-    const size = (leftPanelWidth / bodyWidth) * 100
+    const handler = () => {
+      const bodyWidth = document.body.clientWidth
+      const bodyHeight = document.body.clientHeight
+      const margin = bodyWidth >= 1280 ? 24 : bodyWidth >= 1536 ? 40 : 0
+      const leftPanelWidth = (bodyHeight + margin) * (A4_WIDTH / A4_HEIGHT)
+      const size = (leftPanelWidth / bodyWidth) * 100
 
-    leftPanelRef.current?.resize(size)
+      leftPanelRef.current?.resize(size)
+    }
+
+    const observer = new ResizeObserver(handler)
+    observer.observe(document.body)
+
+    return () => {
+      observer.disconnect()
+    }
   }, [])
 
   return (
@@ -50,9 +61,8 @@ function App() {
       <ThemeProvider defaultTheme="dark">
         <ResizablePanelGroup direction="horizontal">
           <ResizablePanel ref={leftPanelRef}>
-            <div className="m-10 2xl:m-20">
+            <div className="xl:m-6 2xl:m-10">
               <Previewer
-                className="shadow-xl"
                 ref={previewerRef}
                 markdown={markdown}
                 onSelectionChange={handlePreviewerSelectionChange}
@@ -63,8 +73,14 @@ function App() {
           <ResizableHandle />
 
           <ResizablePanel>
-            <div className="h-full dark:bg-black">
-              <div className="p-2 flex flex-row-reverse">
+            <>
+              <div className="p-2 flex dark:bg-black space-x-2">
+                <Button
+                  variant="ghost"
+                  onClick={() => previewerRef.current?.print()}
+                >
+                  <Printer />
+                </Button>
                 <ModeToggle />
               </div>
               <Editor
@@ -76,7 +92,7 @@ function App() {
                   localStorage.setItem('markdown', value || '')
                 }}
               />
-            </div>
+            </>
           </ResizablePanel>
         </ResizablePanelGroup>
       </ThemeProvider>

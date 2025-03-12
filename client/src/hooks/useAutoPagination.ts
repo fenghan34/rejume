@@ -37,7 +37,7 @@ export function useAutoPagination(html: string, options: AutoPaginationOptions) 
     const pages: Page[] = []
 
     const pushPage = () => {
-      pages.push({ html: currentPage, pageNumber: ++currentPageNumber, pageStyle: { width, height, padding: `${paddingY}px ${paddingX}px` } })
+      pages.push({ html: currentPage, pageNumber: ++currentPageNumber, pageStyle: { height, padding: `${paddingY}px ${paddingX}px` } })
     }
 
     items.forEach((item, index) => {

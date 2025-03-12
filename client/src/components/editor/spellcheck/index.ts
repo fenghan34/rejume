@@ -1,6 +1,6 @@
 import type * as Monaco from 'monaco-editor'
 import type { Dictionary, Language } from './dic'
-import _ from 'lodash'
+import { debounce } from 'lodash'
 import { initDictionary } from './dic'
 
 const SPELLCHEK_ID = 'spellcheck'
@@ -120,12 +120,12 @@ export function setUpSpellcheck(editor: Monaco.editor.IStandaloneCodeEditor, mon
   }
 
   const { lang } = options
-  const debouncedRun = _.debounce(run, 500)
+  const debouncedRun = debounce(run, 500)
 
   initDictionary(lang).then((dic) => {
     dictionary = dic
 
-    debouncedRun()
+    run()
     editor.onDidChangeModelContent(() => {
       debouncedRun()
     })

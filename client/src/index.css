@@ -138,11 +138,10 @@
 }
 
 #rejume-preview {
-  @apply overflow-y-auto rounded font-nunito-sans text-pretty;
+  @apply overflow-y-auto rounded font-nunito-sans text-pretty shadow-xl;
 
   #rejume-preview-page {
-    @apply not-first:mt-2;
-    @apply bg-white text-black;
+    @apply not-first:mt-2 bg-white text-black;
 
     #header {
       @apply text-center mb-4;
