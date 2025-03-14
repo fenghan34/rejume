@@ -1,11 +1,6 @@
 import type { ImperativePanelHandle } from 'react-resizable-panels'
 import type { EditorRef } from './components/editor/editor'
 import type { PreviewerRef } from './components/editor/previewer'
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from '@/components/ui/resizable'
 import { Printer } from 'lucide-react'
 import { useCallback, useLayoutEffect, useRef, useState } from 'react'
 import { Editor } from './components/editor/editor'
@@ -13,6 +8,11 @@ import { Previewer } from './components/editor/previewer'
 import { ModeToggle } from './components/theme/mode-toggle'
 import { ThemeProvider } from './components/theme/theme-provider'
 import { Button } from './components/ui/button'
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from './components/ui/resizable'
 import { A4_HEIGHT, A4_WIDTH } from './consts'
 import { parsePositionAttribute } from './lib/utils'
 

@@ -1,15 +1,18 @@
-import antfu from '@antfu/eslint-config'
+import { FlatCompat } from '@eslint/eslintrc'
 
-export default antfu({
-  react: true,
-  typescript: true,
-  formatters: {
-    css: true,
-    html: true,
-    markdown: 'prettier',
-  },
-  rules: {
-    'react-refresh/only-export-components': 'off',
-    'react-dom/no-dangerously-set-innerhtml': 'off',
-  },
+const compat = new FlatCompat({
+  baseDirectory: import.meta.dirname,
 })
+
+const eslintConfig = [
+  ...compat.config({
+    extends: ['next'],
+    settings: {
+      next: {
+        rootDir: 'site',
+      },
+    },
+  }),
+]
+
+export default eslintConfig

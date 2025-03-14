@@ -33,7 +33,6 @@ export function setUpAssistant(editor: Monaco.editor.IStandaloneCodeEditor, mona
       node.querySelector('#improve-writing')?.addEventListener('click', () => {
         const data = getSelectionData()
 
-        // eslint-disable-next-line no-console
         console.log(data)
       })
 

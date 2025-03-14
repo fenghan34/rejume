@@ -1,6 +1,6 @@
 packages:
-  - client
-  - server
+  - site
+  - packages
 onlyBuiltDependencies:
-  - '@swc/core'
-  - esbuild
+  - sharp
+  - simple-git-hooks
