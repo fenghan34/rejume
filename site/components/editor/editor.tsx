@@ -10,15 +10,13 @@ import {
   useImperativeHandle,
   useRef,
 } from 'react'
-import { useTheme } from '../theme/theme-provider'
+import { useTheme } from 'next-themes'
 import { setUpAssistant } from './assistant'
 import { setUpSpellcheck } from './spellcheck'
 
 export interface EditorRef {
   selectRange: (range: monaco.IRange) => void
   searchAndSelectFirstMatch: (target: string) => void
-  editor: monaco.editor.IStandaloneCodeEditor
-  monaco: typeof monaco
 }
 
 export function Editor({
@@ -63,8 +61,6 @@ export function Editor({
     ref,
     () => {
       return {
-        editor: editorRef.current!,
-        monaco: monacoRef.current!,
         selectRange,
         searchAndSelectFirstMatch,
       }

@@ -11,16 +11,18 @@ import { useReactToPrint } from 'react-to-print'
 
 export interface PreviewerRef {
   print: () => void
+  layout: (margin: number) => void
 }
 
 export interface PreviewerProps {
-  markdown: string
+  markdown?: string
   className?: string
   onSelectionChange?: (selectedElement: HTMLElement) => void
   ref: Ref<PreviewerRef>
 }
 
-export function Previewer({ className, markdown, onSelectionChange, ref }: PreviewerProps) {
+export function Previewer({ className, markdown = '', onSelectionChange, ref }: PreviewerProps) {
+  const wrapperRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
 
   const { html: bodyHtml, frontmatter } = useRemark(markdown)
@@ -32,9 +34,14 @@ export function Previewer({ className, markdown, onSelectionChange, ref }: Previ
 
   useAutoScale({ contentRef })
   const print = useReactToPrint({ contentRef })
+  const layout = useCallback((margin: number) => {
+    if (!wrapperRef.current) return
+    wrapperRef.current.style.margin = `${margin}px`
+  }, [])
 
   useImperativeHandle(ref, () => ({
     print,
+    layout
   }), [print])
 
   const mouseupHandler = useCallback(() => {
@@ -49,21 +56,23 @@ export function Previewer({ className, markdown, onSelectionChange, ref }: Previ
     return null
 
   return (
-    <div
-      id="rejume-preview"
-      className={className}
-      style={{ width: A4_WIDTH, height: A4_HEIGHT }}
-      onMouseUp={mouseupHandler}
-      ref={contentRef}
-    >
-      {pages.map(({ html, pageNumber, pageStyle }) => (
-        <div
-          id="rejume-preview-page"
-          key={pageNumber}
-          style={pageStyle}
-          dangerouslySetInnerHTML={{ __html: html }}
-        />
-      ))}
+    <div ref={wrapperRef}>
+      <div
+        id="rejume-preview"
+        className={className}
+        style={{ width: A4_WIDTH, height: A4_HEIGHT }}
+        onMouseUp={mouseupHandler}
+        ref={contentRef}
+      >
+        {pages.map(({ html, pageNumber, pageStyle }) => (
+          <div
+            id="rejume-preview-page"
+            key={pageNumber}
+            style={pageStyle}
+            dangerouslySetInnerHTML={{ __html: html }}
+          />
+        ))}
+      </div>
     </div>
   )
 }
