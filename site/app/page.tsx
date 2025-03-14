@@ -11,7 +11,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable'
-import { A4_HEIGHT, A4_WIDTH } from '@/consts'
+import { A4_HEIGHT, A4_WIDTH } from '@/lib/constants'
 import { parsePositionAttribute } from '@/lib/utils'
 import { Toolbar } from '@/components/editor/toolbar'
 

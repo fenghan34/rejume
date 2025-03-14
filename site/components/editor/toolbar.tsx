@@ -4,7 +4,7 @@ import { Button } from "../ui/button";
 
 export function Toolbar({ onPrint }: { onPrint: () => void }) {
   return (
-    <div className="p-2 flex dark:bg-black">
+    <div className="p-2 flex bg-card border-b">
       <Button
         className="cursor-pointer"
         variant="ghost"

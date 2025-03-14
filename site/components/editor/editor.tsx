@@ -13,6 +13,7 @@ import {
 import { useTheme } from 'next-themes'
 import { setUpAssistant } from './assistant'
 import { setUpSpellcheck } from './spellcheck'
+import { createPortal } from 'react-dom'
 
 export interface EditorRef {
   selectRange: (range: monaco.IRange) => void

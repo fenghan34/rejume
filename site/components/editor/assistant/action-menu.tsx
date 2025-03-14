@@ -1,18 +1,27 @@
 import { Button } from '@/components/ui/button'
 import { Sparkles } from 'lucide-react'
+import { ReactNode } from 'react'
+
+function ActionButton({ id, children }: { id: string, children: ReactNode }) {
+  return (
+    <Button
+      id={id}
+      size="sm"
+      variant="ghost"
+      className="cursor-pointer"
+    >
+      {children}
+    </Button>
+  )
+}
 
 export function ActionMenu() {
   return (
-    <div className="mb-2 select-none border shadow-sm bg-white rounded-md p-1 flex items-center">
-      <Button
-        className="cursor-pointer"
-        size="sm"
-        variant="ghost"
-        id="improve-writing"
-      >
+    <div className="p-0.5 mb-2 select-none bg-background border shadow-sm rounded-md flex items-center">
+      <ActionButton id="improve-writing">
         <Sparkles />
         Improve writing
-      </Button>
+      </ActionButton>
     </div>
   )
 }

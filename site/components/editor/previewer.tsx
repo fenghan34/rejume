@@ -1,6 +1,6 @@
 import type { Frontmatter } from '@/lib/md2html'
 import type { Ref } from 'react'
-import { A4_HEIGHT, A4_WIDTH, PAGE_PADDING } from '@/consts'
+import { A4_HEIGHT, A4_WIDTH, PAGE_PADDING } from '@/lib/constants'
 import { useAutoPagination } from '@/hooks/useAutoPagination'
 import { useAutoScale } from '@/hooks/useAutoScale'
 import { useRemark } from '@/hooks/useRemark'
