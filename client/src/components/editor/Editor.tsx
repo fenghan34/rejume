@@ -11,6 +11,7 @@ import {
   useRef,
 } from 'react'
 import { useTheme } from '../theme/theme-provider'
+import { setUpAssistant } from './assistant'
 import { setUpSpellcheck } from './spellcheck'
 
 export interface EditorRef {
@@ -81,6 +82,7 @@ export function Editor({
         editorRef.current = editor
         monacoRef.current = monaco
         setUpSpellcheck(editor, monaco, { lang: 'en_us' })
+        setUpAssistant(editor, monaco)
       }}
       options={{
         fontSize: 16,

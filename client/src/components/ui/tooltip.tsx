@@ -1,6 +1,5 @@
 import { cn } from '@/lib/utils'
 import * as TooltipPrimitive from '@radix-ui/react-tooltip'
-
 import * as React from 'react'
 
 function TooltipProvider({
@@ -8,6 +7,7 @@ function TooltipProvider({
   ...props
 }: React.ComponentProps<typeof TooltipPrimitive.Provider>) {
   return (
+    // @ts-expect-error types
     <TooltipPrimitive
       data-slot="tooltip-provider"
       delayDuration={delayDuration}
