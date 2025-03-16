@@ -14,6 +14,7 @@ export interface Dictionary {
   check: (word: string) => boolean
   suggest: (word: string) => string[]
   addWord: (word: string) => void
+  dispose: () => void
 }
 
 export async function initDictionary(language: Language): Promise<Dictionary> {
@@ -30,5 +31,6 @@ export async function initDictionary(language: Language): Promise<Dictionary> {
     check: hunspell.spell,
     suggest: hunspell.suggest,
     addWord: hunspell.addWord,
+    dispose: hunspell.dispose
   }
 }

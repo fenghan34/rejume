@@ -102,7 +102,12 @@ export function setUpSpellcheck(editor: Monaco.editor.IStandaloneCodeEditor, mon
         })
       }
 
-      return { actions, dispose: () => {} }
+      return {
+        actions,
+        dispose: () => {
+          dictionary.dispose()
+        }
+      }
     },
   }
 
