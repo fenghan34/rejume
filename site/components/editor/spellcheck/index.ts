@@ -104,9 +104,7 @@ export function setUpSpellcheck(editor: Monaco.editor.IStandaloneCodeEditor, mon
 
       return {
         actions,
-        dispose: () => {
-          dictionary.dispose()
-        }
+        dispose: () => { }
       }
     },
   }
@@ -134,6 +132,7 @@ export function setUpSpellcheck(editor: Monaco.editor.IStandaloneCodeEditor, mon
     editor.onDidChangeModelContent(() => {
       debouncedRun()
     })
+    editor.onDidDispose(() => dictionary.dispose())
 
     monaco.languages.registerCodeActionProvider('markdown', codeActionProvider)
     monaco.editor.registerCommand(SPELLCHEK_ADD_TO_DIC_ID, addToDictionary)
