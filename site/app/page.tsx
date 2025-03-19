@@ -4,7 +4,6 @@ import type { ImperativePanelHandle } from 'react-resizable-panels'
 import type { EditorRef } from '@/components/editor/editor'
 import type { PreviewerRef } from '@/components/editor/previewer'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { Editor } from '@/components/editor/editor'
 import { Previewer } from '@/components/editor/previewer'
 import {
   ResizableHandle,
@@ -14,6 +13,9 @@ import {
 import { A4_HEIGHT, A4_WIDTH } from '@/lib/constants'
 import { parsePositionAttribute } from '@/lib/utils'
 import { Toolbar } from '@/components/editor/toolbar'
+import dynamic from 'next/dynamic'
+
+const Editor = dynamic(() => import('@/components/editor/editor').then(mo => mo.Editor), { ssr: false })
 
 export default function Home() {
   const editorRef = useRef<EditorRef>(null)

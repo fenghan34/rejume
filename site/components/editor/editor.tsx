@@ -1,9 +1,6 @@
 import type { EditorProps } from '@monaco-editor/react'
 import type * as monaco from 'monaco-editor'
-import type {
-  Ref,
-} from 'react'
-
+import type { Ref } from 'react'
 import MonacoEditor from '@monaco-editor/react'
 import {
   useCallback,
@@ -11,9 +8,8 @@ import {
   useRef,
 } from 'react'
 import { useTheme } from 'next-themes'
-import { setUpAssistant } from './assistant'
+import { setUpAssistant } from './writing-assistant'
 import { setUpSpellcheck } from './spellcheck'
-import { createPortal } from 'react-dom'
 
 export interface EditorRef {
   selectRange: (range: monaco.IRange) => void
@@ -74,7 +70,6 @@ export function Editor({
       {...props}
       language="markdown"
       theme={theme === 'light' ? 'vs' : 'vs-dark'}
-      path="resume.md"
       onMount={(editor, monaco) => {
         editorRef.current = editor
         monacoRef.current = monaco
@@ -86,7 +81,7 @@ export function Editor({
         fontFamily: `"Fira Code", monospace`,
         wordWrap: 'on',
         padding: { top: 10, bottom: 10 },
-        lineNumbers: 'off',
+        // lineNumbers: 'off',
         smoothScrolling: true,
         scrollbar: {
           verticalScrollbarSize: 0,
@@ -97,7 +92,7 @@ export function Editor({
         minimap: {
           enabled: true,
           autohide: true,
-        },
+        }
       }}
     />
   )
