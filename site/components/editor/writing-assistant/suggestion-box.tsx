@@ -27,9 +27,9 @@ export class SuggestionBoxWidget implements ContentWidget {
     this.monaco = monaco
     this.buttons = buttons
     this.node.innerHTML = renderToString(
-      <div className="mt-1 bg-card border shadow-sm rounded-md">
-        <Textarea disabled className="min-w-lg w-auto max-w-2xl max-h-44 m-0 border-0 outline-0 shadow-none focus:border-0 focus:outline-0 focus:shadow-none  focus-visible:ring-0 overflow-auto resize-none" />
-        <div className="p-1 text-xs text-right">
+      <div className="mt-1 p-2 bg-card border shadow-sm rounded-md">
+        <Textarea disabled className="min-w-md w-auto max-w-2xl max-h-44 overflow-y-auto m-0 border-0 outline-0 shadow-none focus:border-0 focus:outline-0 focus:shadow-none focus-visible:ring-0 overflow-auto resize-none" />
+        <div className="pt-1 text-xs text-right">
           {
             buttons.map(({ id, title, disabled }) => (
               <Button
@@ -47,7 +47,15 @@ export class SuggestionBoxWidget implements ContentWidget {
         </div>
       </div>
     )
-    this.textarea = this.node.querySelector('textarea')!
+    const textarea = this.node.querySelector('textarea')!
+    const stopPropagation = (event: Event) => event.stopPropagation();
+    textarea.addEventListener("wheel", stopPropagation, { passive: false });
+    textarea.addEventListener("touchmove", stopPropagation, { passive: false });
+    editor.onDidDispose(() => {
+      textarea.removeEventListener("wheel", stopPropagation);
+      textarea.removeEventListener("touchmove", stopPropagation);
+    })
+    this.textarea = textarea
 
     buttons.forEach(({ id, onClick }) => {
       const button = this.node.querySelector(`#${id}`)
@@ -98,6 +106,7 @@ export class SuggestionBoxWidget implements ContentWidget {
 
   updateValue(text: string) {
     this.textarea.value += text
+    this.textarea.scrollTo({ behavior: 'smooth', top: this.textarea.scrollHeight })
   }
 
   ready() {
