@@ -5,6 +5,7 @@ function createContainer() {
   const container = document.createElement('div')
   container.style.position = 'absolute'
   container.style.visibility = 'hidden'
+  container.id = 'rejume-preview'
   document.body.appendChild(container)
   return container
 }
@@ -25,6 +26,7 @@ export function useAutoPagination(html: string, options: AutoPaginationOptions) 
   const calculatePages = useCallback((container: HTMLDivElement, html: string) => {
     container.innerHTML = html
     container.style.width = `${width}px`
+    container.style.padding = `0px ${paddingX}px`
 
     const items = Array.from(container.children).map(child => ({
       height: (child as HTMLElement).offsetHeight + Number.parseFloat(getComputedStyle(child).marginBottom),
@@ -41,7 +43,7 @@ export function useAutoPagination(html: string, options: AutoPaginationOptions) 
     }
 
     items.forEach((item, index) => {
-      if (currentHeight + item.height > (height - 2 * paddingY)) {
+      if (currentHeight + item.height > height - 2 * paddingY) {
         pushPage()
         currentPage = item.html
         currentHeight = item.height
