@@ -35,21 +35,18 @@ export default function Home() {
     [],
   )
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const handler = () => {
-      const bodyWidth = document.body.clientWidth
-      const bodyHeight = document.body.clientHeight
-      const margin = bodyWidth >= 1280 ? 24 : bodyWidth >= 1536 ? 40 : 0
-      const leftPanelWidth = (bodyHeight + margin) * (A4_WIDTH / A4_HEIGHT)
-      const size = (leftPanelWidth / bodyWidth) * 100
+      const { clientWidth, clientHeight } = document.body
+      const margin = clientWidth >= 1536 ? 24 : 0
+      const leftPanelWidth = (clientHeight + margin) * (A4_WIDTH / A4_HEIGHT)
+      const size = (leftPanelWidth / clientWidth) * 100
 
       leftPanelRef.current?.resize(size)
-      previewerRef.current?.layout(margin)
     }
 
     const observer = new ResizeObserver(handler)
     observer.observe(document.body)
-
     return () => {
       observer.disconnect()
     }
@@ -64,6 +61,7 @@ export default function Home() {
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel ref={leftPanelRef}>
           <Previewer
+            className='2xl:m-6'
             ref={previewerRef}
             markdown={markdown}
             onSelectionChange={handlePreviewerSelectionChange}

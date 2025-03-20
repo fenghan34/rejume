@@ -11,7 +11,6 @@ import { useReactToPrint } from 'react-to-print'
 
 export interface PreviewerRef {
   print: () => void
-  layout: (margin: number) => void
 }
 
 export interface PreviewerProps {
@@ -22,7 +21,6 @@ export interface PreviewerProps {
 }
 
 export function Previewer({ className, markdown = '', onSelectionChange, ref }: PreviewerProps) {
-  const wrapperRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
 
   const { html: bodyHtml, frontmatter } = useRemark(markdown)
@@ -32,16 +30,11 @@ export function Previewer({ className, markdown = '', onSelectionChange, ref }: 
     padding: { x: PAGE_PADDING, y: PAGE_PADDING },
   })
 
-  useAutoScale({ contentRef })
   const print = useReactToPrint({ contentRef })
-  const layout = useCallback((margin: number) => {
-    if (!wrapperRef.current) return
-    wrapperRef.current.style.margin = `${margin}px`
-  }, [])
+  useAutoScale({ contentRef })
 
   useImperativeHandle(ref, () => ({
     print,
-    layout
   }), [print])
 
   const mouseupHandler = useCallback(() => {
@@ -56,10 +49,9 @@ export function Previewer({ className, markdown = '', onSelectionChange, ref }: 
     return null
 
   return (
-    <div ref={wrapperRef}>
+    <div className={className} >
       <div
         id="rejume-preview"
-        className={className}
         style={{ width: A4_WIDTH, height: A4_HEIGHT }}
         onMouseUp={mouseupHandler}
         ref={contentRef}
