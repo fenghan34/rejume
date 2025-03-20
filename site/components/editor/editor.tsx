@@ -78,10 +78,9 @@ export function Editor({
       }}
       options={{
         fontSize: 16,
-        fontFamily: `"Fira Code", monospace`,
         wordWrap: 'on',
-        padding: { top: 10, bottom: 10 },
-        // lineNumbers: 'off',
+        padding: { top: 10 },
+        lineNumbers: 'off',
         smoothScrolling: true,
         scrollbar: {
           verticalScrollbarSize: 0,

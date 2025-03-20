@@ -53,9 +53,6 @@ export async function* fetchSuggestion({ messages, signal }: {
       body: JSON.stringify({
         messages
       }),
-      headers: {
-        "Content-Type": "application/json",
-      },
       signal
     })
 

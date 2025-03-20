@@ -27,9 +27,9 @@ export class SuggestionBoxWidget implements ContentWidget {
     this.monaco = monaco
     this.buttons = buttons
     this.node.innerHTML = renderToString(
-      <div className="mt-1 p-2 bg-card border shadow-sm rounded-md">
-        <Textarea disabled className="min-w-md w-auto max-w-2xl max-h-44 overflow-y-auto m-0 border-0 outline-0 shadow-none focus:border-0 focus:outline-0 focus:shadow-none focus-visible:ring-0 overflow-auto resize-none" />
-        <div className="pt-1 text-xs text-right">
+      <div className="mt-1 px-3 py-2 bg-card border shadow-sm rounded-md mr-40">
+        <Textarea placeholder="Thinking..." disabled className="min-w-sm w-auto max-w-xl min-h-6 max-h-44 m-0 p-0 border-0 outline-0 shadow-none focus:border-0 focus:outline-0 focus:shadow-none focus-visible:ring-0 overflow-y-auto resize-none disabled:opacity-70 peer" />
+        <div className="pt-2 text-right space-x-1 peer-disabled:hidden">
           {
             buttons.map(({ id, title, disabled }) => (
               <Button
@@ -38,7 +38,7 @@ export class SuggestionBoxWidget implements ContentWidget {
                 disabled={disabled}
                 size="sm"
                 variant="ghost"
-                className="cursor-pointer"
+                className="cursor-pointer px-1.5 py-0.5"
               >
                 {title}
               </Button>

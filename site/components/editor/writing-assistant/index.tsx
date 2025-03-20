@@ -43,10 +43,10 @@ export function setUpAssistant(editor: MonacoEditor, monaco: Monaco) {
       for await (const chunk of fetchSuggestion({ messages, signal: controller.signal })) {
         suggestionBox.updateValue(chunk)
       }
-
       suggestionBox.ready()
     } catch (error) {
       console.error(error)
+      suggestionBox.updateValue(String(error))
     }
   }
 
