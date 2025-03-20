@@ -27,6 +27,22 @@ export function buildGrammarCheckMessages(text: string): CoreMessage[] {
   ]
 }
 
+/**
+ * Message type following the data stream protocol
+ * @see https://sdk.vercel.ai/docs/ai-sdk-ui/stream-protocol#data-stream-protocol
+ */
+enum MessageType {
+  Start = 'f',
+  Text = '0',
+  Error = '3'
+}
+
+function extractTextData(message: string, type: MessageType.Text | MessageType.Error) {
+  const match = message.match(new RegExp(`${type}:"(.*)"`))
+  if (match) return match[1].replaceAll('\\n', '\n')
+  return ''
+}
+
 export async function* fetchSuggestion({ messages, signal }: {
   messages: CoreMessage[],
   signal?: AbortSignal,
@@ -54,9 +70,17 @@ export async function* fetchSuggestion({ messages, signal }: {
       const { value, done } = await reader.read();
       if (done) break;
 
-      yield decoder.decode(value, { stream: true });
-    }
+      const message = decoder.decode(value, { stream: true });
+      const type = message[0]
 
+      if (type === MessageType.Start || type === MessageType.Text) {
+        yield extractTextData(message, MessageType.Text)
+      }
+
+      if (type === MessageType.Error) {
+        throw new Error(extractTextData(message, MessageType.Error))
+      }
+    }
   } catch (error: any) {
     if (error?.message.includes('aborted')) return
     throw error

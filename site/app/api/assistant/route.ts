@@ -1,14 +1,21 @@
-import { openai } from '@ai-sdk/openai';
 import { ollama } from 'ollama-ai-provider';
-import { streamText } from 'ai';
+import { createDataStreamResponse, streamText } from 'ai';
 
 export async function POST(req: Request) {
   const { messages } = await req.json();
 
-  const result = streamText({
-    model: ollama('gemma3:12b'),
-    messages,
-  });
+  return createDataStreamResponse({
+    execute: dataStream => {
+      const result = streamText({
+        model: ollama('gemma3:12b'),
+        messages,
+        abortSignal: req.signal,
+      });
 
-  return result.toTextStreamResponse();
+      result.mergeIntoDataStream(dataStream)
+    },
+    onError: error => {
+      return error instanceof Error ? error.message : String(error);
+    }
+  })
 }
