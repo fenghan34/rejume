@@ -8,7 +8,6 @@ import type { ReactNode } from "react";
 export type SuggestionBoxButton = {
   id: string,
   title: ReactNode,
-  disabled?: boolean,
   onClick?: (e: Event, suggestionBox: SuggestionBoxWidget) => void
 }
 
@@ -17,7 +16,6 @@ export class SuggestionBoxWidget implements ContentWidget {
   private monaco: Monaco
   private node: HTMLDivElement = document.createElement('div')
   private position: Position | null = null
-  private buttons: SuggestionBoxButton[]
   private textarea: HTMLTextAreaElement
   allowEditorOverflow: boolean = true
   beforeReset: (() => void) | null = null
@@ -25,20 +23,18 @@ export class SuggestionBoxWidget implements ContentWidget {
   constructor(editor: MonacoEditor, monaco: Monaco, buttons: SuggestionBoxButton[]) {
     this.editor = editor
     this.monaco = monaco
-    this.buttons = buttons
     this.node.innerHTML = renderToString(
-      <div className="mt-1 px-3 py-2 bg-card border shadow-sm rounded-md mr-40">
-        <Textarea placeholder="Thinking..." disabled className="min-w-sm w-auto max-w-xl min-h-6 max-h-44 m-0 p-0 border-0 outline-0 shadow-none focus:border-0 focus:outline-0 focus:shadow-none focus-visible:ring-0 overflow-y-auto resize-none disabled:opacity-70 peer" />
-        <div className="pt-2 text-right space-x-1 peer-disabled:hidden">
+      <div className="mt-1 bg-card border shadow-sm rounded-md mr-40">
+        <Textarea placeholder="Thinking..." disabled className="min-w-sm w-auto max-w-xl min-h-6 max-h-44 m-0 py-3 border-0 outline-0 shadow-none focus:border-0 focus:outline-0 focus:shadow-none focus-visible:ring-0 overflow-y-auto resize-none disabled:opacity-70 peer" />
+        <div className="p-1 text-right peer-disabled:hidden">
           {
-            buttons.map(({ id, title, disabled }) => (
+            buttons.map(({ id, title }) => (
               <Button
                 key={id}
                 id={id}
-                disabled={disabled}
                 size="sm"
                 variant="ghost"
-                className="cursor-pointer px-1.5 py-0.5"
+                className="cursor-pointer"
               >
                 {title}
               </Button>
@@ -112,10 +108,6 @@ export class SuggestionBoxWidget implements ContentWidget {
   ready() {
     this.textarea.disabled = false
     this.textarea.focus()
-    this.buttons.filter((({ disabled }) => disabled)).forEach(({ id }) => {
-      const button = this.node.querySelector(`#${id}`) as HTMLButtonElement
-      button.disabled = false
-    })
   }
 
   reset() {
@@ -123,10 +115,6 @@ export class SuggestionBoxWidget implements ContentWidget {
     this.beforeReset = null
     this.textarea.value = ''
     this.textarea.disabled = true
-    this.buttons.forEach(({ id, disabled = false }) => {
-      const button = this.node.querySelector(`#${id}`) as HTMLButtonElement
-      button.disabled = disabled
-    })
     this.setPosition(null)
   }
 }

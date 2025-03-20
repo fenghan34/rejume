@@ -11,7 +11,6 @@ export function setUpAssistant(editor: MonacoEditor, monaco: Monaco) {
     {
       id: 'insert',
       title: 'Insert',
-      disabled: true,
       onClick: (_, suggestionBox) => {
         pushEdit(editor, 'insert', suggestionBox.getValue())
       }
@@ -19,7 +18,6 @@ export function setUpAssistant(editor: MonacoEditor, monaco: Monaco) {
     {
       id: 'replace',
       title: 'Replace',
-      disabled: true,
       onClick: (_, suggestionBox) => {
         pushEdit(editor, 'replace', suggestionBox.getValue())
       }

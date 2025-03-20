@@ -21,7 +21,7 @@ export class ActionBarWidget implements ContentWidget {
     this.editor = editor
     this.monaco = monaco
     this.node.innerHTML = renderToString(
-      <div className="p-0.5 mb-1 select-none bg-background border shadow-sm rounded-md flex items-center">
+      <div className="p-0.5 mb-1 select-none bg-card border shadow-sm rounded-md flex items-center">
         {
           buttons.map(({ id, title }) => (
             <Button
