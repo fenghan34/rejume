@@ -2,20 +2,16 @@ import type { Element } from 'hast'
 import type { Plugin } from 'unified'
 import rehypeStringify from 'rehype-stringify'
 import remarkFrontmatter from 'remark-frontmatter'
-import remarkGfm from 'remark-gfm'
+import rehypeRaw from 'rehype-raw'
 import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
+import rehypeSanitize, { defaultSchema } from 'rehype-sanitize'
+import rehypeExternalLinks from 'rehype-external-links'
 import { unified } from 'unified'
 import { visit } from 'unist-util-visit'
 import { matter } from 'vfile-matter'
 
-export interface Frontmatter {
-  name?: string
-  title?: string
-  email?: string
-  phone?: string
-  github?: string
-}
+export interface Frontmatter { }
 
 export const POSITION_ATTRIBUTE = 'data-source-pos'
 
@@ -33,49 +29,24 @@ const splitIntoSections: Plugin = () => {
 
     while (children.length) {
       const current = children.shift()!
-      if (current.tagName === 'h2') {
+      if (current.tagName === 'h2' || current.tagName === 'h1') {
         chunks.push({
           type: 'element',
-          tagName: 'div',
+          tagName: 'section',
           children: [],
-          properties: {
-            id: 'section',
-          },
+          properties: {},
         })
       }
 
       const last = chunks.at(-1)
-      if (last?.properties.id === 'section') {
+      if (last?.tagName === 'section') {
         last.children.push(current)
-      }
-      else {
+      } else {
         chunks.push(current)
       }
     }
 
     tree.children = chunks
-  }
-}
-
-/**
- * Wrap td content with span tag
- */
-const ProcessTdTag: Plugin = () => {
-  return (tree) => {
-    visit(tree, 'element', (node: Element) => {
-      if (!node.children)
-        return
-
-      if (node.tagName === 'td') {
-        node.children = [{
-          type: 'element',
-          tagName: 'span',
-          properties: {},
-          children: node.children,
-          position: node.position,
-        }]
-      }
-    })
   }
 }
 
@@ -87,9 +58,10 @@ const addPositionAttribute: Plugin = () => {
     visit(tree, 'element', (node: Element) => {
       if (node.position) {
         const { start, end } = node.position
+        const value = `${start.line}:${start.column}-${end.line}:${end.column}`
         node.properties = {
           ...node.properties,
-          [POSITION_ATTRIBUTE]: `${start.line}:${start.column}-${end.line}:${end.column}`,
+          [POSITION_ATTRIBUTE]: value,
         }
       }
     })
@@ -99,13 +71,32 @@ const addPositionAttribute: Plugin = () => {
 export async function parseMarkdown(markdown: string) {
   return await unified()
     .use(remarkParse)
-    .use(remarkGfm)
     .use(remarkFrontmatter)
     .use(extractFrontmatter)
-    .use(remarkRehype)
-    .use(ProcessTdTag)
+    .use(remarkRehype, { allowDangerousHtml: true })
+    .use(rehypeRaw)
     .use(addPositionAttribute)
     .use(splitIntoSections)
+    .use(rehypeSanitize, {
+      ...defaultSchema,
+      attributes: {
+        ...defaultSchema.attributes,
+        '*': [
+          ...defaultSchema.attributes!['*'],
+          'className',
+          'style',
+          POSITION_ATTRIBUTE
+        ],
+      },
+      protocols: {
+        cite: ['http', 'https', 'tel', 'mailto']
+      },
+    })
+    .use(rehypeExternalLinks, {
+      rel: ['noopener', 'noreferrer'],
+      target: '_blank',
+      protocols: ['http', 'https', 'tel', 'mailto']
+    })
     .use(rehypeStringify)
     .process(markdown)
     .then(file => ({
