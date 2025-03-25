@@ -13,7 +13,6 @@ import { setUpSpellcheck } from './spellcheck'
 
 export interface EditorRef {
   selectRange: (range: monaco.IRange) => void
-  searchAndSelectFirstMatch: (target: string) => void
 }
 
 export function Editor({
@@ -33,36 +32,10 @@ export function Editor({
     editorRef.current?.setSelection(range)
   }, [])
 
-  const searchAndSelectFirstMatch = useCallback((target: string) => {
-    if (!editorRef.current)
-      return
-
-    const model = editorRef.current.getModel()
-    const matches = model!.findMatches(
-      target,
-      true,
-      false,
-      true,
-      '\\s',
-      false,
-      1,
-    )
-
-    if (matches.length > 0) {
-      const firstMatch = matches[0].range
-      selectRange(firstMatch)
-    }
-  }, [selectRange])
-
   useImperativeHandle(
     ref,
-    () => {
-      return {
-        selectRange,
-        searchAndSelectFirstMatch,
-      }
-    },
-    [searchAndSelectFirstMatch, selectRange],
+    () => ({ selectRange }),
+    [selectRange],
   )
 
   return (

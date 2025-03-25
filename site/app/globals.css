@@ -141,20 +141,35 @@
     @apply bg-background text-black dark:text-gray-300;
   }
 
-  #header {
-    @apply text-center mb-4;
+  section:has(h1){
+    @apply text-center;
+
+    h1 {
+      @apply text-[2em] font-bold;
+    }
+
+    strong {
+      @apply text-xl font-medium;
+    }
+
+    p:last-child {
+      @apply mt-2;
+    }
+
+    a[href*="github.com"] {
+      @apply before:icon-[mdi--github] before:align-[-0.125em] before:mr-1;
+    }
   }
 
-  #section {
+  section {
     @apply mb-4;
   }
 
   h1,
   h2,
+  h3,
   p,
-  li,
-  span,
-  strong {
+  li {
     @apply select-all;
   }
 
@@ -165,24 +180,6 @@
   }
 
   ul {
-    @apply list-[circle] pl-6 mb-1;
-  }
-
-  table {
-    @apply w-full;
-
-    thead {
-      @apply hidden;
-    }
-
-    tbody {
-      tr {
-        @apply flex;
-
-        td {
-          @apply not-last-of-type:flex-[1_1_0];
-        }
-      }
-    }
+    @apply list-[circle] pl-6 my-1;
   }
 }

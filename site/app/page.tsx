@@ -3,7 +3,7 @@
 import type { ImperativePanelHandle } from 'react-resizable-panels'
 import type { EditorRef } from '@/components/editor/editor'
 import type { PreviewerRef } from '@/components/editor/previewer'
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Previewer } from '@/components/editor/previewer'
 import {
   ResizableHandle,
@@ -28,8 +28,6 @@ export default function Home() {
       const range = parsePositionAttribute(selectedElement)
       if (range) {
         editorRef.current?.selectRange(range)
-      } else {
-        editorRef.current?.searchAndSelectFirstMatch(selectedElement.textContent!)
       }
     },
     [],
@@ -74,7 +72,6 @@ export default function Home() {
           <>
             <Toolbar onPrint={() => previewerRef.current?.print()} />
             <Editor
-              className="rounded"
               ref={editorRef}
               value={markdown}
               onChange={(value) => {
