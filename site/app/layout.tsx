@@ -1,17 +1,7 @@
 import type { Metadata } from "next";
-import { Nunito_Sans, Fira_Code } from "next/font/google";
+import { nunito_sans } from "@/lib/fonts";
 import { ThemeProvider } from 'next-themes'
 import "./globals.css";
-
-const firaCode = Fira_Code({
-  variable: '--font-fira-code',
-  subsets: ['latin']
-})
-
-const nunitoSans = Nunito_Sans({
-  variable: "--font-nunito-sans",
-  subsets: ['latin']
-})
 
 export const metadata: Metadata = {
   title: "Rejume",
@@ -26,7 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${nunitoSans.variable} ${firaCode.variable} antialiased`}
+        className={`${nunito_sans.variable} antialiased`}
       >
         <ThemeProvider
           attribute="class"
