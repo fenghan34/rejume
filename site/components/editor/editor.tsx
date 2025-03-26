@@ -1,65 +1,61 @@
-import type { EditorProps } from '@monaco-editor/react'
-import type * as monaco from 'monaco-editor'
+import type { EditorProps, OnMount } from '@monaco-editor/react'
 import type { Ref } from 'react'
+import type { Monaco, IMonacoEditor, IRange } from './types'
 import MonacoEditor from '@monaco-editor/react'
-import {
-  useCallback,
-  useImperativeHandle,
-  useRef,
-} from 'react'
+import { useCallback, useImperativeHandle, useRef } from 'react'
 import { useTheme } from 'next-themes'
 import { setUpAssistant } from './writing-assistant'
 import { setUpSpellcheck } from './spellcheck'
 
 export interface EditorRef {
-  selectRange: (range: monaco.IRange) => void
+  selectRange: (range: IRange) => void
 }
 
 export function Editor({
   ref,
   ...props
 }: Pick<EditorProps, 'value' | 'onChange' | 'className'> & { ref: Ref<EditorRef> }) {
-  const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>(null)
-  const monacoRef = useRef<typeof monaco>(null)
+  const editorRef = useRef<IMonacoEditor>(null)
+  const monacoRef = useRef<Monaco>(null)
   const { theme } = useTheme()
-
-  const selectRange = useCallback((range: monaco.IRange) => {
-    editorRef.current?.setPosition({
-      lineNumber: range.startLineNumber,
-      column: range.startColumn,
-    })
-    editorRef.current?.revealRangeInCenter(range)
-    editorRef.current?.setSelection(range)
-  }, [])
 
   useImperativeHandle(
     ref,
-    () => ({ selectRange }),
-    [selectRange],
+    () => ({
+      selectRange: (range: IRange) => {
+        editorRef.current?.revealRangeInCenter(range)
+        editorRef.current?.setSelection(range)
+      }
+    }),
+    [],
   )
+
+  const handleOnMount = useCallback<OnMount>((editor, monaco) => {
+    editorRef.current = editor
+    monacoRef.current = monaco
+
+    setUpSpellcheck(editor, monaco, { lang: 'en_us' })
+    setUpAssistant(editor, monaco)
+  }, [])
 
   return (
     <MonacoEditor
       {...props}
       language="markdown"
       theme={theme === 'light' ? 'vs' : 'vs-dark'}
-      onMount={(editor, monaco) => {
-        editorRef.current = editor
-        monacoRef.current = monaco
-        setUpSpellcheck(editor, monaco, { lang: 'en_us' })
-        setUpAssistant(editor, monaco)
-      }}
+      onMount={handleOnMount}
       options={{
         fontSize: 16,
         wordWrap: 'on',
-        padding: { top: 10 },
+        padding: { top: 20, bottom: 200 },
         lineNumbers: 'off',
+        automaticLayout: true,
         smoothScrolling: true,
+        scrollBeyondLastLine: false,
         scrollbar: {
-          verticalScrollbarSize: 0,
-        },
-        stickyScroll: {
-          enabled: true,
+          useShadows: false,
+          verticalScrollbarSize: 8,
+          horizontalScrollbarSize: 8
         },
         minimap: {
           enabled: true,

@@ -1,12 +1,12 @@
+import type { Monaco, IMonacoEditor } from '../types'
 import { ActionBarWidget } from './action-bar'
 import { debounce } from 'lodash'
 import { getSelectedValue, isValidSelect, pushEdit } from './utils'
 import { Check, Sparkles } from 'lucide-react'
 import { SuggestionBoxWidget } from './suggestion-box'
 import { buildGrammarCheckMessages, buildRewriteMessages, fetchSuggestion } from './fetch'
-import type { Monaco, MonacoEditor } from '../types'
 
-export function setUpAssistant(editor: MonacoEditor, monaco: Monaco) {
+export function setUpAssistant(editor: IMonacoEditor, monaco: Monaco) {
   const suggestionBox = new SuggestionBoxWidget(editor, monaco, [
     {
       id: 'insert',
@@ -51,7 +51,7 @@ export function setUpAssistant(editor: MonacoEditor, monaco: Monaco) {
   const actionBar = new ActionBarWidget(editor, monaco, [
     {
       id: 'rewrite',
-      title: <><Sparkles /> Rewrite</ >,
+      title: <><Sparkles />Improve writing</ >,
       onClick: () => proposeSuggestion('rewrite')
     },
     {

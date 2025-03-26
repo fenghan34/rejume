@@ -1,4 +1,10 @@
-import type * as Monaco from 'monaco-editor'
+import type {
+  CodeAction,
+  CodeActionProvider,
+  IMarkerData,
+  IMonacoEditor,
+  Monaco
+} from '../types'
 import type { Dictionary, Language } from './dic'
 import { debounce } from 'lodash'
 import { initDictionary } from './dic'
@@ -10,7 +16,7 @@ function extractWordFromMessage(message: string) {
   return message.match(/^"(.*?)":/)![1]
 }
 
-export function setUpSpellcheck(editor: Monaco.editor.IStandaloneCodeEditor, monaco: typeof Monaco, options: { lang: Language }) {
+export function setUpSpellcheck(editor: IMonacoEditor, monaco: Monaco, options: { lang: Language }) {
   let dictionary = {} as Dictionary
 
   const run = () => {
@@ -20,7 +26,7 @@ export function setUpSpellcheck(editor: Monaco.editor.IStandaloneCodeEditor, mon
 
     const text = model.getValue()
     const words = text.split(/\b/)
-    const markers: Monaco.editor.IMarkerData[] = []
+    const markers: IMarkerData[] = []
 
     let offset = 0
     for (const word of words) {
@@ -51,13 +57,13 @@ export function setUpSpellcheck(editor: Monaco.editor.IStandaloneCodeEditor, mon
     monaco.editor.setModelMarkers(model, SPELLCHEK_ID, markers)
   }
 
-  const codeActionProvider: Monaco.languages.CodeActionProvider = {
+  const codeActionProvider: CodeActionProvider = {
     provideCodeActions: (model, _, context, token) => {
       if (token.isCancellationRequested) {
         return
       }
 
-      const actions: Monaco.languages.CodeAction[] = []
+      const actions: CodeAction[] = []
 
       for (const marker of context.markers) {
         if (!(marker.source === SPELLCHEK_ID))

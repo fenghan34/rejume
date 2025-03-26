@@ -1,8 +1,7 @@
+import type { ContentWidget, Monaco, IMonacoEditor, Position } from '../types'
+import type { ReactNode } from 'react'
 import { renderToString } from 'react-dom/server'
 import { Button } from '@/components/ui/button'
-import type { ContentWidget, Monaco, MonacoEditor } from '../types'
-import type { Position } from 'monaco-editor'
-import type { ReactNode } from 'react'
 
 export type ActionBarButton = {
   id: string,
@@ -11,13 +10,13 @@ export type ActionBarButton = {
 }
 
 export class ActionBarWidget implements ContentWidget {
-  private editor: MonacoEditor
+  private editor: IMonacoEditor
   private monaco: Monaco
   private node: HTMLDivElement = document.createElement('div')
   private position: Position | null = null
   allowEditorOverflow: boolean = true
 
-  constructor(editor: MonacoEditor, monaco: Monaco, buttons: ActionBarButton[]) {
+  constructor(editor: IMonacoEditor, monaco: Monaco, buttons: ActionBarButton[]) {
     this.editor = editor
     this.monaco = monaco
     this.node.innerHTML = renderToString(

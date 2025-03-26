@@ -1,9 +1,8 @@
+import type { IMonacoEditor, ContentWidget, Monaco, Position } from "../types";
+import type { ReactNode } from "react";
 import { renderToString } from "react-dom/server";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import type { MonacoEditor, ContentWidget, Monaco } from "../types";
-import type { Position } from "monaco-editor";
-import type { ReactNode } from "react";
 
 export type SuggestionBoxButton = {
   id: string,
@@ -12,7 +11,7 @@ export type SuggestionBoxButton = {
 }
 
 export class SuggestionBoxWidget implements ContentWidget {
-  private editor: MonacoEditor
+  private editor: IMonacoEditor
   private monaco: Monaco
   private node: HTMLDivElement = document.createElement('div')
   private position: Position | null = null
@@ -20,7 +19,7 @@ export class SuggestionBoxWidget implements ContentWidget {
   allowEditorOverflow: boolean = true
   beforeReset: (() => void) | null = null
 
-  constructor(editor: MonacoEditor, monaco: Monaco, buttons: SuggestionBoxButton[]) {
+  constructor(editor: IMonacoEditor, monaco: Monaco, buttons: SuggestionBoxButton[]) {
     this.editor = editor
     this.monaco = monaco
     this.node.innerHTML = renderToString(
