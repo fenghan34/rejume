@@ -33,7 +33,8 @@ export async function initDictionary(language: Language): Promise<Dictionary> {
 
   const addWord = (word: string) => {
     hunspell.addWord(word)
-    localStorage.setItem(key, JSON.stringify([...userAddWords, word]))
+    userAddWords.push(word)
+    localStorage.setItem(key, JSON.stringify(userAddWords))
   }
 
   return {
