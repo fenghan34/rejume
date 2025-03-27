@@ -27,10 +27,19 @@ export async function initDictionary(language: Language): Promise<Dictionary> {
 
   const hunspell = hunspellFactory.create(affPath, dicPath)
 
+  const key = 'userAddWords'
+  const userAddWords: string[] = JSON.parse(localStorage.getItem(key) || '[]')
+  userAddWords.forEach(word => hunspell.addWord(word))
+
+  const addWord = (word: string) => {
+    hunspell.addWord(word)
+    localStorage.setItem(key, JSON.stringify([...userAddWords, word]))
+  }
+
   return {
     check: hunspell.spell,
     suggest: hunspell.suggest,
-    addWord: hunspell.addWord,
+    addWord,
     dispose: hunspell.dispose
   }
 }

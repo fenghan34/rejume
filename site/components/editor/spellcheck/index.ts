@@ -8,6 +8,7 @@ import type {
 import type { Dictionary, Language } from './dic'
 import { debounce } from 'lodash'
 import { initDictionary } from './dic'
+import { processMarkdownWords } from './word'
 
 const SPELLCHEK_ID = 'spellcheck'
 const SPELLCHEK_ADD_TO_DIC_ID = 'spellcheck.addToDictionary'
@@ -25,20 +26,13 @@ export function setUpSpellcheck(editor: IMonacoEditor, monaco: Monaco, options: 
       return
 
     const text = model.getValue()
-    const words = text.split(/\b/)
     const markers: IMarkerData[] = []
 
-    let offset = 0
-    for (const word of words) {
-      if (!/^\w+$/.test(word)) {
-        offset += word.length
-        continue
-      }
+    processMarkdownWords(text, ({ word, start, end }) => {
+      if (word.length >= 4 && !dictionary.check(word)) {
+        const startPos = model.getPositionAt(start)
+        const endPos = model.getPositionAt(end)
 
-      const startPos = model.getPositionAt(offset)
-      const endPos = model.getPositionAt(offset + word.length)
-
-      if (!dictionary.check(word)) {
         markers.push({
           message: `"${word}": Unknown word.`,
           startLineNumber: startPos.lineNumber,
@@ -50,9 +44,7 @@ export function setUpSpellcheck(editor: IMonacoEditor, monaco: Monaco, options: 
           source: SPELLCHEK_ID,
         })
       }
-
-      offset += word.length
-    }
+    })
 
     monaco.editor.setModelMarkers(model, SPELLCHEK_ID, markers)
   }
@@ -83,12 +75,7 @@ export function setUpSpellcheck(editor: IMonacoEditor, monaco: Monaco, options: 
                   versionId: undefined,
                   resource: model.uri,
                   textEdit: {
-                    range: new monaco.Range(
-                      marker.startLineNumber,
-                      marker.startColumn,
-                      marker.endLineNumber,
-                      marker.endColumn,
-                    ),
+                    range: marker,
                     text: suggestion,
                   },
                 },
@@ -128,16 +115,13 @@ export function setUpSpellcheck(editor: IMonacoEditor, monaco: Monaco, options: 
     monaco.editor.setModelMarkers(model, SPELLCHEK_ID, remainedMarkers)
   }
 
-  const { lang } = options
   const debouncedRun = debounce(run, 500)
 
-  initDictionary(lang).then((dic) => {
+  initDictionary(options.lang).then((dic) => {
     dictionary = dic
 
     run()
-    editor.onDidChangeModelContent(() => {
-      debouncedRun()
-    })
+    editor.onDidChangeModelContent(() => debouncedRun())
     editor.onDidDispose(() => dictionary.dispose())
 
     monaco.languages.registerCodeActionProvider('markdown', codeActionProvider)
