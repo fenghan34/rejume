@@ -1,4 +1,5 @@
 import type { CoreMessage } from "ai"
+import ky from "ky"
 
 export function buildRewriteMessages(text: string): CoreMessage[] {
   return [
@@ -48,8 +49,7 @@ export async function* fetchSuggestion({ messages, signal }: {
   signal?: AbortSignal,
 }) {
   try {
-    const res = await fetch('/api/assistant', {
-      method: 'POST',
+    const res = await ky.post('/api/assistant', {
       body: JSON.stringify({
         messages
       }),

@@ -4,7 +4,7 @@ import { debounce } from 'lodash'
 import { getSelectedValue, isValidSelect, pushEdit } from './utils'
 import { Check, Sparkles } from 'lucide-react'
 import { SuggestionBoxWidget } from './suggestion-box'
-import { buildGrammarCheckMessages, buildRewriteMessages, fetchSuggestion } from './fetch'
+import { buildGrammarCheckMessages, buildRewriteMessages, fetchSuggestion } from './suggestion'
 
 export function setUpAssistant(editor: IMonacoEditor, monaco: Monaco) {
   const suggestionBox = new SuggestionBoxWidget(editor, monaco, [
