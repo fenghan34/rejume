@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 function createContainer() {
   const container = document.createElement('div')
-  container.style.position = 'absolute'
+  container.style.position = 'fixed'
   container.style.visibility = 'hidden'
   container.id = 'rejume-preview'
   document.body.appendChild(container)

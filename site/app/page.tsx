@@ -69,17 +69,15 @@ export default function Home() {
         <ResizableHandle />
 
         <ResizablePanel>
-          <>
-            <Toolbar onPrint={() => previewerRef.current?.print()} />
-            <Editor
-              ref={editorRef}
-              value={markdown}
-              onChange={(value) => {
-                setMarkdown(value || '')
-                localStorage.setItem('markdown', value || '')
-              }}
-            />
-          </>
+          <Toolbar onPrint={() => previewerRef.current?.print()} />
+          <Editor
+            ref={editorRef}
+            value={markdown}
+            onChange={(value) => {
+              setMarkdown(value || '')
+              localStorage.setItem('markdown', value || '')
+            }}
+          />
         </ResizablePanel>
       </ResizablePanelGroup>
     </div >
