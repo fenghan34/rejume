@@ -27,5 +27,10 @@
     "simple-git-hooks": "^2.11.1",
     "typescript": "~5.7.2"
   },
-  "packageManager": "pnpm@10.6.5"
+  "packageManager": "pnpm@10.6.5",
+  "pnpm": {
+    "patchedDependencies": {
+      "monaco-editor": "patches/monaco-editor.patch"
+    }
+  }
 }

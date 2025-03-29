@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  monaco-editor:
+    hash: 8cd6c4d036225659e406686db7ccbba719bbab7519a09156a81d35fc4a04a45b
+    path: patches/monaco-editor.patch
+
 importers:
 
   .:
@@ -37,7 +42,7 @@ importers:
         version: 1.2.5(zod@3.24.2)
       '@monaco-editor/react':
         specifier: ^4.7.0
-        version: 4.7.0(monaco-editor@0.52.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        version: 4.7.0(monaco-editor@0.52.2(patch_hash=8cd6c4d036225659e406686db7ccbba719bbab7519a09156a81d35fc4a04a45b))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@radix-ui/react-context-menu':
         specifier: ^2.2.6
         version: 2.2.6(@types/react-dom@19.0.4(@types/react@19.0.10))(@types/react@19.0.10)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -79,7 +84,7 @@ importers:
         version: 0.479.0(react@19.0.0)
       monaco-editor:
         specifier: ^0.52.2
-        version: 0.52.2
+        version: 0.52.2(patch_hash=8cd6c4d036225659e406686db7ccbba719bbab7519a09156a81d35fc4a04a45b)
       next:
         specifier: 15.2.2
         version: 15.2.2(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -3051,10 +3056,10 @@ snapshots:
     dependencies:
       state-local: 1.0.7
 
-  '@monaco-editor/react@4.7.0(monaco-editor@0.52.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
+  '@monaco-editor/react@4.7.0(monaco-editor@0.52.2(patch_hash=8cd6c4d036225659e406686db7ccbba719bbab7519a09156a81d35fc4a04a45b))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
       '@monaco-editor/loader': 1.5.0
-      monaco-editor: 0.52.2
+      monaco-editor: 0.52.2(patch_hash=8cd6c4d036225659e406686db7ccbba719bbab7519a09156a81d35fc4a04a45b)
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
 
@@ -5034,7 +5039,7 @@ snapshots:
       pkg-types: 1.3.1
       ufo: 1.5.4
 
-  monaco-editor@0.52.2: {}
+  monaco-editor@0.52.2(patch_hash=8cd6c4d036225659e406686db7ccbba719bbab7519a09156a81d35fc4a04a45b): {}
 
   ms@2.1.3: {}
 
