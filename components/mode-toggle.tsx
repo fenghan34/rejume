@@ -17,6 +17,7 @@ export function ModeToggle() {
 
   return (
     <Button
+      title="Toggle dark mode"
       className="cursor-pointer"
       variant="ghost"
       onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
