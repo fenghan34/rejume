@@ -1,12 +1,7 @@
-import type { Metadata } from 'next'
 import { ThemeProvider } from 'next-themes'
 import { nunito_sans } from '@/lib/fonts'
+import { AppStoreProvider } from '@/providers/app'
 import './globals.css'
-
-export const metadata: Metadata = {
-  title: 'Rejume',
-  description: '',
-}
 
 export default function RootLayout({
   children,
@@ -21,7 +16,7 @@ export default function RootLayout({
           defaultTheme="light"
           enableSystem={false}
         >
-          {children}
+          <AppStoreProvider>{children}</AppStoreProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -4,9 +4,10 @@ import type { EditorRef } from '@/components/editor/editor'
 import type { PreviewerRef } from '@/components/editor/previewer'
 import type { ImperativePanelHandle } from 'react-resizable-panels'
 import dynamic from 'next/dynamic'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
+import { useShallow } from 'zustand/react/shallow'
 import { Previewer } from '@/components/editor/previewer'
-import { Toolbar } from '@/components/editor/toolbar'
+import { Toolbar } from '@/components/toolbar'
 import {
   ResizableHandle,
   ResizablePanel,
@@ -14,6 +15,7 @@ import {
 } from '@/components/ui/resizable'
 import { A4_HEIGHT, A4_WIDTH } from '@/lib/constants'
 import { parsePositionAttribute } from '@/lib/utils'
+import { useAppStore } from '@/providers/app'
 
 const Editor = dynamic(
   () => import('@/components/editor/editor').then((mo) => mo.Editor),
@@ -34,7 +36,6 @@ export default function Home() {
   const editorRef = useRef<EditorRef>(null)
   const previewerRef = useRef<PreviewerRef>(null)
   const leftPanelRef = useRef<ImperativePanelHandle>(null)
-  const [markdown, setMarkdown] = useState<string>()
 
   const handlePreviewerSelectionChange = useCallback(
     (selectedElement: HTMLElement) => {
@@ -56,36 +57,36 @@ export default function Home() {
     }
   }, [])
 
-  useEffect(() => {
-    setMarkdown(localStorage.getItem('markdown') || '')
-  }, [])
-
   return (
-    <div className="h-screen bg-accent">
-      <ResizablePanelGroup direction="horizontal">
-        <ResizablePanel ref={leftPanelRef}>
-          <Previewer
-            className="xl:m-4 2xl:m-6"
-            ref={previewerRef}
-            markdown={markdown}
-            onSelectionChange={handlePreviewerSelectionChange}
-          />
-        </ResizablePanel>
+    <>
+      <PageTitle />
+      <div className="h-screen bg-accent">
+        <ResizablePanelGroup direction="horizontal">
+          <ResizablePanel ref={leftPanelRef}>
+            <Previewer
+              ref={previewerRef}
+              onSelectionChange={handlePreviewerSelectionChange}
+            />
+          </ResizablePanel>
 
-        <ResizableHandle />
+          <ResizableHandle />
 
-        <ResizablePanel>
-          <Toolbar onPrint={() => previewerRef.current?.print()} />
-          <Editor
-            ref={editorRef}
-            value={markdown}
-            onChange={(value) => {
-              setMarkdown(value || '')
-              localStorage.setItem('markdown', value || '')
-            }}
-          />
-        </ResizablePanel>
-      </ResizablePanelGroup>
-    </div>
+          <ResizablePanel minSize={40}>
+            <Toolbar onPrint={() => previewerRef.current?.print()} />
+            <Editor ref={editorRef} />
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      </div>
+    </>
   )
+}
+
+function PageTitle() {
+  const title = useAppStore(useShallow((state) => state.resume.title))
+
+  useEffect(() => {
+    document.title = `Rejume - ${title}`
+  }, [title])
+
+  return null
 }

@@ -1,25 +1,28 @@
 import type { Monaco, IMonacoEditor, IRange } from './types'
-import type { EditorProps, OnMount } from '@monaco-editor/react'
+import type { OnMount } from '@monaco-editor/react'
 import type { Ref } from 'react'
 import MonacoEditor from '@monaco-editor/react'
 import { useTheme } from 'next-themes'
 import { useCallback, useImperativeHandle, useRef } from 'react'
+import { useShallow } from 'zustand/react/shallow'
+import { useAppStore } from '@/providers/app'
 import { setUpSpellcheck } from './spellcheck'
 import { setUpAssistant } from './writing-assistant'
 
-export interface EditorRef {
+export type EditorRef = {
   selectRange: (range: IRange) => void
 }
 
-export function Editor({
-  ref,
-  ...props
-}: Pick<EditorProps, 'value' | 'onChange' | 'className'> & {
-  ref: Ref<EditorRef>
-}) {
+export function Editor({ ref }: { ref: Ref<EditorRef> }) {
   const editorRef = useRef<IMonacoEditor>(null)
   const monacoRef = useRef<Monaco>(null)
   const { theme } = useTheme()
+  const { content, updateResume } = useAppStore(
+    useShallow((state) => ({
+      content: state.resume.content,
+      updateResume: state.updateResume,
+    })),
+  )
 
   useImperativeHandle(
     ref,
@@ -42,12 +45,13 @@ export function Editor({
 
   return (
     <MonacoEditor
-      {...props}
+      value={content}
       language="markdown"
       theme={theme === 'light' ? 'vs' : 'vs-dark'}
       onMount={handleOnMount}
+      onChange={(value) => updateResume({ content: value || '' })}
       options={{
-        fontSize: 16,
+        fontSize: 15,
         wordWrap: 'on',
         padding: { top: 20, bottom: 200 },
         lineNumbers: 'off',
