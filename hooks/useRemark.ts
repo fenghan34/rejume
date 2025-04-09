@@ -1,20 +1,20 @@
-import type { Frontmatter } from '@/lib/md2html'
 import { useEffect, useState } from 'react'
 import { parseMarkdown } from '@/lib/md2html'
 
 export function useRemark(markdown: string) {
-  const [data, setData] = useState<{
-    html: string
-    frontmatter?: Frontmatter
-  }>({ html: '' })
+  const [html, setHtml] = useState('')
 
   useEffect(() => {
     ;(async function () {
-      if (!markdown) return
+      if (!markdown) {
+        setHtml('')
+        return
+      }
+
       const data = await parseMarkdown(markdown)
-      setData(data)
+      setHtml(data)
     })()
   }, [markdown])
 
-  return data
+  return html
 }

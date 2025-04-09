@@ -9,7 +9,7 @@ import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
 import { unified } from 'unified'
 import { visit } from 'unist-util-visit'
-import { matter } from 'vfile-matter'
+// import { matter } from 'vfile-matter'
 
 export interface Frontmatter {
   [key: string]: string
@@ -17,11 +17,13 @@ export interface Frontmatter {
 
 export const POSITION_ATTRIBUTE = 'data-source-pos'
 
-const extractFrontmatter: Plugin = () => {
-  return (_, file) => {
-    matter(file)
-  }
-}
+// const extractFrontmatter: Plugin = () => {
+//   return (_, file) => {
+//     try {
+//       matter(file)
+//     } catch {}
+//   }
+// }
 
 const splitIntoSections: Plugin = () => {
   return (_tree) => {
@@ -74,7 +76,7 @@ export async function parseMarkdown(markdown: string) {
   return await unified()
     .use(remarkParse)
     .use(remarkFrontmatter)
-    .use(extractFrontmatter)
+    // .use(extractFrontmatter)
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypeRaw)
     .use(addPositionAttribute)
@@ -101,8 +103,5 @@ export async function parseMarkdown(markdown: string) {
     })
     .use(rehypeStringify)
     .process(markdown)
-    .then((file) => ({
-      frontmatter: file.data.matter as Frontmatter,
-      html: String(file),
-    }))
+    .then((file) => String(file))
 }
