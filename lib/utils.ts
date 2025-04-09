@@ -1,3 +1,4 @@
+import type { Resume } from '@/stores/resume-slice'
 import type { ClassValue } from 'clsx'
 import type { IRange } from 'monaco-editor'
 import { clsx } from 'clsx'
@@ -39,4 +40,19 @@ export function parsePositionAttribute(
     endLineNumber: endLine,
     endColumn,
   }
+}
+
+export function downloadMarkdown(resume: Resume) {
+  const blob = new Blob([resume.content], { type: 'text/markdown' })
+  const url = URL.createObjectURL(blob)
+
+  const link = document.createElement('a')
+  link.href = url
+  link.download = `${resume.title.split(' ').join('-')}.md`
+
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+
+  URL.revokeObjectURL(url)
 }
