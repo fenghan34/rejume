@@ -13,13 +13,14 @@ export type EditorRef = {
   selectRange: (range: IRange) => void
 }
 
-export function Editor({ ref }: { ref: Ref<EditorRef> }) {
+export function Editor({ ref }: { ref?: Ref<EditorRef> }) {
   const editorRef = useRef<IMonacoEditor>(null)
   const monacoRef = useRef<Monaco>(null)
   const { theme } = useTheme()
-  const { content, updateResume } = useAppStore(
+  const { resumeId, resumeContent, updateResume } = useAppStore(
     useShallow((state) => ({
-      content: state.resume.content,
+      resumeId: state.resume.id,
+      resumeContent: state.resume.content,
       updateResume: state.updateResume,
     })),
   )
@@ -45,15 +46,15 @@ export function Editor({ ref }: { ref: Ref<EditorRef> }) {
 
   return (
     <MonacoEditor
-      value={content}
+      value={resumeContent}
       language="markdown"
       theme={theme === 'light' ? 'vs' : 'vs-dark'}
       onMount={handleOnMount}
-      onChange={(value) => updateResume({ content: value || '' })}
+      onChange={(value) => updateResume(resumeId, { content: value || '' })}
       options={{
         fontSize: 15,
         wordWrap: 'on',
-        padding: { top: 20, bottom: 200 },
+        padding: { top: 15, bottom: 200 },
         lineNumbers: 'off',
         automaticLayout: true,
         smoothScrolling: true,

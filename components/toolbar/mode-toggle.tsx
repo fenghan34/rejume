@@ -1,7 +1,7 @@
 import { Moon, Sun } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { useEffect, useState } from 'react'
-import { Button } from '@/components/ui/button'
+import { ToolbarButton } from './toolbar-button'
 
 export function ModeToggle() {
   const [mounted, setMounted] = useState(false)
@@ -15,14 +15,14 @@ export function ModeToggle() {
     return null
   }
 
+  const isDarkMode = theme === 'dark'
+
   return (
-    <Button
-      title="Toggle dark mode"
-      className="cursor-pointer"
-      variant="ghost"
-      onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+    <ToolbarButton
+      title="Toggle Dark Mode"
+      onClick={() => setTheme(isDarkMode ? 'light' : 'dark')}
     >
-      {theme === 'light' ? <Sun /> : <Moon />}
-    </Button>
+      {isDarkMode ? <Sun /> : <Moon />}
+    </ToolbarButton>
   )
 }

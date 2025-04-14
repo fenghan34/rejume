@@ -10,17 +10,23 @@ function createContainer() {
   return container
 }
 
-interface Page {
+type Page = {
   html: string
   pageNumber: number
   pageStyle: CSSProperties
 }
 
-interface AutoPaginationOptions {
+type AutoPaginationOptions = {
   pageSize: { width: number; height: number }
   padding: { x: number; y: number }
 }
 
+/**
+ * Automatically paginates a given HTML string based on the specified page size and padding
+ * @param html - The HTML string to paginate
+ * @param options - The options for the pagination
+ * @returns An array of pages with the HTML content, page number, and page style
+ */
 export function useAutoPagination(
   html: string,
   options: AutoPaginationOptions,

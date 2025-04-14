@@ -1,15 +1,16 @@
-import type { RefObject } from 'react'
-import { useEffect } from 'react'
+import { RefCallback, useEffect, useRef } from 'react'
 
 /**
- * Auto-scales a container based on its parent's width while preserving the content layout
+ * Automatically scales a container based on its parent's width while preserving the content layout
+ * @returns A ref callback for the container element
  */
-export function useAutoScale(options: {
-  contentRef: RefObject<HTMLDivElement | null>
-}) {
+export function useAutoScale(): RefCallback<HTMLDivElement> {
+  const ref = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
-    const container = options.contentRef.current
+    const container = ref.current
     if (!container) return
+
     const parent = container.parentElement
     if (!parent) return
 
@@ -27,7 +28,6 @@ export function useAutoScale(options: {
 
     updateScale()
 
-    // Set up resize observer
     const resizeObserver = new ResizeObserver(updateScale)
     resizeObserver.observe(parent)
 
@@ -36,5 +36,9 @@ export function useAutoScale(options: {
       container.style.transform = originalTransform
       container.style.transformOrigin = originalTransformOrigin
     }
-  }, [options])
+  }, [])
+
+  return (containerElement) => {
+    ref.current = containerElement
+  }
 }

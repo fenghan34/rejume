@@ -1,5 +1,5 @@
-import type { Element } from 'hast'
-import type { Plugin } from 'unified'
+import type { Element as HastElement, Root } from 'hast'
+import type { IRange } from 'monaco-editor'
 import rehypeExternalLinks from 'rehype-external-links'
 import rehypeRaw from 'rehype-raw'
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize'
@@ -9,32 +9,38 @@ import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
 import { unified } from 'unified'
 import { visit } from 'unist-util-visit'
-// import { matter } from 'vfile-matter'
 
-export interface Frontmatter {
-  [key: string]: string
+const POSITION_ATTRIBUTE = 'data-source-pos'
+
+export function parsePositionAttribute(element: Element): IRange | undefined {
+  const position = element.getAttribute(POSITION_ATTRIBUTE)
+  if (!position) return
+
+  const [start, end] = position.split('-')
+  const [startLine, startColumn] = start.split(':').map(Number)
+  const [endLine, endColumn] = end.split(':').map(Number)
+
+  return {
+    startLineNumber: startLine,
+    startColumn,
+    endLineNumber: endLine,
+    endColumn,
+  }
 }
 
-export const POSITION_ATTRIBUTE = 'data-source-pos'
+/**
+ * Split HTML elements into sections
+ */
+function rehypeSectionSplit() {
+  return (tree: Root) => {
+    const newChildren: HastElement[] = []
 
-// const extractFrontmatter: Plugin = () => {
-//   return (_, file) => {
-//     try {
-//       matter(file)
-//     } catch {}
-//   }
-// }
+    while (tree.children.length) {
+      const current = tree.children.shift()!
+      if (current.type !== 'element') continue
 
-const splitIntoSections: Plugin = () => {
-  return (_tree) => {
-    const tree = _tree as Element
-    const children = tree.children as Element[]
-    const chunks: Element[] = []
-
-    while (children.length) {
-      const current = children.shift()!
-      if (current.tagName === 'h2' || current.tagName === 'h1') {
-        chunks.push({
+      if (['h1', 'h2'].includes(current.tagName)) {
+        newChildren.push({
           type: 'element',
           tagName: 'section',
           children: [],
@@ -42,24 +48,24 @@ const splitIntoSections: Plugin = () => {
         })
       }
 
-      const last = chunks.at(-1)
+      const last = newChildren.at(-1)
       if (last?.tagName === 'section') {
         last.children.push(current)
       } else {
-        chunks.push(current)
+        newChildren.push(current)
       }
     }
 
-    tree.children = chunks
+    tree.children = newChildren
   }
 }
 
 /**
  * Set the position data (line, column) of each node as an HTML attribute
  */
-const addPositionAttribute: Plugin = () => {
-  return (tree) => {
-    visit(tree, 'element', (node: Element) => {
+function rehypeElementPosition() {
+  return (tree: Root) => {
+    visit(tree, 'element', (node) => {
       if (node.position) {
         const { start, end } = node.position
         const value = `${start.line}:${start.column}-${end.line}:${end.column}`
@@ -76,11 +82,10 @@ export async function parseMarkdown(markdown: string) {
   return await unified()
     .use(remarkParse)
     .use(remarkFrontmatter)
-    // .use(extractFrontmatter)
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypeRaw)
-    .use(addPositionAttribute)
-    .use(splitIntoSections)
+    .use(rehypeElementPosition)
+    .use(rehypeSectionSplit)
     .use(rehypeSanitize, {
       ...defaultSchema,
       attributes: {
