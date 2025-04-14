@@ -1,4 +1,4 @@
-import type { Monaco, IMonacoEditor } from '../types'
+import type { Monaco, MonacoEditor } from '../types'
 import { debounce } from 'lodash'
 import { Check, Sparkles } from 'lucide-react'
 import { ActionBarWidget } from './action-bar'
@@ -10,7 +10,7 @@ import {
 import { SuggestionBoxWidget } from './suggestion-box'
 import { getSelectedValue, isValidSelect, pushEdit } from './utils'
 
-export function setUpAssistant(editor: IMonacoEditor, monaco: Monaco) {
+export function setUpAssistant(editor: MonacoEditor, monaco: Monaco) {
   const suggestionBox = new SuggestionBoxWidget(editor, monaco, [
     {
       id: 'insert',

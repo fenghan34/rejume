@@ -1,5 +1,6 @@
 import { useRef, useEffect, useCallback } from 'react'
 import { ImperativePanelHandle } from 'react-resizable-panels'
+import { useShallow } from 'zustand/react/shallow'
 import { ResizablePanel } from '@/components/ui/resizable'
 import { useAutoScale } from '@/hooks/useAutoScale'
 import { A4_WIDTH, A4_HEIGHT } from '@/lib/constants'
@@ -10,9 +11,14 @@ import { Preview } from './preview'
 
 export function PreviewPanel() {
   const LeftPanel = useRef<ImperativePanelHandle>(null)
-  const content = useAppStore((state) => state.resume.content)
-  const setPreviewElement = useAppStore((state) => state.setPreviewElement)
   const autoScaleRef = useAutoScale()
+  const [content, editor, setPreviewElement] = useAppStore(
+    useShallow((state) => [
+      state.resume.content,
+      state.editor,
+      state.setPreviewElement,
+    ]),
+  )
 
   const mouseupHandler = useCallback(() => {
     const el = getSelectedElement()
@@ -20,7 +26,8 @@ export function PreviewPanel() {
 
     const range = parsePositionAttribute(el)
     if (range) {
-      // editorRef.current?.selectRange(range)
+      editor?.setSelection(range)
+      editor?.revealRangeInCenter(range)
     }
   }, [])
 

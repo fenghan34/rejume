@@ -2,8 +2,8 @@ import type {
   CodeAction,
   CodeActionProvider,
   IMarkerData,
-  IMonacoEditor,
   Monaco,
+  MonacoEditor,
 } from '../types'
 import type { Dictionary, Language } from './dic'
 import { debounce } from 'lodash'
@@ -18,7 +18,7 @@ function extractWordFromMessage(message: string) {
 }
 
 export function setUpSpellcheck(
-  editor: IMonacoEditor,
+  editor: MonacoEditor,
   monaco: Monaco,
   options: { lang: Language },
 ) {

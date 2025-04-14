@@ -1,4 +1,4 @@
-import type { IMonacoEditor, ContentWidget, Monaco, Position } from '../types'
+import type { MonacoEditor, ContentWidget, Monaco, Position } from '../types'
 import type { ReactNode } from 'react'
 import { renderToString } from 'react-dom/server'
 import { Button } from '@/components/ui/button'
@@ -11,7 +11,7 @@ export type SuggestionBoxButton = {
 }
 
 export class SuggestionBoxWidget implements ContentWidget {
-  private editor: IMonacoEditor
+  private editor: MonacoEditor
   private monaco: Monaco
   private node: HTMLDivElement = document.createElement('div')
   private position: Position | null = null
@@ -20,7 +20,7 @@ export class SuggestionBoxWidget implements ContentWidget {
   beforeReset: (() => void) | null = null
 
   constructor(
-    editor: IMonacoEditor,
+    editor: MonacoEditor,
     monaco: Monaco,
     buttons: SuggestionBoxButton[],
   ) {

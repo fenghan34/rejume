@@ -1,8 +1,8 @@
+import type { MonacoEditor } from '../types'
 import { Selection } from 'monaco-editor'
-import { IMonacoEditor } from '../types'
 
 export function pushEdit(
-  editor: IMonacoEditor,
+  editor: MonacoEditor,
   type: 'insert' | 'replace',
   text: string,
 ) {
@@ -59,7 +59,7 @@ export function pushEdit(
 }
 
 export function getSelectedValue(
-  editor: IMonacoEditor,
+  editor: MonacoEditor,
   extent: boolean = false,
 ) {
   const model = editor.getModel()
@@ -78,7 +78,7 @@ export function getSelectedValue(
   return value
 }
 
-export function isValidSelect(editor: IMonacoEditor, minWordCount = 5) {
+export function isValidSelect(editor: MonacoEditor, minWordCount = 5) {
   const selection = editor.getSelection()
   if (!selection || selection.isEmpty() || editor.getSelections()!.length > 1)
     return false

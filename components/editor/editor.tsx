@@ -1,51 +1,31 @@
-import type { Monaco, IMonacoEditor, IRange } from './types'
 import type { OnMount } from '@monaco-editor/react'
-import type { Ref } from 'react'
-import MonacoEditor from '@monaco-editor/react'
+import CodeEditor from '@monaco-editor/react'
 import { useTheme } from 'next-themes'
-import { useCallback, useImperativeHandle, useRef } from 'react'
+import { useCallback } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { useAppStore } from '@/providers/app'
 import { setUpSpellcheck } from './spellcheck'
 import { setUpAssistant } from './writing-assistant'
 
-export type EditorRef = {
-  selectRange: (range: IRange) => void
-}
-
-export function Editor({ ref }: { ref?: Ref<EditorRef> }) {
-  const editorRef = useRef<IMonacoEditor>(null)
-  const monacoRef = useRef<Monaco>(null)
+export function Editor() {
   const { theme } = useTheme()
-  const { resumeId, resumeContent, updateResume } = useAppStore(
-    useShallow((state) => ({
-      resumeId: state.resume.id,
-      resumeContent: state.resume.content,
-      updateResume: state.updateResume,
-    })),
-  )
-
-  useImperativeHandle(
-    ref,
-    () => ({
-      selectRange: (range: IRange) => {
-        editorRef.current?.revealRangeInCenter(range)
-        editorRef.current?.setSelection(range)
-      },
-    }),
-    [],
+  const [resumeId, resumeContent, updateResume, setMonacoEditor] = useAppStore(
+    useShallow((state) => [
+      state.resume.id,
+      state.resume.content,
+      state.updateResume,
+      state.setMonacoEditor,
+    ]),
   )
 
   const handleOnMount = useCallback<OnMount>((editor, monaco) => {
-    editorRef.current = editor
-    monacoRef.current = monaco
-
+    setMonacoEditor(monaco, editor)
     setUpSpellcheck(editor, monaco, { lang: 'en_us' })
     setUpAssistant(editor, monaco)
   }, [])
 
   return (
-    <MonacoEditor
+    <CodeEditor
       value={resumeContent}
       language="markdown"
       theme={theme === 'light' ? 'vs' : 'vs-dark'}
