@@ -29,7 +29,7 @@ export function PreviewPanel() {
       editor?.setSelection(range)
       editor?.revealRangeInCenter(range)
     }
-  }, [])
+  }, [editor])
 
   useEffect(() => {
     function computeLeftPanelSize() {

@@ -1,20 +1,20 @@
 import type { AppStore } from './app-store'
+import type { WorkBenchSubPanel } from '@/components/workbench-panel'
 import type { StateCreator } from 'zustand'
 
-type TaggablePanel = 'editor' | 'resume-list'
-
 type PanelSliceState = {
-  workbenchPanel: TaggablePanel
+  workbenchSubPanels: WorkBenchSubPanel[]
 }
 
 type PanelSliceActions = {
-  setWorkbenchPanel: (panel: TaggablePanel) => void
+  setWorkbenchSubPanels: (panels: WorkBenchSubPanel[]) => void
+  toggleWorkbenchSubPanel: (panel: WorkBenchSubPanel) => void
 }
 
 export type PanelSlice = PanelSliceState & PanelSliceActions
 
 export const partializePanelSlice = (state: PanelSliceState) => ({
-  workbenchPanel: state.workbenchPanel,
+  workbenchSubPanels: state.workbenchSubPanels,
 })
 
 export const createPanelSlice: StateCreator<
@@ -23,11 +23,23 @@ export const createPanelSlice: StateCreator<
   [],
   PanelSlice
 > = (set) => ({
-  workbenchPanel: 'editor',
+  workbenchSubPanels: [],
 
-  setWorkbenchPanel: (panel) => {
+  setWorkbenchSubPanels: (panels) => {
     set((state) => {
-      state.workbenchPanel = panel
+      state.workbenchSubPanels = panels
+    })
+  },
+
+  toggleWorkbenchSubPanel: (panel) => {
+    set((state) => {
+      const index = state.workbenchSubPanels.indexOf(panel)
+
+      if (index > -1) {
+        state.workbenchSubPanels.splice(index, 1)
+      } else {
+        state.workbenchSubPanels.push(panel)
+      }
     })
   },
 })
