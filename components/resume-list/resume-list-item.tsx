@@ -54,7 +54,7 @@ export function ResumeListItem({
           <Preview
             ref={autoScaleRef}
             content={content}
-            className="overflow-hidden"
+            className="overflow-hidden pointer-events-none"
           />
         </div>
 
