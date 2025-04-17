@@ -1,6 +1,6 @@
 import { useAutoPagination } from '@/hooks/useAutoPagination'
 import { useRemark } from '@/hooks/useRemark'
-import { A4_HEIGHT, A4_WIDTH, PAGE_PADDING } from '@/lib/constants'
+import { A4_HEIGHT, A4_WIDTH, A4_PAGE_PADDING } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 
 export type PreviewProps = {
@@ -11,7 +11,7 @@ export function Preview({ content, className, ...rest }: PreviewProps) {
   const html = useRemark(content)
   const pages = useAutoPagination(html, {
     pageSize: { width: A4_WIDTH, height: A4_HEIGHT },
-    padding: { x: PAGE_PADDING, y: PAGE_PADDING },
+    padding: { x: A4_PAGE_PADDING, y: A4_PAGE_PADDING },
   })
 
   return (

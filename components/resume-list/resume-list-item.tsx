@@ -7,6 +7,7 @@ import { useAppStore } from '@/providers/app'
 import { Resume } from '@/stores/resume-slice'
 import { Preview } from '../preview'
 import { EditableTitle } from './editable-title'
+import { CURRENT_RESUME_CLASS } from './resume-list'
 
 export function ResumeListItem({
   id,
@@ -14,10 +15,14 @@ export function ResumeListItem({
   content,
   updatedTime,
   removable,
-}: Resume & { removable: boolean }) {
-  const [isCurrent, update, remove, set] = useAppStore(
+  className,
+  ref,
+}: Resume & { removable: boolean; className?: string } & Pick<
+    React.HTMLProps<HTMLDivElement>,
+    'className' | 'ref'
+  >) {
+  const [update, remove, set] = useAppStore(
     useShallow((state) => [
-      state.resume.id === id,
       state.updateResume,
       state.removeResume,
       state.setResume,
@@ -27,9 +32,10 @@ export function ResumeListItem({
 
   return (
     <div
+      ref={ref}
       className={cn(
         'w-fit relative hover:scale-105 transition-transform duration-200 cursor-pointer group',
-        isCurrent ? 'scale-105' : 'opacity-80 hover:opacity-100',
+        className,
       )}
     >
       {removable && (
@@ -45,10 +51,7 @@ export function ResumeListItem({
 
       <div className="w-60 flex flex-col items-center space-y-3">
         <div
-          className={cn(
-            'w-full h-fit aspect-[calc(210/297)]',
-            isCurrent && 'border',
-          )}
+          className={`w-full h-fit aspect-[calc(210/297)] group-[.${CURRENT_RESUME_CLASS}]:border`}
           onClick={() => set(id)}
         >
           <Preview
