@@ -18,14 +18,18 @@ export function Editor() {
     ]),
   )
 
-  const handleOnMount = useCallback<OnMount>((editor, monaco) => {
-    setMonacoEditor(monaco, editor)
-    setUpSpellcheck(editor, monaco, { lang: 'en_us' })
-    setUpAssistant(editor, monaco)
-  }, [])
+  const handleOnMount = useCallback<OnMount>(
+    (editor, monaco) => {
+      setMonacoEditor(monaco, editor)
+      setUpSpellcheck(editor, monaco, { lang: 'en_us' })
+      setUpAssistant(editor, monaco)
+    },
+    [setMonacoEditor],
+  )
 
   return (
     <CodeEditor
+      key={resumeId}
       value={resumeContent}
       language="markdown"
       theme={theme === 'light' ? 'vs' : 'vs-dark'}
