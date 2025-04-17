@@ -12,7 +12,7 @@ Software Engineer with 4+ years of experience in full-stack development, special
 
 ### Nexora Technologies - Software Engineer
 
-Mar 2022 – Present | Atlanta, GA
+Mar 2022 - Present | Atlanta, GA
 
 - Developed internal tools and web applications using React, Node.js, and PostgreSQL.
 - Refactored legacy monolith into modular microservices with Express and Docker.
@@ -21,7 +21,7 @@ Mar 2022 – Present | Atlanta, GA
 
 ### Bytewave Studios - Full Stack Developer
 
-Jan 2020 – Feb 2022 | Remote
+Jan 2020 - Feb 2022 | Remote
 
 - Built e-commerce and analytics platforms using Vue.js and Node.js.
 - Created serverless functions using AWS Lambda to handle asynchronous workloads.
@@ -33,7 +33,7 @@ Jan 2020 – Feb 2022 | Remote
 **Science in Computer Science, Bachelor**
 Westlake University of Technology
 
-Sep 2015 – June 2019 | Chicago, IL
+Sep 2015 - June 2019 | Chicago, IL
 
 ## Skills
 
@@ -46,7 +46,7 @@ Sep 2015 – June 2019 | Chicago, IL
 
 ## Projects
 
-### Dashly – Developer Dashboard App
+### Dashly - Developer Dashboard App
 
 A customizable productivity dashboard tailored for developers.
 
@@ -54,7 +54,7 @@ A customizable productivity dashboard tailored for developers.
 - Backend service built with Express and deployed on Vercel serverless functions.
 - Features GitHub activity, real-time data widgets, and drag-and-drop layout.
 
-### Notemark – Markdown Note Editor
+### Notemark - Markdown Note Editor
 
 A modern note-taking app with real-time Markdown preview and autosave.
 
