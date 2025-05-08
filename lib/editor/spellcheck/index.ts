@@ -1,3 +1,4 @@
+import type { Dictionary, Language } from './dic'
 import type {
   CodeAction,
   CodeActionProvider,
@@ -5,7 +6,6 @@ import type {
   Monaco,
   MonacoEditor,
 } from '../types'
-import type { Dictionary, Language } from './dic'
 import { debounce } from 'lodash'
 import { initDictionary } from './dic'
 import { processMarkdownWords } from './word'

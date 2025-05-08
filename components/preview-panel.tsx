@@ -1,6 +1,12 @@
-import { useRef, useEffect, useCallback } from 'react'
-import { ImperativePanelHandle } from 'react-resizable-panels'
+'use client'
+
+import { useRef, useEffect, useCallback, useState } from 'react'
+import {
+  getPanelGroupElement,
+  ImperativePanelHandle,
+} from 'react-resizable-panels'
 import { useShallow } from 'zustand/react/shallow'
+import { RESUME_PANEL_GROUP_ID } from '@/app/resume/[id]/page-content'
 import { ResizablePanel } from '@/components/ui/resizable'
 import { useAutoScale } from '@/hooks/useAutoScale'
 import { A4_WIDTH, A4_HEIGHT } from '@/lib/constants'
@@ -9,9 +15,13 @@ import { getSelectedElement } from '@/lib/utils'
 import { useAppStore } from '@/providers/app'
 import { Preview } from './preview'
 
+const MIN_SIZE = 30
+const MAX_SIZE = 60
+
 export function PreviewPanel() {
-  const LeftPanel = useRef<ImperativePanelHandle>(null)
-  const autoScaleRef = useAutoScale()
+  const panelRef = useRef<ImperativePanelHandle>(null)
+  const previewRef = useAutoScale({ heightScaling: 'stretch' })
+  const [minSize, setMinSize] = useState(MIN_SIZE)
   const [content, editor, setPreviewElement] = useAppStore(
     useShallow((state) => [
       state.resume.content,
@@ -32,35 +42,37 @@ export function PreviewPanel() {
   }, [editor])
 
   useEffect(() => {
-    function computeLeftPanelSize() {
-      const xl = window.matchMedia(`(min-width: 1280px)`).matches && 16
-      const doubleXl = window.matchMedia(`(min-width: 1536px)`).matches && 24
-      const margin = xl || doubleXl || 0
-      const w = (document.body.clientHeight + margin) * (A4_WIDTH / A4_HEIGHT)
-      return (w / document.body.clientWidth) * 100
+    const resizePanel = getPanelGroupElement(RESUME_PANEL_GROUP_ID)!
+
+    function updatePanelSize() {
+      const estimatedWidth = resizePanel.clientHeight * (A4_WIDTH / A4_HEIGHT)
+      const size = Math.min(
+        (estimatedWidth / resizePanel.clientWidth) * 100,
+        MAX_SIZE,
+      )
+      panelRef.current?.resize(size)
+      setMinSize(size)
     }
 
-    const observer = new ResizeObserver(() => {
-      LeftPanel.current?.resize(computeLeftPanelSize())
-    })
-    observer.observe(document.body)
+    updatePanelSize()
+
+    const observer = new ResizeObserver(updatePanelSize)
+    observer.observe(resizePanel)
     return () => {
       observer.disconnect()
     }
   }, [])
 
   return (
-    <ResizablePanel ref={LeftPanel} minSize={30} maxSize={70}>
-      <div className="xl:m-4 2xl:m-6">
-        <Preview
-          content={content}
-          onMouseUp={mouseupHandler}
-          ref={(e) => {
-            autoScaleRef(e)
-            setPreviewElement(e)
-          }}
-        />
-      </div>
+    <ResizablePanel ref={panelRef} minSize={minSize} maxSize={MAX_SIZE}>
+      <Preview
+        content={content}
+        onMouseUp={mouseupHandler}
+        ref={(e) => {
+          previewRef.current = e
+          setPreviewElement(e)
+        }}
+      />
     </ResizablePanel>
   )
 }

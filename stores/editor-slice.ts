@@ -1,6 +1,6 @@
 import type { AppStore } from './app-store'
+import type { MonacoEditor, Monaco } from '@/lib/editor/types'
 import type { StateCreator } from 'zustand'
-import { MonacoEditor, Monaco } from '@/components/editor/types'
 
 type EditorSliceState = {
   editor: MonacoEditor | null

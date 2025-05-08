@@ -1,3 +1,5 @@
+'use client'
+
 import dynamic from 'next/dynamic'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { useShallow } from 'zustand/react/shallow'
@@ -7,89 +9,53 @@ import {
   ResizableHandle,
 } from '@/components/ui/resizable'
 import { useAppStore } from '@/providers/app'
-import { Chatbot } from './chatbot/chatbot'
-import { ResumeList } from './resume-list/resume-list'
-import { Toolbar } from './toolbar/toolbar'
+import { Chatbot } from './chatbot'
+import { Toolbar } from './toolbar'
 
 const Editor = dynamic(
-  () => import('@/components/editor/editor').then(({ Editor }) => Editor),
+  () => import('@/components/editor').then(({ Editor }) => Editor),
   { ssr: false },
 )
 
 export function WorkBenchPanel() {
-  const [subPanels, editor] = useAppStore(
-    useShallow((state) => [state.workbenchSubPanels, state.editor]),
+  const [chatbotPanel, toggleChatbotPanel] = useAppStore(
+    useShallow((state) => [state.chatbotPanel, state.toggleChatbotPanel]),
   )
 
-  useHotkeys('meta+1', () => editor?.focus())
+  useHotkeys('meta+l', () => toggleChatbotPanel(), {
+    preventDefault: true,
+    enableOnFormTags: ['input', 'textarea', 'select'],
+  })
 
   return (
-    <ResizablePanel minSize={30}>
+    <ResizablePanel minSize={30} className="flex flex-col">
       <Toolbar />
 
-      <ResizablePanelGroup autoSaveId="workbench" direction="horizontal">
-        {subPanels.includes('chatbot') && (
-          <>
-            <WorkBenchSubPanel id="chatbot" order={1}>
-              <Chatbot />
-            </WorkBenchSubPanel>
-            <ResizableHandle />
-          </>
-        )}
-
-        <ResizablePanel id="editor" order={2}>
+      <ResizablePanelGroup className="flex-1" direction="horizontal">
+        <ResizablePanel id="editor" order={1}>
           <Editor />
         </ResizablePanel>
 
-        {subPanels.includes('resume-list') && (
+        {chatbotPanel && (
           <>
             <ResizableHandle />
-            <WorkBenchSubPanel id="resume-list" order={3}>
-              <ResumeList />
-            </WorkBenchSubPanel>
+            <ResizablePanel
+              id="chatbot"
+              order={2}
+              minSize={30}
+              maxSize={70}
+              defaultSize={70}
+              onResize={(size) => {
+                if (size === 0 && chatbotPanel) {
+                  toggleChatbotPanel()
+                }
+              }}
+            >
+              <Chatbot resourceId="weather-chat" threadId="default" />
+            </ResizablePanel>
           </>
         )}
       </ResizablePanelGroup>
-    </ResizablePanel>
-  )
-}
-
-export type WorkBenchSubPanel = 'resume-list' | 'chatbot'
-
-function WorkBenchSubPanel({
-  id,
-  children,
-  ...rest
-}: Omit<React.ComponentProps<typeof ResizablePanel>, 'onResize'> & {
-  id: WorkBenchSubPanel
-}) {
-  const [subPanels, setSubPanels] = useAppStore(
-    useShallow((state) => [
-      state.workbenchSubPanels,
-      state.setWorkbenchSubPanels,
-    ]),
-  )
-
-  const visible = subPanels.includes(id)
-
-  const handleResize = (size: number) => {
-    if (size === 0 && visible) {
-      setSubPanels(subPanels.filter((panel) => panel !== id))
-    }
-  }
-
-  if (!visible) return null
-
-  return (
-    <ResizablePanel
-      minSize={30}
-      maxSize={70}
-      collapsible
-      {...rest}
-      id={id}
-      onResize={handleResize}
-    >
-      {children}
     </ResizablePanel>
   )
 }

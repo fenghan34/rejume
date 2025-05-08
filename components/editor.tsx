@@ -1,11 +1,13 @@
+'use client'
+
 import type { OnMount } from '@monaco-editor/react'
 import CodeEditor from '@monaco-editor/react'
 import { useTheme } from 'next-themes'
 import { useCallback } from 'react'
 import { useShallow } from 'zustand/react/shallow'
+import { setUpSpellcheck } from '@/lib/editor/spellcheck'
+import { setUpAssistant } from '@/lib/editor/writing-assistant'
 import { useAppStore } from '@/providers/app'
-import { setUpSpellcheck } from './spellcheck'
-import { setUpAssistant } from './writing-assistant'
 
 export function Editor() {
   const { theme } = useTheme()

@@ -1,20 +1,18 @@
 import type { AppStore } from './app-store'
-import type { WorkBenchSubPanel } from '@/components/workbench-panel'
 import type { StateCreator } from 'zustand'
 
 type PanelSliceState = {
-  workbenchSubPanels: WorkBenchSubPanel[]
+  chatbotPanel: boolean
 }
 
 type PanelSliceActions = {
-  setWorkbenchSubPanels: (panels: WorkBenchSubPanel[]) => void
-  toggleWorkbenchSubPanel: (panel: WorkBenchSubPanel) => void
+  toggleChatbotPanel: () => void
 }
 
 export type PanelSlice = PanelSliceState & PanelSliceActions
 
 export const partializePanelSlice = (state: PanelSliceState) => ({
-  workbenchSubPanels: state.workbenchSubPanels,
+  chatbotPanel: state.chatbotPanel,
 })
 
 export const createPanelSlice: StateCreator<
@@ -23,23 +21,11 @@ export const createPanelSlice: StateCreator<
   [],
   PanelSlice
 > = (set) => ({
-  workbenchSubPanels: [],
+  chatbotPanel: false,
 
-  setWorkbenchSubPanels: (panels) => {
+  toggleChatbotPanel: () => {
     set((state) => {
-      state.workbenchSubPanels = panels
-    })
-  },
-
-  toggleWorkbenchSubPanel: (panel) => {
-    set((state) => {
-      const index = state.workbenchSubPanels.indexOf(panel)
-
-      if (index > -1) {
-        state.workbenchSubPanels.splice(index, 1)
-      } else {
-        state.workbenchSubPanels.push(panel)
-      }
+      state.chatbotPanel = !state.chatbotPanel
     })
   },
 })

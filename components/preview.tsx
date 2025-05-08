@@ -1,3 +1,5 @@
+'use client'
+
 import { useAutoPagination } from '@/hooks/useAutoPagination'
 import { useRemark } from '@/hooks/useRemark'
 import { A4_HEIGHT, A4_WIDTH, A4_PAGE_PADDING } from '@/lib/constants'
@@ -18,7 +20,7 @@ export function Preview({ content, className, ...rest }: PreviewProps) {
     <div
       {...rest}
       id="rejume-preview"
-      style={{ width: A4_WIDTH, height: A4_HEIGHT }}
+      style={{ width: A4_WIDTH, height: A4_HEIGHT, visibility: 'hidden' }}
       className={cn(
         'overflow-y-auto rounded font-nunito-sans text-pretty shadow-xl',
         !pages?.length && 'bg-background',

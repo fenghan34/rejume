@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { Input } from '@/components/ui/input'
 
@@ -28,8 +30,9 @@ export function EditableTitle({
 
   return (
     <Input
-      className="text-center h-auto py-0 px-1 border-0 shadow-none focus-visible:ring-0 bg-background text-sm font-medium rounded-xs"
+      className="text-center w-auto h-auto py-0 px-1 border-0 shadow-none focus-visible:ring-0 bg-background text-sm font-medium rounded-xs"
       autoFocus
+      maxLength={30}
       defaultValue={value}
       onClick={(e) => e.stopPropagation()}
       onKeyUp={(e) => {
