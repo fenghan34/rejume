@@ -6,10 +6,9 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
 import { createEditorSlice } from './editor-slice'
 import { createPanelSlice, partializePanelSlice } from './panel-slice'
-import { createPreviewSlice, PreviewSlice } from './preview-slice'
 import { createResumeSlice, partializeResumeSlice } from './resume-slice'
 
-export type AppStore = PanelSlice & ResumeSlice & PreviewSlice & EditorSlice
+export type AppStore = PanelSlice & ResumeSlice & EditorSlice
 
 export const createAppStore = () =>
   createStore<AppStore>()(
@@ -17,7 +16,6 @@ export const createAppStore = () =>
       immer((...a) => ({
         ...createPanelSlice(...a),
         ...createResumeSlice(...a),
-        ...createPreviewSlice(...a),
         ...createEditorSlice(...a),
       })),
       {

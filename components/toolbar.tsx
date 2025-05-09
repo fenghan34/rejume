@@ -1,6 +1,7 @@
 'use client'
 
 import { FileDown, PanelRight, PanelRightClose, Printer } from 'lucide-react'
+import { useCallback } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { useReactToPrint } from 'react-to-print'
 import { useShallow } from 'zustand/react/shallow'
@@ -8,23 +9,26 @@ import { Toggle } from '@/components/ui/toggle'
 import { downloadMarkdown } from '@/lib/utils'
 import { useAppStore } from '@/providers/app'
 import { EditableTitle } from './editable-title'
+import { PREVIEW_PANEL_CLASS } from './preview-panel'
 import { Button } from './ui/button'
 
 export function Toolbar() {
-  const [resume, chatbotPanel, previewEl, updateResume, toggleChatbotPanel] =
-    useAppStore(
-      useShallow((state) => [
-        state.resume,
-        state.chatbotPanel,
-        state.previewElement,
-        state.updateResume,
-        state.toggleChatbotPanel,
-      ]),
-    )
+  const [resume, chatPanel, updateResume, toggleChatPanel] = useAppStore(
+    useShallow((state) => [
+      state.resume,
+      state.chatPanel,
+      state.updateResume,
+      state.toggleChatPanel,
+    ]),
+  )
 
-  const print = useReactToPrint({ contentRef: { current: previewEl } })
+  const print = useReactToPrint({ documentTitle: resume.title })
+  const printHandler = useCallback(
+    () => print(() => document.querySelector(`.${PREVIEW_PANEL_CLASS}`)),
+    [print],
+  )
 
-  useHotkeys('meta+p, ctrl+p', () => print(), {
+  useHotkeys('meta+p, ctrl+p', printHandler, {
     preventDefault: true,
     enableOnFormTags: ['input', 'textarea', 'select'],
   })
@@ -50,7 +54,7 @@ export function Toolbar() {
           variant="ghost"
           className="cursor-pointer size-8"
           title="Export PDF (⌘P)"
-          onClick={() => print()}
+          onClick={printHandler}
         >
           <Printer />
         </Button>
@@ -62,13 +66,13 @@ export function Toolbar() {
       />
 
       <Toggle
-        pressed={chatbotPanel}
-        onPressedChange={toggleChatbotPanel}
+        pressed={chatPanel}
+        onPressedChange={toggleChatPanel}
         className="cursor-pointer"
         title="Toggle AI Chat (⌘L)"
         size="sm"
       >
-        {chatbotPanel ? <PanelRightClose /> : <PanelRight />}
+        {chatPanel ? <PanelRightClose /> : <PanelRight />}
       </Toggle>
     </div>
   )
