@@ -5,7 +5,7 @@ import { getResumeList } from '@/lib/db/queries'
 export default async function ResumeListPage() {
   const list = await getResumeList()
   return (
-    <div className="h-full @container flex gap-x-6 gap-y-12 py-6">
+    <div className="flex flex-wrap justify-between gap-y-12 px-4 pt-2 pb-4">
       <NewResumeButton />
 
       {list.map((resume) => (

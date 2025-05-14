@@ -19,19 +19,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${nunito_sans.variable} antialiased`}>
+      <body
+        className={`${nunito_sans.variable} antialiased bg-primary-foreground`}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
           enableSystem={false}
         >
           <AppStoreProvider>
-            <main className="h-svh flex flex-col bg-primary-foreground">
-              <Header />
-              <div className="flex-1 grow-1 overflow-hidden p-4 pt-2">
-                {children}
-              </div>
-            </main>
+            <Header />
+            <main>{children}</main>
           </AppStoreProvider>
         </ThemeProvider>
       </body>
@@ -41,8 +39,8 @@ export default function RootLayout({
 
 function Header() {
   return (
-    <div className="flex items-center justify-between py-1 px-4">
-      <Link href="/" className="text-2xl font-extrabold font-nunito-sans">
+    <div className="sticky top-0 h-12 z-10 flex items-center justify-between px-4 bg-primary-foreground">
+      <Link href="/" className="text-xl font-extrabold font-nunito-sans">
         Rejume
       </Link>
       <div className="flex items-center">

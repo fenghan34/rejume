@@ -57,7 +57,12 @@ export function PreviewPanel() {
   }, [])
 
   return (
-    <ResizablePanel ref={panelRef} minSize={minSize} maxSize={MAX_SIZE}>
+    <ResizablePanel
+      ref={panelRef}
+      minSize={minSize}
+      maxSize={MAX_SIZE}
+      defaultSize={40}
+    >
       <Preview
         className={PREVIEW_CLASS}
         content={editorContent}
