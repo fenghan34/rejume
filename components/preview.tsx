@@ -1,15 +1,23 @@
 'use client'
 
 import { useAutoPagination } from '@/hooks/useAutoPagination'
+import { useAutoScale, UseAutoScaleOptions } from '@/hooks/useAutoScale'
 import { useRemark } from '@/hooks/useRemark'
 import { A4_HEIGHT, A4_WIDTH, A4_PAGE_PADDING } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 
-export type PreviewProps = {
+export function Preview({
+  content,
+  className,
+  autoScaleOptions,
+  onMouseUp,
+}: {
   content: string
-} & Omit<React.HTMLProps<HTMLDivElement>, 'style' | 'id'>
-
-export function Preview({ content, className, ...rest }: PreviewProps) {
+  className?: string
+  onMouseUp?: () => void
+  autoScaleOptions?: UseAutoScaleOptions
+}) {
+  const ref = useAutoScale(autoScaleOptions)
   const html = useRemark(content)
   const pages = useAutoPagination(html, {
     pageSize: { width: A4_WIDTH, height: A4_HEIGHT },
@@ -18,7 +26,7 @@ export function Preview({ content, className, ...rest }: PreviewProps) {
 
   return (
     <div
-      {...rest}
+      ref={ref}
       id="rejume-preview"
       style={{ width: A4_WIDTH, height: A4_HEIGHT, visibility: 'hidden' }}
       className={cn(
@@ -26,6 +34,7 @@ export function Preview({ content, className, ...rest }: PreviewProps) {
         !pages?.length && 'bg-background',
         className,
       )}
+      onMouseUp={onMouseUp}
     >
       {pages?.map(({ html, pageNumber, pageStyle }) => (
         <div

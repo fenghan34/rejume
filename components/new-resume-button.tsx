@@ -1,0 +1,26 @@
+'use client'
+
+import { Plus } from 'lucide-react'
+import { createNewResume } from '@/app/resume/actions'
+import exampleResume from '@/examples/en.md'
+import { Button } from './ui/button'
+
+export function NewResumeButton() {
+  return (
+    <Button
+      title="Create new resume"
+      variant="ghost"
+      className={
+        'w-60 h-fit aspect-[calc(210/297)] hover:scale-105 transition-transform duration-200 bg-background flex items-center justify-center rounded shadow-md border border-input text-muted-foreground cursor-pointer hover:bg-background'
+      }
+      onClick={() =>
+        createNewResume({
+          name: '',
+          content: exampleResume,
+        })
+      }
+    >
+      <Plus />
+    </Button>
+  )
+}

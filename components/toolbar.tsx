@@ -1,30 +1,40 @@
 'use client'
 
-import { FileDown, PanelRight, PanelRightClose, Printer } from 'lucide-react'
+import {
+  FileDown,
+  PanelRight,
+  PanelRightClose,
+  Printer,
+  CheckCircle2,
+  Loader2,
+  AlertCircle,
+} from 'lucide-react'
 import { useCallback } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { useReactToPrint } from 'react-to-print'
 import { useShallow } from 'zustand/react/shallow'
+import { updateResume } from '@/app/resume/actions'
 import { Toggle } from '@/components/ui/toggle'
 import { downloadMarkdown } from '@/lib/utils'
 import { useAppStore } from '@/providers/app'
+import { useResume } from '@/providers/resume'
 import { EditableTitle } from './editable-title'
-import { PREVIEW_PANEL_CLASS } from './preview-panel'
+import { PREVIEW_CLASS } from './preview-panel'
 import { Button } from './ui/button'
 
 export function Toolbar() {
-  const [resume, chatPanel, updateResume, toggleChatPanel] = useAppStore(
+  const resume = useResume()
+  const [chatPanel, toggleChatPanel, saveStatus] = useAppStore(
     useShallow((state) => [
-      state.resume,
       state.chatPanel,
-      state.updateResume,
       state.toggleChatPanel,
+      state.saveStatus,
     ]),
   )
 
-  const print = useReactToPrint({ documentTitle: resume.title })
+  const print = useReactToPrint({ documentTitle: resume.name })
   const printHandler = useCallback(
-    () => print(() => document.querySelector(`.${PREVIEW_PANEL_CLASS}`)),
+    () => print(() => document.querySelector(`.${PREVIEW_CLASS}`)),
     [print],
   )
 
@@ -33,10 +43,16 @@ export function Toolbar() {
     enableOnFormTags: ['input', 'textarea', 'select'],
   })
 
-  useHotkeys('meta+s, ctrl+s', () => downloadMarkdown(resume), {
-    preventDefault: true,
-    enableOnFormTags: ['input', 'textarea', 'select'],
-  })
+  const renderSaveStatus = () => {
+    switch (saveStatus) {
+      case 'saved':
+        return <CheckCircle2 className="size-4 text-green-500" />
+      case 'saving':
+        return <Loader2 className="size-4 animate-spin" />
+      case 'error':
+        return <AlertCircle className="size-4 text-red-500" />
+    }
+  }
 
   return (
     <div className="p-1.5 flex items-center justify-between space-x-2 bg-background/10 border-b">
@@ -44,7 +60,7 @@ export function Toolbar() {
         <Button
           variant="ghost"
           className="cursor-pointer size-8"
-          title="Export Markdown (⌘S)"
+          title="Export Markdown"
           onClick={() => downloadMarkdown(resume)}
         >
           <FileDown />
@@ -58,11 +74,15 @@ export function Toolbar() {
         >
           <Printer />
         </Button>
+
+        <div className="inline-flex items-center ml-2">
+          {renderSaveStatus()}
+        </div>
       </div>
 
       <EditableTitle
-        value={resume.title}
-        onSave={(title) => updateResume(resume.id, { title })}
+        value={resume.name}
+        onSave={(name) => updateResume(resume.id, { name })}
       />
 
       <Toggle

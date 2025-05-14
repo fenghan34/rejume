@@ -2,17 +2,17 @@ import type { AppStore } from './app-store'
 import type { StateCreator } from 'zustand'
 
 type PanelSliceState = {
-  chatbotPanel: boolean
+  chatPanel: boolean
 }
 
 type PanelSliceActions = {
-  toggleChatbotPanel: () => void
+  toggleChatPanel: () => void
 }
 
 export type PanelSlice = PanelSliceState & PanelSliceActions
 
 export const partializePanelSlice = (state: PanelSliceState) => ({
-  chatbotPanel: state.chatbotPanel,
+  chatPanel: state.chatPanel,
 })
 
 export const createPanelSlice: StateCreator<
@@ -21,11 +21,11 @@ export const createPanelSlice: StateCreator<
   [],
   PanelSlice
 > = (set) => ({
-  chatbotPanel: false,
+  chatPanel: false,
 
-  toggleChatbotPanel: () => {
+  toggleChatPanel: () => {
     set((state) => {
-      state.chatbotPanel = !state.chatbotPanel
+      state.chatPanel = !state.chatPanel
     })
   },
 })

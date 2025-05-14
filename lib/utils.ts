@@ -1,7 +1,7 @@
-import type { Resume } from '@/stores/resume-slice'
 import type { ClassValue } from 'clsx'
 import { clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
+import { ResumeSchema } from './db/schema'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -22,13 +22,13 @@ export function getSelectedElement() {
   return node instanceof Element ? node : null
 }
 
-export function downloadMarkdown(resume: Resume) {
+export function downloadMarkdown(resume: ResumeSchema) {
   const blob = new Blob([resume.content], { type: 'text/markdown' })
   const url = URL.createObjectURL(blob)
 
   const link = document.createElement('a')
   link.href = url
-  link.download = `${resume.title.split(' ').join('-')}.md`
+  link.download = `${resume.name.split(' ').join('-')}.md`
 
   document.body.appendChild(link)
   link.click()

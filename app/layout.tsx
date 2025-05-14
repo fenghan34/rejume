@@ -1,17 +1,22 @@
 import { Github } from 'lucide-react'
+import { Nunito_Sans } from 'next/font/google'
 import Link from 'next/link'
 import { ThemeProvider } from 'next-themes'
 import { ModeToggle } from '@/components/mode-toggle'
 import { Button } from '@/components/ui/button'
-import { nunito_sans } from '@/lib/fonts'
 import { AppStoreProvider } from '@/providers/app'
 import './globals.css'
 
+const nunito_sans = Nunito_Sans({
+  variable: '--font-nunito-sans',
+  subsets: ['latin'],
+})
+
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
+}) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${nunito_sans.variable} antialiased`}>
@@ -21,12 +26,12 @@ export default function RootLayout({
           enableSystem={false}
         >
           <AppStoreProvider>
-            <div className="h-svh flex flex-col bg-primary-foreground">
+            <main className="h-svh flex flex-col bg-primary-foreground">
               <Header />
               <div className="flex-1 grow-1 overflow-hidden p-4 pt-2">
                 {children}
               </div>
-            </div>
+            </main>
           </AppStoreProvider>
         </ThemeProvider>
       </body>

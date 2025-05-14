@@ -2,7 +2,7 @@
 
 import type { AppStore } from '@/stores/app-store'
 import type { ReactNode } from 'react'
-import { createContext, useRef, useContext } from 'react'
+import React, { createContext, useRef, useContext } from 'react'
 import { useStore } from 'zustand'
 import { createAppStore } from '@/stores/app-store'
 

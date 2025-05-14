@@ -9,7 +9,8 @@ import {
   ResizableHandle,
 } from '@/components/ui/resizable'
 import { useAppStore } from '@/providers/app'
-import { Chatbot } from './chatbot'
+import { useResume } from '@/providers/resume'
+import { Chat } from './chat'
 import { Toolbar } from './toolbar'
 
 const Editor = dynamic(
@@ -18,11 +19,11 @@ const Editor = dynamic(
 )
 
 export function WorkBenchPanel() {
-  const [chatbotPanel, toggleChatbotPanel] = useAppStore(
-    useShallow((state) => [state.chatbotPanel, state.toggleChatbotPanel]),
+  const [chatPanel, toggleChatPanel] = useAppStore(
+    useShallow((state) => [state.chatPanel, state.toggleChatPanel]),
   )
 
-  useHotkeys('meta+l', () => toggleChatbotPanel(), {
+  useHotkeys('meta+l', () => toggleChatPanel(), {
     preventDefault: true,
     enableOnFormTags: ['input', 'textarea', 'select'],
   })
@@ -36,7 +37,7 @@ export function WorkBenchPanel() {
           <Editor />
         </ResizablePanel>
 
-        {chatbotPanel && (
+        {chatPanel && (
           <>
             <ResizableHandle />
             <ResizablePanel
@@ -44,18 +45,23 @@ export function WorkBenchPanel() {
               order={2}
               minSize={30}
               maxSize={70}
-              defaultSize={70}
+              defaultSize={50}
               onResize={(size) => {
-                if (size === 0 && chatbotPanel) {
-                  toggleChatbotPanel()
+                if (size === 0 && chatPanel) {
+                  toggleChatPanel()
                 }
               }}
             >
-              <Chatbot resourceId="weather-chat" threadId="default" />
+              <ResumeChat />
             </ResizablePanel>
           </>
         )}
       </ResizablePanelGroup>
     </ResizablePanel>
   )
+}
+
+const ResumeChat = () => {
+  const resumeId = useResume().id
+  return <Chat resourceId={resumeId} threadId={resumeId} />
 }

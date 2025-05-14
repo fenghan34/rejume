@@ -5,30 +5,23 @@ import {
   getPanelGroupElement,
   ImperativePanelHandle,
 } from 'react-resizable-panels'
-import { useShallow } from 'zustand/react/shallow'
-import { RESUME_PANEL_GROUP_ID } from '@/app/resume/[id]/page-content'
 import { ResizablePanel } from '@/components/ui/resizable'
-import { useAutoScale } from '@/hooks/useAutoScale'
-import { A4_WIDTH, A4_HEIGHT } from '@/lib/constants'
+import { A4_WIDTH, A4_HEIGHT, RESUME_PANEL_GROUP_ID } from '@/lib/constants'
 import { parsePositionAttribute } from '@/lib/md2html'
 import { getSelectedElement } from '@/lib/utils'
 import { useAppStore } from '@/providers/app'
 import { Preview } from './preview'
+
+export const PREVIEW_CLASS = 'preview-panel'
 
 const MIN_SIZE = 30
 const MAX_SIZE = 60
 
 export function PreviewPanel() {
   const panelRef = useRef<ImperativePanelHandle>(null)
-  const previewRef = useAutoScale({ heightScaling: 'stretch' })
+  const editorContent = useAppStore((state) => state.editorContent)
+  const editor = useAppStore((state) => state.editor)
   const [minSize, setMinSize] = useState(MIN_SIZE)
-  const [content, editor, setPreviewElement] = useAppStore(
-    useShallow((state) => [
-      state.resume.content,
-      state.editor,
-      state.setPreviewElement,
-    ]),
-  )
 
   const mouseupHandler = useCallback(() => {
     const el = getSelectedElement()
@@ -66,12 +59,10 @@ export function PreviewPanel() {
   return (
     <ResizablePanel ref={panelRef} minSize={minSize} maxSize={MAX_SIZE}>
       <Preview
-        content={content}
+        className={PREVIEW_CLASS}
+        content={editorContent}
         onMouseUp={mouseupHandler}
-        ref={(e) => {
-          previewRef.current = e
-          setPreviewElement(e)
-        }}
+        autoScaleOptions={{ heightScaling: 'stretch' }}
       />
     </ResizablePanel>
   )

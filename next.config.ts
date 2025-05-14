@@ -1,7 +1,6 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ['@mastra/*'],
   devIndicators: false,
   webpack(config) {
     config.module.rules.push({

@@ -4,6 +4,12 @@ import { RefObject, useLayoutEffect, useRef } from 'react'
 
 type HeightScalingMode = 'stretch' | 'scale'
 
+export type UseAutoScaleOptions = {
+  minScale?: number
+  maxScale?: number
+  heightScaling?: HeightScalingMode
+}
+
 /**
  * Automatically scales a container based on its parent's width while preserving the content layout
  *
@@ -13,11 +19,9 @@ type HeightScalingMode = 'stretch' | 'scale'
  * @param options.heightScaling - How to handle height scaling: 'scale' (default, maintain original height), 'stretch' (match parent height)
  * @returns A ref object for the container element
  */
-export function useAutoScale(options?: {
-  minScale?: number
-  maxScale?: number
-  heightScaling?: HeightScalingMode
-}): RefObject<HTMLDivElement | null> {
+export function useAutoScale(
+  options?: UseAutoScaleOptions,
+): RefObject<HTMLDivElement | null> {
   const ref = useRef<HTMLDivElement>(null)
   const { minScale = 0, maxScale = 10, heightScaling = 'scale' } = options || {}
 
