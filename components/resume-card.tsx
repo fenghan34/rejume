@@ -1,5 +1,6 @@
 'use client'
 
+import { formatDistance } from 'date-fns'
 import { X } from 'lucide-react'
 import Link from 'next/link'
 import { deleteResume, updateResume } from '@/app/resume/actions'
@@ -19,6 +20,7 @@ import { Preview } from './preview'
 import { Button } from './ui/button'
 
 export function ResumeCard({ id, name, content, updatedAt }: ResumeSchema) {
+  console.log(new Date(updatedAt).getDate() - new Date().getDate())
   return (
     <div className="h-fit relative hover:scale-105 hover:opacity-100 transition-transform duration-200 cursor-pointer opacity-90 group/resume-card">
       <DeleteButton id={id} />
@@ -47,7 +49,9 @@ export function ResumeCard({ id, name, content, updatedAt }: ResumeSchema) {
             suppressHydrationWarning
             className="text-xs text-muted-foreground"
           >
-            {new Date(updatedAt).toLocaleString()}
+            {formatDistance(new Date(updatedAt), new Date(), {
+              addSuffix: true,
+            })}
           </div>
         </div>
       </div>
