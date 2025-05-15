@@ -3,8 +3,8 @@ import ky from 'ky'
 
 const DicSources = {
   en_us: {
-    aff: 'https://raw.githubusercontent.com/wooorm/dictionaries/refs/heads/main/dictionaries/en/index.aff',
-    dic: 'https://raw.githubusercontent.com/wooorm/dictionaries/refs/heads/main/dictionaries/en/index.dic',
+    aff: '/dic/en_us.aff',
+    dic: '/dic/en_us.dic',
   },
 } as const
 
