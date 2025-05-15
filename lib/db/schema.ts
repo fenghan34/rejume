@@ -1,6 +1,6 @@
 import type { InferSelectModel } from 'drizzle-orm'
 import { relations } from 'drizzle-orm'
-import { pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { json, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
 
 export const resumes = pgTable('resume', {
   id: uuid().primaryKey().defaultRandom(),
@@ -37,8 +37,10 @@ export const messages = pgTable('message', {
   chatId: uuid()
     .notNull()
     .references(() => chats.id, { onDelete: 'cascade' }),
-  content: text().notNull(),
-  role: text({ enum: ['system', 'user', 'assistant', 'tool'] }).notNull(),
+  content: text(),
+  role: text().notNull(),
+  parts: json().notNull(),
+  attachments: json().notNull(),
   createdAt: timestamp().defaultNow().notNull(),
 })
 

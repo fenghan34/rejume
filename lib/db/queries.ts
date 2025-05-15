@@ -1,14 +1,8 @@
+import type { ChatSchema, MessageSchema, ResumeSchema } from './schema'
 import { eq } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
-import {
-  chats,
-  type ChatSchema,
-  messages,
-  MessageSchema,
-  resumes,
-  type ResumeSchema,
-} from './schema'
+import { chats, messages, resumes } from './schema'
 
 const client = postgres(process.env.DATABASE_URL!)
 const db = drizzle({
@@ -48,26 +42,26 @@ export const deleteResume = async (id: string) => {
   return await db.delete(resumes).where(eq(resumes.id, id))
 }
 
-export const createChat = async (
-  data: Pick<ChatSchema, 'title' | 'resumeId'>,
+export const saveChat = async (
+  data: Pick<ChatSchema, 'id' | 'title' | 'resumeId'>,
 ) => {
-  return await db.insert(chats).values(data).returning()
+  return await db.insert(chats).values(data)
 }
 
-export const getChat = async (id: string) => {
-  return await db.select().from(chats).where(eq(chats.id, id))
+export const getChatById = async (id: string) => {
+  const data = await db.select().from(chats).where(eq(chats.id, id))
+  if (data.length === 0) return null
+  return data[0]
 }
 
-export const getChatsByResumeId = async (resumeId: string) => {
-  return await db.select().from(chats).where(eq(chats.resumeId, resumeId))
+export const getChatsByResumeId = async (id: string) => {
+  return await db.select().from(chats).where(eq(chats.resumeId, id))
 }
 
-export const createMessage = async (
-  data: Pick<MessageSchema, 'content' | 'role' | 'chatId'>,
-) => {
+export const saveMessage = async (data: Omit<MessageSchema, 'createdAt'>) => {
   return await db.insert(messages).values(data).returning()
 }
 
-export const getMessagesByChatId = async (chatId: string) => {
-  return await db.select().from(messages).where(eq(messages.chatId, chatId))
+export const getMessagesByChatId = async (id: string) => {
+  return await db.select().from(messages).where(eq(messages.chatId, id))
 }
