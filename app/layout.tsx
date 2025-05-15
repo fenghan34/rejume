@@ -2,6 +2,7 @@ import { Github } from 'lucide-react'
 import { Nunito_Sans } from 'next/font/google'
 import Link from 'next/link'
 import { ThemeProvider } from 'next-themes'
+import { Toaster } from 'sonner'
 import { ModeToggle } from '@/components/mode-toggle'
 import { Button } from '@/components/ui/button'
 import { AppStoreProvider } from '@/providers/app'
@@ -30,6 +31,7 @@ export default function RootLayout({
           <AppStoreProvider>
             <Header />
             <main>{children}</main>
+            <Toaster position="top-center" />
           </AppStoreProvider>
         </ThemeProvider>
       </body>

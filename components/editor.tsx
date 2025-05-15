@@ -8,16 +8,15 @@ import { useCallback, useEffect, useMemo } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { useShallow } from 'zustand/react/shallow'
 import { updateResume } from '@/app/resume/actions'
+import { ResumeSchema } from '@/lib/db/schema'
 import { setUpSpellcheck } from '@/lib/editor/spellcheck'
 import { setUpAssistant } from '@/lib/editor/writing-assistant'
 import { useAppStore } from '@/providers/app'
-import { useResume } from '@/providers/resume'
 
 const AUTO_SAVE_DELAY = 3000
 
-export function Editor() {
+export function Editor({ resume }: { resume: ResumeSchema }) {
   const { theme } = useTheme()
-  const resume = useResume()
   const [setMonacoEditor, editorContent, setEditorContent, setSaveStatus] =
     useAppStore(
       useShallow((state) => [

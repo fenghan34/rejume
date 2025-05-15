@@ -15,15 +15,14 @@ import { useReactToPrint } from 'react-to-print'
 import { useShallow } from 'zustand/react/shallow'
 import { updateResume } from '@/app/resume/actions'
 import { Toggle } from '@/components/ui/toggle'
+import { ResumeSchema } from '@/lib/db/schema'
 import { downloadMarkdown } from '@/lib/utils'
 import { useAppStore } from '@/providers/app'
-import { useResume } from '@/providers/resume'
 import { EditableTitle } from './editable-title'
 import { PREVIEW_CLASS } from './preview-panel'
 import { Button } from './ui/button'
 
-export function Toolbar() {
-  const resume = useResume()
+export function Toolbar({ resume }: { resume: ResumeSchema }) {
   const [chatPanel, toggleChatPanel, saveStatus] = useAppStore(
     useShallow((state) => [
       state.chatPanel,
