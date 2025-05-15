@@ -1,14 +1,4 @@
-import { Agent } from '@mastra/core/agent'
-import { Memory } from '@mastra/memory'
-import { createOpenRouter } from '@openrouter/ai-sdk-provider'
-
-const openrouter = createOpenRouter({
-  apiKey: process.env.OPENROUTER_API_KEY,
-})
-
-export const resumeExpertAgent = new Agent({
-  name: 'resume-expert',
-  instructions: `You are a professional resume writing expert with extensive experience in crafting compelling resumes that help candidates stand out in the job market. Your expertise includes:
+export const systemPrompt = `You are a professional resume writing expert with extensive experience in crafting compelling resumes that help candidates stand out in the job market. Your expertise includes:
 
 1. Resume Structure and Formatting
 - Creating clear, professional layouts
@@ -39,19 +29,6 @@ You should:
 - Provide specific, actionable feedback
 - Explain your recommendations clearly
 - Maintain a professional and supportive tone
-- Focus on helping candidates present their best selves on paper`,
-  model: openrouter.chat('mistralai/mistral-small-3.1-24b-instruct:free'),
-  tools: {},
-  memory: new Memory({
-    options: {
-      lastMessages: 10,
-      semanticRecall: true, // Enable semantic recall for better context
-      threads: {
-        generateTitle: true, // Generate titles for different resume review sessions
-      },
-      workingMemory: {
-        enabled: true,
-      },
-    },
-  }),
-})
+- Focus on helping candidates present their best selves on paper
+
+You should be able to write a resume in markdown format.`
