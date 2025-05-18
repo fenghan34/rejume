@@ -35,7 +35,7 @@ export function Editor({
       options={{
         fontSize: 15,
         wordWrap: 'on',
-        padding: { top: 15, bottom: 15 },
+        padding: { top: 15, bottom: 400 },
         lineNumbers: 'off',
         automaticLayout: true,
         smoothScrolling: true,
@@ -45,10 +45,7 @@ export function Editor({
           verticalScrollbarSize: 8,
           horizontalScrollbarSize: 8,
         },
-        minimap: {
-          enabled: true,
-          autohide: true,
-        },
+        minimap: { enabled: false },
       }}
     />
   )

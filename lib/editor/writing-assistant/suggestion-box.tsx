@@ -3,10 +3,41 @@ import type { ReactNode } from 'react'
 import { renderToString } from 'react-dom/server'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
+import { cn } from '@/lib/utils'
+
+function SuggestionBox({ buttons }: { buttons: SuggestionBoxButton[] }) {
+  return (
+    <div className="min-w-sm mt-1 bg-card outline shadow-sm rounded max-w-4/5 min-h-8">
+      <div className="p-4 space-y-1 animate-pulse hidden group-data-[status=loading]:block">
+        <div className="py-1 bg-accent rounded" />
+        <div className="py-1 bg-accent rounded w-2/3" />
+        <div className="py-1 bg-accent rounded w-1/3" />
+      </div>
+
+      <Textarea className="w-auto max-w-xl min-h-6 max-h-64 m-0 p-4 border-0 outline-0 shadow-none focus:border-0 focus:outline-0 focus:shadow-none focus-visible:ring-0 overflow-y-auto resize-none text-pretty disabled:opacity-70 group-data-[status=loading]:hidden" />
+
+      <div className="w-full px-2 py-2 text-right hidden group-data-[status=completed]:block">
+        {buttons.map(({ id, children, variant, className }) => (
+          <Button
+            key={id}
+            id={id}
+            variant={variant}
+            size="sm"
+            className={cn('cursor-pointer ml-1.5', className)}
+          >
+            {children}
+          </Button>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 export type SuggestionBoxButton = {
   id: string
-  title: ReactNode
+  children: ReactNode
+  className?: string
+  variant?: 'ghost' | 'default' | 'outline' | 'secondary' | 'destructive'
   onClick?: (e: Event, suggestionBox: SuggestionBoxWidget) => void
 }
 
@@ -26,28 +57,9 @@ export class SuggestionBoxWidget implements ContentWidget {
   ) {
     this.editor = editor
     this.monaco = monaco
-    this.node.innerHTML = renderToString(
-      <div className="mt-1 bg-card border shadow-sm rounded-md mr-40">
-        <Textarea
-          placeholder="Thinking..."
-          disabled
-          className="min-w-sm w-auto max-w-xl min-h-6 max-h-44 m-0 py-3 border-0 outline-0 shadow-none focus:border-0 focus:outline-0 focus:shadow-none focus-visible:ring-0 overflow-y-auto resize-none disabled:opacity-70 peer"
-        />
-        <div className="p-1 text-right peer-disabled:hidden">
-          {buttons.map(({ id, title }) => (
-            <Button
-              key={id}
-              id={id}
-              size="sm"
-              variant="ghost"
-              className="cursor-pointer"
-            >
-              {title}
-            </Button>
-          ))}
-        </div>
-      </div>,
-    )
+
+    this.node.classList.add('group')
+    this.node.innerHTML = renderToString(<SuggestionBox buttons={buttons} />)
     const textarea = this.node.querySelector('textarea')!
     const stopPropagation = (event: Event) => event.stopPropagation()
     textarea.addEventListener('wheel', stopPropagation, { passive: false })
@@ -115,16 +127,23 @@ export class SuggestionBoxWidget implements ContentWidget {
     })
   }
 
-  ready() {
-    this.textarea.disabled = false
-    this.textarea.focus()
+  setStatus(status: 'loading' | 'message' | 'completed' | 'error') {
+    this.node.dataset.status = status
+
+    if (status === 'error') {
+      this.textarea.disabled = true
+    }
+
+    if (status === 'completed') {
+      this.textarea.focus()
+    }
   }
 
   reset() {
     this.beforeReset?.()
     this.beforeReset = null
     this.textarea.value = ''
-    this.textarea.disabled = true
     this.setPosition(null)
+    this.setStatus('loading')
   }
 }

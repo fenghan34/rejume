@@ -1,5 +1,5 @@
 import { createDataStreamResponse, streamText } from 'ai'
-import { ollama } from 'ollama-ai-provider'
+import { model } from '@/lib/ai/model'
 
 export async function POST(req: Request) {
   const { messages } = await req.json()
@@ -7,7 +7,7 @@ export async function POST(req: Request) {
   return createDataStreamResponse({
     execute: (dataStream) => {
       const result = streamText({
-        model: ollama('gemma3:12b'),
+        model,
         messages,
         abortSignal: req.signal,
       })

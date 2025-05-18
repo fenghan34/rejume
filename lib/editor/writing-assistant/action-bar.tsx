@@ -2,10 +2,12 @@ import type { ContentWidget, Monaco, MonacoEditor, Position } from '../types'
 import type { ReactNode } from 'react'
 import { renderToString } from 'react-dom/server'
 import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 export type ActionBarButton = {
   id: string
-  title: ReactNode
+  children: ReactNode
+  className?: string
   onClick?: (e: Event) => void
 }
 
@@ -25,15 +27,15 @@ export class ActionBarWidget implements ContentWidget {
     this.monaco = monaco
     this.node.innerHTML = renderToString(
       <div className="p-0.5 mb-1 select-none bg-card border shadow-sm rounded-md flex items-center">
-        {buttons.map(({ id, title }) => (
+        {buttons.map(({ id, children, className }) => (
           <Button
             key={id}
             id={id}
             size="sm"
             variant="ghost"
-            className="cursor-pointer"
+            className={cn('cursor-pointer', className)}
           >
-            {title}
+            {children}
           </Button>
         ))}
       </div>,
@@ -61,6 +63,13 @@ export class ActionBarWidget implements ContentWidget {
   }
 
   getPosition() {
+    if (this.position?.lineNumber === 1) {
+      return {
+        position: this.position,
+        preference: [this.monaco.editor.ContentWidgetPositionPreference.EXACT],
+      }
+    }
+
     return {
       position: this.position,
       preference: [this.monaco.editor.ContentWidgetPositionPreference.ABOVE],
