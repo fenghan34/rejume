@@ -22,14 +22,12 @@ export function Message({ message }: { message: UIMessage }) {
               <div
                 key={`${message.id}-${part.type}-${i}`}
                 className={cn(
-                  'rounded-xl px-3 py-1.5',
+                  'prose prose-sm dark:prose-invert max-w-none break-words',
                   message.role === 'user' &&
-                    'bg-primary/10 text-primary max-w-[80%]',
+                    'bg-black/10 dark:bg-white/10 max-w-[80%] rounded-2xl px-3 py-1',
                 )}
               >
-                <div className="prose prose-sm dark:prose-invert break-words">
-                  <Markdown>{part.text}</Markdown>
-                </div>
+                <Markdown>{part.text}</Markdown>
               </div>
             )
         }
