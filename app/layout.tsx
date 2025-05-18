@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { ThemeProvider } from 'next-themes'
 import { Toaster } from 'sonner'
 import { ModeToggle } from '@/components/mode-toggle'
+import { Toolbar } from '@/components/toolbar'
 import { Button } from '@/components/ui/button'
 import { AppStoreProvider } from '@/providers/app'
 import './globals.css'
@@ -20,17 +21,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${nunito_sans.variable} antialiased bg-primary-foreground`}
-      >
+      <body className={`${nunito_sans.variable} antialiased`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
           enableSystem={false}
         >
           <AppStoreProvider>
-            <Header />
-            <main>{children}</main>
+            <div className="flex flex-col h-screen">
+              <Header />
+              <main className="flex-1 overflow-hidden">{children}</main>
+            </div>
             <Toaster position="top-center" />
           </AppStoreProvider>
         </ThemeProvider>
@@ -41,15 +42,15 @@ export default function RootLayout({
 
 function Header() {
   return (
-    <div className="sticky top-0 h-12 z-10 flex items-center justify-between px-4 bg-primary-foreground">
-      <Link href="/" className="text-xl font-extrabold font-nunito-sans">
+    <header className="flex items-center justify-between px-6 h-14">
+      <Link href="/" className="font-extrabold font-nunito-sans">
         Rejume
       </Link>
-      <div className="flex items-center">
+      <div className="flex items-center gap-1">
+        <Toolbar />
         <Button
-          className="cursor-pointer"
+          className="cursor-pointer size-8"
           variant="ghost"
-          size="icon"
           title="GitHub"
           asChild
         >
@@ -59,6 +60,6 @@ function Header() {
         </Button>
         <ModeToggle />
       </div>
-    </div>
+    </header>
   )
 }

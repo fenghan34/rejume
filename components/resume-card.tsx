@@ -3,6 +3,7 @@
 import { formatDistance } from 'date-fns'
 import { X } from 'lucide-react'
 import Link from 'next/link'
+import { toast } from 'sonner'
 import { deleteResume, updateResume } from '@/app/resume/actions'
 import {
   AlertDialog,
@@ -14,45 +15,43 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
-import { ResumeSchema } from '@/lib/db/schema'
+import { ResumeModel } from '@/lib/db/schema'
 import { EditableTitle } from './editable-title'
 import { Preview } from './preview'
 import { Button } from './ui/button'
 
-export function ResumeCard({ id, name, content, updatedAt }: ResumeSchema) {
-  console.log(new Date(updatedAt).getDate() - new Date().getDate())
+export function ResumeCard({ id, name, content, updatedAt }: ResumeModel) {
   return (
-    <div className="h-fit relative hover:scale-105 hover:opacity-100 transition-transform duration-200 cursor-pointer opacity-90 group/resume-card">
-      <DeleteButton id={id} />
+    <div className="space-y-3 flex flex-col items-center">
+      <div className="relative group hover:scale-105 transition-transform duration-200">
+        <DeleteButton id={id} />
 
-      <div className="w-60 flex flex-col items-center space-y-3">
         <Link
-          className={`w-full h-fit aspect-[calc(210/297)] border`}
+          className="w-60 h-fit block aspect-[calc(210/297)] border overflow-hidden rounded"
           href={`/resume/${id}`}
         >
-          <Preview
-            content={content}
-            className="overflow-hidden pointer-events-none"
-          />
+          <Preview content={content} className="pointer-events-none" />
         </Link>
+      </div>
 
-        <div className="text-center space-y-0.5">
-          <EditableTitle
-            value={name}
-            onSave={(v) => {
-              if (name !== v) {
-                updateResume(id, { name: v })
+      <div className="text-center space-y-0.5">
+        <EditableTitle
+          value={name}
+          onSave={async (v) => {
+            if (name !== v) {
+              try {
+                await updateResume(id, { name: v })
+              } catch (e) {
+                console.error(e)
+                toast.error('Failed to update resume name')
               }
-            }}
-          />
-          <div
-            suppressHydrationWarning
-            className="text-xs text-muted-foreground"
-          >
-            {formatDistance(new Date(updatedAt), new Date(), {
-              addSuffix: true,
-            })}
-          </div>
+            }
+          }}
+        />
+        <div suppressHydrationWarning className="text-xs text-muted-foreground">
+          {formatDistance(new Date(updatedAt), new Date(), {
+            addSuffix: true,
+          })}
         </div>
       </div>
     </div>
@@ -64,7 +63,7 @@ function DeleteButton({ id }: { id: string }) {
     <AlertDialog>
       <AlertDialogTrigger asChild>
         <Button
-          className="absolute top-0 right-0 z-10 cursor-pointer group-hover/resume-card:visible invisible opacity-60 hover:opacity-100 hover:bg-inherit"
+          className="absolute top-0 right-0 z-10 cursor-pointer group-hover:visible invisible opacity-60 hover:opacity-100 hover:bg-inherit"
           variant="ghost"
           size="icon"
         >

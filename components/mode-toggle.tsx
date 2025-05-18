@@ -19,9 +19,8 @@ export function ModeToggle() {
     return (
       <Button
         variant="ghost"
-        size="icon"
         title="Toggle Dark Mode"
-        className="cursor-pointer"
+        className="cursor-pointer size-8"
       />
     )
   }
@@ -29,9 +28,8 @@ export function ModeToggle() {
   return (
     <Button
       variant="ghost"
-      size="icon"
       title="Toggle Dark Mode"
-      className="cursor-pointer"
+      className="cursor-pointer size-8"
       onClick={() => setTheme(isDarkMode ? 'light' : 'dark')}
     >
       {isDarkMode ? <Sun /> : <Moon />}

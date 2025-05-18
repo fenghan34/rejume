@@ -1,25 +1,28 @@
 import type { EditorSlice } from './editor-slice'
-import type { PanelSlice } from './panel-slice'
+import type { WorkbenchSlice } from './workbench-slice'
 import { createStore } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
 import { createEditorSlice } from './editor-slice'
-import { createPanelSlice, partializePanelSlice } from './panel-slice'
+import {
+  createWorkbenchSlice,
+  partializeWorkbenchSlice,
+} from './workbench-slice'
 
-export type AppStore = PanelSlice & EditorSlice
+export type AppStore = WorkbenchSlice & EditorSlice
 
 export const createAppStore = () =>
   createStore<AppStore>()(
     persist(
       immer((...a) => ({
-        ...createPanelSlice(...a),
+        ...createWorkbenchSlice(...a),
         ...createEditorSlice(...a),
       })),
       {
         name: 'rejume-storage',
         storage: createJSONStorage(() => localStorage),
         partialize: (state) => ({
-          ...partializePanelSlice(state),
+          ...partializeWorkbenchSlice(state),
         }),
       },
     ),

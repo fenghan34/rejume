@@ -10,11 +10,9 @@ export function Preview({
   content,
   className,
   autoScaleOptions,
-  onMouseUp,
 }: {
   content: string
   className?: string
-  onMouseUp?: () => void
   autoScaleOptions?: UseAutoScaleOptions
 }) {
   const ref = useAutoScale(autoScaleOptions)
@@ -30,11 +28,10 @@ export function Preview({
       id="rejume-preview"
       style={{ width: A4_WIDTH, height: A4_HEIGHT, visibility: 'hidden' }}
       className={cn(
-        'overflow-y-auto rounded font-nunito-sans text-pretty shadow-xl',
+        'font-nunito-sans text-pretty will-change-transform',
         !pages?.length && 'bg-background',
         className,
       )}
-      onMouseUp={onMouseUp}
     >
       {pages?.map(({ html, pageNumber, pageStyle }) => (
         <div

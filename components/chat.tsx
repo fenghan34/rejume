@@ -2,11 +2,10 @@
 
 import { useChat } from '@ai-sdk/react'
 import { UIMessage } from 'ai'
-import { useEffect, useRef } from 'react'
 import { toast } from 'sonner'
 import { generateUUID } from '@/lib/utils'
-import { Message } from './message'
 import { MessageInput } from './message-input'
+import { MessageList } from './message-list'
 
 export function Chat({
   id,
@@ -17,7 +16,6 @@ export function Chat({
   resumeId: string
   initialMessages?: UIMessage[]
 }) {
-  const ref = useRef<HTMLDivElement>(null)
   const { messages, input, status, stop, handleInputChange, handleSubmit } =
     useChat({
       id,
@@ -37,22 +35,9 @@ export function Chat({
       },
     })
 
-  useEffect(() => {
-    if (ref.current) {
-      ref.current.scrollTo({
-        top: ref.current.scrollHeight,
-      })
-    }
-  }, [messages])
-
   return (
-    <div className="bg-background text-primary flex flex-col h-full">
-      <div className="flex-1 p-4 space-y-4 overflow-auto" ref={ref}>
-        {messages.map((message) => (
-          <Message key={message.id} message={message} />
-        ))}
-      </div>
-
+    <div className="h-full flex flex-col">
+      <MessageList messages={messages} />
       <MessageInput
         input={input}
         status={status}

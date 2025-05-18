@@ -10,7 +10,7 @@ export const resumes = pgTable('resume', {
   updatedAt: timestamp().defaultNow().notNull(),
 })
 
-export type ResumeSchema = InferSelectModel<typeof resumes>
+export type ResumeModel = InferSelectModel<typeof resumes>
 
 export const resumesRelations = relations(resumes, ({ many }) => ({
   chats: many(chats),
@@ -26,7 +26,7 @@ export const chats = pgTable('chat', {
   updatedAt: timestamp().defaultNow().notNull(),
 })
 
-export type ChatSchema = InferSelectModel<typeof chats>
+export type ChatModel = InferSelectModel<typeof chats>
 
 export const chatsRelations = relations(chats, ({ many }) => ({
   messages: many(messages),
@@ -44,4 +44,4 @@ export const messages = pgTable('message', {
   createdAt: timestamp().defaultNow().notNull(),
 })
 
-export type MessageSchema = InferSelectModel<typeof messages>
+export type MessageModel = InferSelectModel<typeof messages>

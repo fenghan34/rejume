@@ -3,6 +3,10 @@
 @plugin "tailwindcss-animate";
 @plugin "@iconify/tailwind4";
 @plugin "@tailwindcss/typography";
+@plugin 'tailwind-scrollbar' {
+  nocompatible: true;
+  preferredstrategy: 'pseudoelements';
+}
 
 @custom-variant dark (&:is(.dark *));
 
@@ -128,6 +132,12 @@
   --font-nunito-sans: var(--font-nunito-sans);
 }
 
+@layer components {
+  .scrollbar-primary {
+    @apply scrollbar-thin scrollbar-thumb-rounded-full hover:scrollbar-thumb-black/15 dark:hover:scrollbar-thumb-white/15 transition-all;
+  }
+}
+
 @media print {
   #rejume-preview {
     @apply overflow-visible! h-fit! transform-[scale(1)]!;
@@ -137,7 +147,7 @@
 #rejume-preview {
   #rejume-preview-page {
     @apply not-first:mt-2;
-    @apply bg-background text-primary;
+    @apply bg-background dark:bg-background/60 shadow-lg;
   }
 
   section:has(h1) {

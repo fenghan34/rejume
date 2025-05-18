@@ -1,4 +1,6 @@
-import type { ChatSchema, MessageSchema, ResumeSchema } from './schema'
+import 'server-only'
+
+import type { ChatModel, MessageModel, ResumeModel } from './schema'
 import { eq } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
@@ -20,7 +22,7 @@ export const getResumeList = async () => {
 }
 
 export const createResume = async (
-  data: Pick<ResumeSchema, 'name' | 'content'>,
+  data: Pick<ResumeModel, 'name' | 'content'>,
 ) => {
   return await db.insert(resumes).values(data)
 }
@@ -33,7 +35,7 @@ export const getResumeById = async (id: string) => {
 
 export const updateResume = async (
   id: string,
-  data: Partial<Pick<ResumeSchema, 'name' | 'content'>>,
+  data: Partial<Pick<ResumeModel, 'name' | 'content'>>,
 ) => {
   return await db.update(resumes).set(data).where(eq(resumes.id, id))
 }
@@ -43,7 +45,7 @@ export const deleteResume = async (id: string) => {
 }
 
 export const saveChat = async (
-  data: Pick<ChatSchema, 'id' | 'title' | 'resumeId'>,
+  data: Pick<ChatModel, 'id' | 'title' | 'resumeId'>,
 ) => {
   return await db.insert(chats).values(data)
 }
@@ -58,7 +60,7 @@ export const getChatsByResumeId = async (id: string) => {
   return await db.select().from(chats).where(eq(chats.resumeId, id))
 }
 
-export const saveMessage = async (data: Omit<MessageSchema, 'createdAt'>) => {
+export const saveMessage = async (data: Omit<MessageModel, 'createdAt'>) => {
   return await db.insert(messages).values(data).returning()
 }
 
