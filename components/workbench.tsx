@@ -61,8 +61,7 @@ export function Workbench({
   )
 
   const handleContentChange = useCallback(
-    (value?: string) => {
-      if (!value) return
+    (value: string = '') => {
       setEditorContent(value)
       throttledSave(value)
     },
@@ -97,12 +96,15 @@ export function Workbench({
         defaultSize={50}
         collapsible
         collapsedSize={5}
-        className="bg-sidebar"
+        className="dark:bg-secondary/80"
       >
         {sidebar === 'chat' ? (
           <ChatContainer resumeId={resume.id} chats={chats} />
         ) : (
-          <Editor value={editorContent} onChange={handleContentChange} />
+          <Editor
+            defaultValue={resume.content}
+            onChange={handleContentChange}
+          />
         )}
       </ResizablePanel>
     </ResizablePanelGroup>

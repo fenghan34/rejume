@@ -9,9 +9,9 @@ import { setUpAssistant } from '@/lib/editor/writing-assistant'
 import { useAppStore } from '@/providers/app'
 
 export function Editor({
-  value,
+  defaultValue,
   onChange,
-}: Pick<EditorProps, 'value' | 'onChange'>) {
+}: Pick<EditorProps, 'defaultValue' | 'onChange'>) {
   const { theme } = useTheme()
   const setMonacoEditor = useAppStore((state) => state.setMonacoEditor)
 
@@ -29,11 +29,11 @@ export function Editor({
     <CodeEditor
       language="markdown"
       theme={theme === 'light' ? 'vs' : 'vs-dark'}
-      value={value}
+      defaultValue={defaultValue}
       onChange={onChange}
       onMount={handleOnMount}
       options={{
-        fontSize: 15,
+        fontSize: 14,
         wordWrap: 'on',
         padding: { top: 15, bottom: 400 },
         lineNumbers: 'off',
