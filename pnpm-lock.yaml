@@ -84,9 +84,6 @@ importers:
       immer:
         specifier: ^10.1.1
         version: 10.1.1
-      ky:
-        specifier: ^1.8.1
-        version: 1.8.1
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -5716,13 +5713,6 @@ packages:
     resolution:
       {
         integrity: sha512-HzhziW6sc5m0pwi5M196+7cEBtbt0lCYi67wNsiwMUmz833wloE0gbzJPWKs1gliFKQb34huItDQX97LyOdPdA==,
-      }
-    engines: { node: '>=18' }
-
-  ky@1.8.1:
-    resolution:
-      {
-        integrity: sha512-7Bp3TpsE+L+TARSnnDpk3xg8Idi8RwSLdj6CMbNWoOARIrGrbuLGusV0dYwbZOm4bB3jHNxSw8Wk/ByDqJEnDw==,
       }
     engines: { node: '>=18' }
 
@@ -11601,8 +11591,6 @@ snapshots:
   kolorist@1.8.0: {}
 
   ky@1.7.5: {}
-
-  ky@1.8.1: {}
 
   language-subtag-registry@0.3.23: {}
 

@@ -78,7 +78,7 @@ export function getSelectedValue(
   return value
 }
 
-export function isValidSelect(editor: MonacoEditor, minWordCount = 5) {
+export function isValidSelection(editor: MonacoEditor, minWordCount = 5) {
   const selection = editor.getSelection()
   if (!selection || selection.isEmpty() || editor.getSelections()!.length > 1)
     return false

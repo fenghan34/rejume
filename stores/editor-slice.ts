@@ -1,5 +1,5 @@
 import type { AppStore } from './app-store'
-import type { MonacoEditor, Monaco } from '@/lib/editor/types'
+import type { MonacoEditor, Monaco } from '@/lib/monaco/types'
 import type { StateCreator } from 'zustand'
 
 type SaveStatus = 'saved' | 'saving' | 'error'

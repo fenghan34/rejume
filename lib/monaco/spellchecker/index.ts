@@ -10,14 +10,14 @@ import { debounce } from 'lodash'
 import { initDictionary } from './dic'
 import { processMarkdownWords } from './word'
 
-const SPELLCHEK_ID = 'spellcheck'
-const SPELLCHEK_ADD_TO_DIC_ID = 'spellcheck.addToDictionary'
+const SPELLCHEK_ID = 'spellchecker'
+const SPELLCHEK_ADD_TO_DIC_ID = 'spellchecker.addToDictionary'
 
 function extractWordFromMessage(message: string) {
   return message.match(/^"(.*?)":/)![1]
 }
 
-export function setUpSpellcheck(
+export function setUpSpellchecker(
   editor: MonacoEditor,
   monaco: Monaco,
   options: { lang: Language },
@@ -121,7 +121,7 @@ export function setUpSpellcheck(
     monaco.editor.setModelMarkers(model, SPELLCHEK_ID, remainedMarkers)
   }
 
-  const debouncedRun = debounce(run, 500)
+  const debouncedRun = debounce(run, 300)
 
   initDictionary(options.lang).then((dic) => {
     dictionary = dic

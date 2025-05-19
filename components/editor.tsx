@@ -4,8 +4,8 @@ import type { EditorProps, OnMount } from '@monaco-editor/react'
 import CodeEditor from '@monaco-editor/react'
 import { useTheme } from 'next-themes'
 import { useCallback } from 'react'
-import { setUpSpellcheck } from '@/lib/editor/spellcheck'
-import { setUpAssistant } from '@/lib/editor/writing-assistant'
+import { setUpSelectionTools } from '@/lib/monaco/selection-tools'
+import { setUpSpellchecker } from '@/lib/monaco/spellchecker'
 import { useAppStore } from '@/providers/app'
 
 export function Editor({
@@ -19,8 +19,8 @@ export function Editor({
     (editor, monaco) => {
       editor.focus()
       setMonacoEditor(monaco, editor)
-      setUpSpellcheck(editor, monaco, { lang: 'en_us' })
-      setUpAssistant(editor, monaco)
+      setUpSpellchecker(editor, monaco, { lang: 'en_us' })
+      setUpSelectionTools(editor, monaco)
     },
     [setMonacoEditor],
   )

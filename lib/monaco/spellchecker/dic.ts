@@ -1,5 +1,4 @@
 import { loadModule } from 'hunspell-asm'
-import ky from 'ky'
 
 const DicSources = {
   en_us: {
@@ -20,7 +19,9 @@ export interface Dictionary {
 export async function initDictionary(language: Language): Promise<Dictionary> {
   const source = DicSources[language]
   const buffers = await Promise.all(
-    [source.aff, source.dic].map((url) => ky(url).arrayBuffer()),
+    [source.aff, source.dic].map((url) =>
+      fetch(url).then((res) => res.arrayBuffer()),
+    ),
   )
 
   const hunspellFactory = await loadModule()
