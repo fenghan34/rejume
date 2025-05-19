@@ -10,6 +10,7 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
+  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
@@ -75,11 +76,15 @@ function DeleteButton({ id }: { id: string }) {
           <AlertDialogTitle>
             Are you sure you want to delete this resume?
           </AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone. This will permanently delete your
+            resume and remove your data from our servers.
+          </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction onClick={() => deleteResume(id)}>
-            Yes
+            Continue
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

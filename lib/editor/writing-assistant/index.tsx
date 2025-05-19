@@ -70,17 +70,13 @@ export function setUpAssistant(editor: MonacoEditor, monaco: Monaco) {
     },
   ])
 
-  editor.addContentWidget(actionBar)
-  editor.addContentWidget(suggestionBox)
-  editor.onDidChangeCursorSelection(
-    debounce((e) => {
-      if (isValidSelect(editor)) {
-        actionBar.setPosition(e.selection.getStartPosition())
-      } else {
-        actionBar.setPosition(null)
-      }
-    }, 100),
-  )
+  const handleCursorChange = debounce(() => {
+    if (isValidSelect(editor)) {
+      actionBar.setPosition(editor.getSelection()!.getStartPosition())
+    } else {
+      actionBar.setPosition(null)
+    }
+  }, 100)
 
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Escape') {
@@ -98,7 +94,12 @@ export function setUpAssistant(editor: MonacoEditor, monaco: Monaco) {
       editor.focus()
     }
   }
+
   window.addEventListener('keydown', handleKeyDown)
+  handleCursorChange()
+  editor.addContentWidget(actionBar)
+  editor.addContentWidget(suggestionBox)
+  editor.onDidChangeCursorSelection(handleCursorChange)
   editor.onDidDispose(() => {
     window.removeEventListener('keydown', handleKeyDown)
   })
