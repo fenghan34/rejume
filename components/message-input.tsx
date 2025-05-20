@@ -17,7 +17,7 @@ export function MessageInput({
   const isLoading = status === 'submitted' || status === 'streaming'
 
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-center p-8">
       <form
         onSubmit={handleSubmit}
         onKeyDown={(e) => {
@@ -26,7 +26,7 @@ export function MessageInput({
             handleSubmit(e)
           }
         }}
-        className="m-6 mt-0 p-2 w-full max-w-[65ch] border rounded-2xl shadow-sm focus-within:ring"
+        className="mx-auto p-2 w-full max-w-3xl border rounded-2xl shadow-sm focus-within:ring"
       >
         <Textarea
           autoFocus

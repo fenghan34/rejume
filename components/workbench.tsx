@@ -79,12 +79,10 @@ export function Workbench({
 
   return (
     <ResizablePanelGroup direction="horizontal" className="rounded outline">
-      <ResizablePanel minSize={30} defaultSize={50} className="@container ">
-        <div className="bg-secondary h-full">
-          <div className="h-full overflow-y-auto overflow-x-hidden scrollbar-primary">
-            <div className="mx-auto max-w-xl @4xl:max-w-2xl">
-              <Preview className={PREVIEW_CLASS} content={editorContent} />
-            </div>
+      <ResizablePanel minSize={30} defaultSize={50} className="bg-secondary">
+        <div className="h-full overflow-y-auto overflow-x-hidden scrollbar-primary scrollbar-gutter-stable">
+          <div className="mx-auto max-w-xl @4xl:max-w-2xl">
+            <Preview className={PREVIEW_CLASS} content={editorContent} />
           </div>
         </div>
       </ResizablePanel>

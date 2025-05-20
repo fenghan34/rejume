@@ -36,8 +36,8 @@ export function Chat({
     })
 
   return (
-    <div className="h-full flex flex-col">
-      <MessageList messages={messages} />
+    <div className="h-full flex flex-col @container/chat">
+      <MessageList messages={messages} status={status} />
       <MessageInput
         input={input}
         status={status}

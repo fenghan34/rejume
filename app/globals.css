@@ -132,10 +132,12 @@
   --font-nunito-sans: var(--font-nunito-sans);
 }
 
-@layer components {
-  .scrollbar-primary {
-    @apply scrollbar-thin scrollbar-thumb-rounded-full hover:scrollbar-thumb-black/15 dark:hover:scrollbar-thumb-white/15 transition-all;
-  }
+@utility scrollbar-primary {
+  @apply scrollbar-thin scrollbar-thumb-rounded-full hover:scrollbar-thumb-black/10 dark:hover:scrollbar-thumb-white/10 transition-all;
+}
+
+@utility scrollbar-gutter-stable {
+  scrollbar-gutter: stable both-edges;
 }
 
 @media print {

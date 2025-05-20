@@ -16,9 +16,10 @@ export function ChatContainer({
   const [initialMessages, setInitialMessages] = useState<UIMessage[]>([])
 
   // Not support multiple chats yet
-  const chatId = chats[0]?.id || generateUUID()
+  const chatId = chats[0]?.id
 
   useEffect(() => {
+    if (!chatId) return
     const fetchMessages = async () => {
       const response = await fetch(`/api/chat?id=${chatId}`)
       const data = await response.json()
@@ -29,7 +30,11 @@ export function ChatContainer({
 
   return (
     <div className="h-full">
-      <Chat id={chatId} resumeId={resumeId} initialMessages={initialMessages} />
+      <Chat
+        id={chatId || generateUUID()}
+        resumeId={resumeId}
+        initialMessages={initialMessages}
+      />
     </div>
   )
 }
