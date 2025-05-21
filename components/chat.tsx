@@ -2,6 +2,7 @@
 
 import { useChat } from '@ai-sdk/react'
 import { UIMessage } from 'ai'
+import React from 'react'
 import { toast } from 'sonner'
 import { generateUUID } from '@/lib/utils'
 import { MessageInput } from './message-input'
@@ -36,7 +37,7 @@ export function Chat({
     })
 
   return (
-    <div className="h-full flex flex-col @container/chat">
+    <div className="h-full flex flex-col @container/chat relative">
       <MessageList messages={messages} status={status} />
       <MessageInput
         input={input}

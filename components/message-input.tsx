@@ -1,10 +1,11 @@
 import { UseChatHelpers } from '@ai-sdk/react'
 import { Paperclip, Square, ArrowUp } from 'lucide-react'
+import { memo } from 'react'
 import { cn } from '@/lib/utils'
 import { Button } from './ui/button'
 import { Textarea } from './ui/textarea'
 
-export function MessageInput({
+function PureMessageInput({
   input,
   status,
   stop,
@@ -17,7 +18,7 @@ export function MessageInput({
   const isLoading = status === 'submitted' || status === 'streaming'
 
   return (
-    <div className="flex justify-center p-8">
+    <div className="flex justify-center p-8 pt-0 z-10">
       <form
         onSubmit={handleSubmit}
         onKeyDown={(e) => {
@@ -26,17 +27,17 @@ export function MessageInput({
             handleSubmit(e)
           }
         }}
-        className="mx-auto p-2 w-full max-w-3xl border rounded-2xl shadow-sm focus-within:ring"
+        className="mx-auto p-2 w-full max-w-3xl rounded-2xl shadow-sm focus-within:ring border"
       >
         <Textarea
           autoFocus
           value={input}
           onChange={handleInputChange}
           placeholder="Type your message..."
-          className="ring-0 border-0 focus-visible:ring-0 shadow-none focus-visible:border-0 resize-none min-h-[3rem] max-h-[10rem] p-1"
+          className="ring-0 border-0 focus-visible:ring-0 shadow-none focus-visible:border-0 resize-none min-h-[3rem] max-h-[10rem] p-1 scrollbar-primary"
         />
         <div className="flex items-center justify-between">
-          <Button variant="ghost" className="cursor-pointer size-6">
+          <Button variant="ghost" className="cursor-pointer size-8">
             <Paperclip />
           </Button>
           {isLoading ? (
@@ -44,7 +45,7 @@ export function MessageInput({
               disabled={!isLoading}
               onClick={stop}
               className={cn(
-                'rounded-full size-6',
+                'rounded-full size-8',
                 isLoading && 'cursor-pointer',
               )}
             >
@@ -54,9 +55,9 @@ export function MessageInput({
             <Button
               type="submit"
               disabled={!input}
-              className={cn('rounded-full size-6', input && 'cursor-pointer')}
+              className={cn('rounded-full size-8', input && 'cursor-pointer')}
             >
-              <ArrowUp className="size-4" />
+              <ArrowUp />
             </Button>
           )}
         </div>
@@ -64,3 +65,9 @@ export function MessageInput({
     </div>
   )
 }
+
+export const MessageInput = memo(PureMessageInput, (prev, next) => {
+  if (prev.input !== next.input) return false
+  if (prev.status !== next.status) return false
+  return true
+})
