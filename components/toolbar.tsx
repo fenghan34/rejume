@@ -44,6 +44,7 @@ export function Toolbar() {
   return (
     <>
       <Tabs
+        className="mr-2"
         value={sidebar}
         onValueChange={(value) =>
           setSidebar(value as WorkbenchSlice['sidebar'])

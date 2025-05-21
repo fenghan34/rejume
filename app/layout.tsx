@@ -46,7 +46,7 @@ function Header() {
       <Link href="/" className="font-extrabold font-nunito-sans">
         Rejume
       </Link>
-      <div className="flex items-center gap-1">
+      <div className="flex items-center">
         <Toolbar />
         <Button
           className="cursor-pointer size-8"

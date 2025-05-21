@@ -1,6 +1,6 @@
 'use client'
 
-import { throttle } from 'lodash'
+import { debounce } from 'lodash'
 import dynamic from 'next/dynamic'
 import { useMemo, useCallback, useEffect } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
@@ -38,9 +38,9 @@ export function Workbench({
   const setEditorContent = useAppStore((state) => state.setEditorContent)
   const setSaveStatus = useAppStore((state) => state.setSaveStatus)
 
-  const throttledSave = useMemo(
+  const debouncedSave = useMemo(
     () =>
-      throttle(
+      debounce(
         async (content) => {
           if (content !== resume.content) {
             try {
@@ -63,12 +63,12 @@ export function Workbench({
   const handleContentChange = useCallback(
     (value: string = '') => {
       setEditorContent(value)
-      throttledSave(value)
+      debouncedSave(value)
     },
-    [setEditorContent, throttledSave],
+    [setEditorContent, debouncedSave],
   )
 
-  useHotkeys('meta+s, ctrl+s', () => throttledSave(editorContent), {
+  useHotkeys('meta+s, ctrl+s', () => debouncedSave(editorContent), {
     preventDefault: true,
     enableOnFormTags: ['input', 'textarea', 'select'],
   })
@@ -94,7 +94,6 @@ export function Workbench({
         defaultSize={50}
         collapsible
         collapsedSize={5}
-        className="dark:bg-secondary/80"
       >
         {sidebar === 'chat' ? (
           <ChatContainer resumeId={resume.id} chats={chats} />
