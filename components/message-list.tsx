@@ -26,7 +26,7 @@ function PureMessageList({
 }) {
   const mountedRef = useRef(false)
   const ref = useRef<HTMLDivElement>(null)
-  const [isAtBottom, setIsAtBottom] = useState(false)
+  const [isAtBottom, setIsAtBottom] = useState(true)
 
   useLayoutEffect(() => {
     // Scroll to the bottom when the messages are loaded for the first time
@@ -39,7 +39,12 @@ function PureMessageList({
   }, [messages])
 
   const computeScrollPadding = useCallback((role: UIMessage['role']) => {
-    if (!mountedRef.current || !ref.current || role !== 'assistant') {
+    if (
+      !mountedRef.current ||
+      !ref.current ||
+      ref.current.scrollHeight <= ref.current.clientHeight ||
+      role !== 'assistant'
+    ) {
       return 0
     }
     return ref.current.clientHeight - PADDING * 3
@@ -81,20 +86,20 @@ function PureMessageList({
           messages[messages.length - 1].role === 'user' && (
             <PendingMessage minHeight={computeScrollPadding('assistant')} />
           )}
-
-        <AnimatePresence>
-          {mountedRef.current && !isAtBottom && (
-            <ScrollToBottomButton
-              onClick={() => {
-                ref.current?.scrollTo({
-                  top: ref.current?.scrollHeight,
-                  behavior: 'smooth',
-                })
-              }}
-            />
-          )}
-        </AnimatePresence>
       </div>
+
+      <AnimatePresence>
+        {!isAtBottom && (
+          <ScrollToBottomButton
+            onClick={() => {
+              ref.current?.scrollTo({
+                top: ref.current?.scrollHeight,
+                behavior: 'smooth',
+              })
+            }}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }
