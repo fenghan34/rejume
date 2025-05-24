@@ -1,7 +1,7 @@
 import 'server-only'
 
 import type { ChatModel, MessageModel, ResumeModel } from './schema'
-import { eq } from 'drizzle-orm'
+import { desc, eq } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
 import { chats, messages, resumes } from './schema'
@@ -13,12 +13,7 @@ const db = drizzle({
 })
 
 export const getResumeList = async () => {
-  try {
-    return await db.select().from(resumes)
-  } catch (error) {
-    console.log('error', error)
-    return []
-  }
+  return await db.select().from(resumes).orderBy(desc(resumes.createdAt))
 }
 
 export const createResume = async (
@@ -37,7 +32,10 @@ export const updateResume = async (
   id: string,
   data: Partial<Pick<ResumeModel, 'name' | 'content'>>,
 ) => {
-  return await db.update(resumes).set(data).where(eq(resumes.id, id))
+  return await db
+    .update(resumes)
+    .set({ ...data, updatedAt: new Date() })
+    .where(eq(resumes.id, id))
 }
 
 export const deleteResume = async (id: string) => {
@@ -61,6 +59,15 @@ export const getChatsByResumeId = async (id: string) => {
 }
 
 export const saveMessage = async (data: Omit<MessageModel, 'createdAt'>) => {
+  const result = await db
+    .select()
+    .from(messages)
+    .where(eq(messages.id, data.id))
+
+  if (result.length > 0) {
+    return await db.update(messages).set(data).where(eq(messages.id, data.id))
+  }
+
   return await db.insert(messages).values(data).returning()
 }
 
