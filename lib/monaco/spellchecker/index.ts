@@ -126,11 +126,22 @@ export function setUpSpellchecker(
   initDictionary(options.lang).then((dic) => {
     dictionary = dic
 
+    const codeActionDisposable = monaco.languages.registerCodeActionProvider(
+      'markdown',
+      codeActionProvider,
+    )
+    const cmdDisposable = monaco.editor.registerCommand(
+      SPELLCHEK_ADD_TO_DIC_ID,
+      addToDictionary,
+    )
+
     run()
     editor.onDidChangeModelContent(() => debouncedRun())
-    editor.onDidDispose(() => dictionary.dispose())
 
-    monaco.languages.registerCodeActionProvider('markdown', codeActionProvider)
-    monaco.editor.registerCommand(SPELLCHEK_ADD_TO_DIC_ID, addToDictionary)
+    editor.onDidDispose(() => {
+      dictionary.dispose()
+      cmdDisposable.dispose()
+      codeActionDisposable.dispose()
+    })
   })
 }
