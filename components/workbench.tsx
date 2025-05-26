@@ -2,7 +2,13 @@
 
 import { debounce } from 'lodash'
 import dynamic from 'next/dynamic'
-import { useMemo, useCallback, useEffect } from 'react'
+import React, {
+  useMemo,
+  useCallback,
+  useEffect,
+  // @ts-expect-error ViewTransition is experimental
+  unstable_ViewTransition as ViewTransition,
+} from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { toast } from 'sonner'
 import { updateResume } from '@/app/resume/actions'
@@ -82,7 +88,10 @@ export function Workbench({
       <ResizablePanel minSize={30} defaultSize={50} className="bg-secondary">
         <div className="h-full overflow-y-auto overflow-x-hidden scrollbar-primary scrollbar-gutter-stable">
           <div className="mx-auto max-w-xl @4xl:max-w-2xl">
-            <Preview className={PREVIEW_CLASS} content={editorContent} />
+            <PreviewWithViewTransition
+              resumeId={resume.id}
+              content={editorContent}
+            />
           </div>
         </div>
       </ResizablePanel>
@@ -105,5 +114,19 @@ export function Workbench({
         )}
       </ResizablePanel>
     </ResizablePanelGroup>
+  )
+}
+
+function PreviewWithViewTransition({
+  resumeId,
+  content,
+}: {
+  resumeId: string
+  content: string
+}) {
+  return (
+    <ViewTransition name={`resume-${resumeId}`}>
+      <Preview className={PREVIEW_CLASS} content={content} />
+    </ViewTransition>
   )
 }

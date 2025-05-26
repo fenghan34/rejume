@@ -1,12 +1,14 @@
 'use client'
 
+import { isEqual } from 'lodash'
+import { memo } from 'react'
 import { useAutoPagination } from '@/hooks/useAutoPagination'
 import { useAutoScale, UseAutoScaleOptions } from '@/hooks/useAutoScale'
 import { useRemark } from '@/hooks/useRemark'
 import { A4_HEIGHT, A4_WIDTH, A4_PAGE_PADDING } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 
-export function Preview({
+function PurePreview({
   content,
   className,
   autoScaleOptions,
@@ -44,3 +46,11 @@ export function Preview({
     </div>
   )
 }
+
+export const Preview = memo(PurePreview, (prev, next) => {
+  if (prev.content !== next.content) return false
+  if (prev.className !== next.className) return false
+  if (!isEqual(prev.autoScaleOptions, next.autoScaleOptions)) return false
+
+  return true
+})
