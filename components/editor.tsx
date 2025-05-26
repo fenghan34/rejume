@@ -2,19 +2,19 @@
 
 import type { EditorProps, OnMount } from '@monaco-editor/react'
 import CodeEditor, { loader } from '@monaco-editor/react'
-import * as monaco from 'monaco-editor'
 import { useTheme } from 'next-themes'
 import { useCallback } from 'react'
 import { setUpSelectionTools } from '@/lib/monaco/selection-tools'
 import { setUpSpellchecker } from '@/lib/monaco/spellchecker'
 import { useAppStore } from '@/providers/app'
 
-loader.config({ monaco })
+// NOTE: I manually copied the monaco-editor/min/vs folder to the public folder as a workaround to not load from the default CDN
+loader.config({ paths: { vs: `${window.origin}/monaco-editor` } })
 
 export function Editor({
-  defaultValue,
+  value,
   onChange,
-}: Pick<EditorProps, 'defaultValue' | 'onChange'>) {
+}: Pick<EditorProps, 'value' | 'onChange'>) {
   const { theme } = useTheme()
   const setMonacoEditor = useAppStore((state) => state.setMonacoEditor)
 
@@ -32,7 +32,7 @@ export function Editor({
     <CodeEditor
       language="markdown"
       theme={theme === 'light' ? 'vs' : 'vs-dark'}
-      defaultValue={defaultValue}
+      value={value}
       onChange={onChange}
       onMount={handleOnMount}
       options={{
