@@ -1,12 +1,15 @@
 'use client'
 
 import type { EditorProps, OnMount } from '@monaco-editor/react'
-import CodeEditor from '@monaco-editor/react'
+import CodeEditor, { loader } from '@monaco-editor/react'
+import * as monaco from 'monaco-editor'
 import { useTheme } from 'next-themes'
 import { useCallback } from 'react'
 import { setUpSelectionTools } from '@/lib/monaco/selection-tools'
 import { setUpSpellchecker } from '@/lib/monaco/spellchecker'
 import { useAppStore } from '@/providers/app'
+
+loader.config({ monaco })
 
 export function Editor({
   defaultValue,
