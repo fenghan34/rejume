@@ -2,7 +2,7 @@
 
 import { UIMessage, generateText } from 'ai'
 import { revalidatePath } from 'next/cache'
-import { model } from '@/lib/ai/model'
+import { providers } from '@/lib/ai/providers'
 import * as queries from '@/lib/db/queries'
 import { ResumeModel } from '@/lib/db/schema'
 
@@ -22,6 +22,7 @@ export async function updateResume(
   data: Partial<Pick<ResumeModel, 'name' | 'content'>>,
 ) {
   await queries.updateResume(id, data)
+  revalidatePath('/resume')
   revalidatePath(`/resume/${id}`)
 }
 
@@ -40,7 +41,7 @@ export async function generateTitleFromUserMessage({
   message: UIMessage
 }) {
   const { text: title } = await generateText({
-    model,
+    model: providers.openrouter('meta-llama/llama-4-maverick:free'),
     system: `\n
     - you will generate a short title based on the first message a user begins a conversation with
     - ensure it is not more than 80 characters long
@@ -50,4 +51,33 @@ export async function generateTitleFromUserMessage({
   })
 
   return title
+}
+
+export async function importFromPDF(file: File, exampleResume: string) {
+  const { text } = await generateText({
+    model: providers.openrouter('meta-llama/llama-4-maverick:free'),
+    system: `You are a helpful assistant that extracts and structures all relevant information including personal details, work experience, education, skills, and any other sections present from the OCR of user's resume PDF.
+      - you should return the information in Markdown format
+      - you should return the information in the same language as the resume
+      - you should format the information clearly in the same format as the example below
+
+      Example output:
+      ${exampleResume}
+      `,
+    messages: [
+      {
+        role: 'user',
+        content: [
+          {
+            type: 'file',
+            filename: file.name,
+            mimeType: 'application/pdf',
+            data: await file.bytes(),
+          },
+        ],
+      },
+    ],
+  })
+
+  return text
 }

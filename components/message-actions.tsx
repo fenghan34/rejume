@@ -3,7 +3,6 @@ import { Check, Copy } from 'lucide-react'
 import { useEffect, useState, memo } from 'react'
 import { toast } from 'sonner'
 import {
-  TooltipProvider,
   Tooltip,
   TooltipTrigger,
   TooltipContent,
@@ -54,34 +53,32 @@ function PureMessageActions({
   }
 
   return (
-    <TooltipProvider delayDuration={0}>
-      <div
-        className={cn(
-          'flex group-data-[role=user]/message:justify-end group-data-[role=assistant]/message:justify-start opacity-0 group-hover/message:opacity-100 transition-opacity duration-200 ease-in-out transform group-data-[role=user]/message:translate-x-1.5 group-data-[role=assistant]/message:-translate-x-1.5',
-          {
-            'opacity-100': copiedMessageId === message.id,
-            '!opacity-0': loading,
-            'group-last/message:opacity-100': message.role === 'assistant',
-            'group-last/message:opacity-0': message.role === 'user',
-          },
-        )}
-      >
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              className="size-8 cursor-pointer"
-              onClick={handleCopy}
-            >
-              {copied ? <Check /> : <Copy />}
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent className="px-1.5 py-0.5 font-medium" side="bottom">
-            Copy
-          </TooltipContent>
-        </Tooltip>
-      </div>
-    </TooltipProvider>
+    <div
+      className={cn(
+        'flex group-data-[role=user]/message:justify-end group-data-[role=assistant]/message:justify-start opacity-0 group-hover/message:opacity-100 transition-opacity duration-200 ease-in-out transform group-data-[role=user]/message:translate-x-1.5 group-data-[role=assistant]/message:-translate-x-1.5',
+        {
+          'opacity-100': copiedMessageId === message.id,
+          '!opacity-0': loading,
+          'group-last/message:opacity-100': message.role === 'assistant',
+          'group-last/message:opacity-0': message.role === 'user',
+        },
+      )}
+    >
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            variant="ghost"
+            className="size-8 cursor-pointer"
+            onClick={handleCopy}
+          >
+            {copied ? <Check /> : <Copy />}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent className="px-1.5 py-0.5 font-medium" side="bottom">
+          Copy
+        </TooltipContent>
+      </Tooltip>
+    </div>
   )
 }
 

@@ -1,5 +1,5 @@
 import { createDataStreamResponse, streamText } from 'ai'
-import { model } from '@/lib/ai/model'
+import { providers } from '@/lib/ai/providers'
 
 export async function POST(req: Request) {
   const { messages } = await req.json()
@@ -7,7 +7,7 @@ export async function POST(req: Request) {
   return createDataStreamResponse({
     execute: (dataStream) => {
       const result = streamText({
-        model,
+        model: providers.openrouter('meta-llama/llama-4-maverick:free'),
         messages,
         abortSignal: req.signal,
       })

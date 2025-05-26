@@ -107,10 +107,7 @@ export function Workbench({
         {sidebar === 'chat' ? (
           <ChatContainer resumeId={resume.id} chats={chats} />
         ) : (
-          <Editor
-            defaultValue={resume.content}
-            onChange={handleContentChange}
-          />
+          <Editor value={editorContent} onChange={handleContentChange} />
         )}
       </ResizablePanel>
     </ResizablePanelGroup>
