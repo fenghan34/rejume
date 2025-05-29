@@ -47,12 +47,18 @@ export function useAutoPagination(
       container.style.width = `${width}px`
       container.style.padding = `0px ${paddingX}px`
 
-      const items = Array.from(container.children).map((child) => ({
-        height:
-          (child as HTMLElement).offsetHeight +
-          Number.parseFloat(getComputedStyle(child).marginBottom),
-        html: child.outerHTML,
-      }))
+      const items = Array.from(container.children).map((child) => {
+        if (!(child instanceof HTMLElement)) {
+          return { height: child.clientHeight, html: child.outerHTML }
+        }
+
+        const height =
+          child.offsetHeight +
+          Number.parseFloat(getComputedStyle(child).marginBottom) +
+          Number.parseFloat(getComputedStyle(child).marginTop)
+
+        return { height, html: child.outerHTML }
+      })
 
       let currentHeight = 0
       let currentPage = ''

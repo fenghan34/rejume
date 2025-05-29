@@ -152,37 +152,53 @@
     @apply bg-background dark:bg-background/60 shadow-lg;
   }
 
-  section:has(h1) {
-    @apply text-center;
+  h1 {
+    /* Name */
+    @apply text-center text-[2em] font-bold;
+  }
 
-    h1 {
-      @apply text-[2em] font-bold;
-    }
+  h1 + p {
+    /* Position */
+    @apply text-center text-xl mb-2;
 
     strong {
-      @apply text-xl font-medium;
+      @apply font-medium;
     }
+  }
 
-    p:last-child {
-      @apply mt-2;
-    }
+  h1 + p + p {
+    /* Basic Info */
+    @apply text-center;
 
     a[href*='github.com'] {
       @apply before:icon-[mdi--github] before:align-[-0.125em] before:mr-1;
     }
   }
 
-  section {
-    @apply mb-4;
-  }
-
   h2 {
-    @apply w-fit pr-3 pl-1 mb-2;
+    /* Section Title */
+    @apply w-fit pr-3 pl-1 mb-3 mt-5 font-bold;
     @apply text-white bg-black;
     @apply dark:bg-gray-200 dark:text-black;
   }
 
+  h3 {
+    /* Section item title */
+    @apply mt-4;
+  }
+
+  h3 span {
+    /* Section item subtitle */
+    @apply text-[#777] ml-1;
+  }
+
+  h3 + p {
+    /* Start Date - End Date */
+    @apply text-sm text-[#777] mb-2;
+  }
+
   ul {
-    @apply list-[circle] pl-6 my-1;
+    /* Highlight */
+    @apply list-[circle] pl-6 mt-1;
   }
 }

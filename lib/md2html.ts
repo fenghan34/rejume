@@ -1,4 +1,4 @@
-import type { Element as HastElement, Root } from 'hast'
+import type { Root } from 'hast'
 import type { IRange } from 'monaco-editor'
 import rehypeExternalLinks from 'rehype-external-links'
 import rehypeRaw from 'rehype-raw'
@@ -29,38 +29,6 @@ export function parsePositionAttribute(element: Element): IRange | undefined {
 }
 
 /**
- * Split HTML elements into sections
- */
-function rehypeSectionSplit() {
-  return (tree: Root) => {
-    const newChildren: HastElement[] = []
-
-    while (tree.children.length) {
-      const current = tree.children.shift()!
-      if (current.type !== 'element') continue
-
-      if (['h1', 'h2'].includes(current.tagName)) {
-        newChildren.push({
-          type: 'element',
-          tagName: 'section',
-          children: [],
-          properties: {},
-        })
-      }
-
-      const last = newChildren.at(-1)
-      if (last?.tagName === 'section') {
-        last.children.push(current)
-      } else {
-        newChildren.push(current)
-      }
-    }
-
-    tree.children = newChildren
-  }
-}
-
-/**
  * Set the position data (line, column) of each node as an HTML attribute
  */
 function rehypeElementPosition() {
@@ -78,6 +46,42 @@ function rehypeElementPosition() {
   }
 }
 
+function rehypeHeading3() {
+  return (tree: Root) => {
+    visit(tree, 'element', (node) => {
+      if (node.tagName === 'h3') {
+        if (
+          node.children.length === 1 &&
+          node.children[0].type === 'text' &&
+          node.children[0].value.includes('|')
+        ) {
+          const [name, position, date] = node.children[0].value.split('|')
+          node.children = [
+            {
+              type: 'element',
+              tagName: 'strong',
+              children: [{ type: 'text', value: name }],
+              properties: {},
+            },
+            {
+              type: 'element',
+              tagName: 'span',
+              children: [{ type: 'text', value: position }],
+              properties: {},
+            },
+            {
+              type: 'element',
+              tagName: 'span',
+              children: [{ type: 'text', value: date }],
+              properties: {},
+            },
+          ]
+        }
+      }
+    })
+  }
+}
+
 export async function parseMarkdown(markdown: string) {
   return await unified()
     .use(remarkParse)
@@ -85,7 +89,7 @@ export async function parseMarkdown(markdown: string) {
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypeRaw)
     .use(rehypeElementPosition)
-    .use(rehypeSectionSplit)
+    .use(rehypeHeading3)
     .use(rehypeSanitize, {
       ...defaultSchema,
       attributes: {
