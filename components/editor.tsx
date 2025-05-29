@@ -12,27 +12,27 @@ import { useAppStore } from '@/providers/app'
 loader.config({ paths: { vs: `${window.origin}/monaco-editor` } })
 
 export function Editor({
-  value,
+  defaultValue,
   onChange,
-}: Pick<EditorProps, 'value' | 'onChange'>) {
+}: Pick<EditorProps, 'defaultValue' | 'onChange'>) {
   const { theme } = useTheme()
-  const setMonacoEditor = useAppStore((state) => state.setMonacoEditor)
+  const setEditor = useAppStore((state) => state.setEditor)
 
   const handleOnMount = useCallback<OnMount>(
     (editor, monaco) => {
       editor.focus()
-      setMonacoEditor(monaco, editor)
+      setEditor(editor)
       setUpSpellchecker(editor, monaco, { lang: 'en_us' })
       setUpSelectionTools(editor, monaco)
     },
-    [setMonacoEditor],
+    [setEditor],
   )
 
   return (
     <CodeEditor
       language="markdown"
       theme={theme === 'light' ? 'vs' : 'vs-dark'}
-      value={value}
+      defaultValue={defaultValue}
       onChange={onChange}
       onMount={handleOnMount}
       options={{

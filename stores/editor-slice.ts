@@ -1,18 +1,17 @@
 import type { AppStore } from './app-store'
-import type { MonacoEditor, Monaco } from '@/lib/monaco/types'
+import type { MonacoEditor } from '@/lib/monaco/types'
 import type { StateCreator } from 'zustand'
 
 type SaveStatus = 'saved' | 'saving' | 'error'
 
 type EditorSliceState = {
   editor: MonacoEditor | null
-  monaco: Monaco | null
   editorContent: string
   saveStatus: SaveStatus
 }
 
 type EditorSliceActions = {
-  setMonacoEditor: (monaco: Monaco | null, editor: MonacoEditor | null) => void
+  setEditor: (editor: MonacoEditor | null) => void
   setEditorContent: (content: string) => void
   setSaveStatus: (status: SaveStatus) => void
 }
@@ -26,12 +25,13 @@ export const createEditorSlice: StateCreator<
   EditorSlice
 > = (set) => ({
   editor: null,
-  monaco: null,
   editorContent: '',
   saveStatus: 'saved',
 
-  setMonacoEditor(monaco, editor) {
-    set(() => ({ monaco, editor }))
+  setEditor(editor) {
+    set((state) => {
+      state.editor = editor
+    })
   },
 
   setEditorContent(content) {

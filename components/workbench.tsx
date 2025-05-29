@@ -8,6 +8,7 @@ import React, {
   useEffect,
   // @ts-expect-error ViewTransition is experimental
   unstable_ViewTransition as ViewTransition,
+  useRef,
 } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { toast } from 'sonner'
@@ -85,15 +86,12 @@ export function Workbench({
 
   return (
     <ResizablePanelGroup direction="horizontal" className="rounded outline">
-      <ResizablePanel minSize={30} defaultSize={50} className="bg-secondary">
-        <div className="h-full overflow-y-auto overflow-x-hidden scrollbar-primary scrollbar-gutter-stable">
-          <div className="mx-auto max-w-xl @4xl:max-w-2xl">
-            <PreviewWithViewTransition
-              resumeId={resume.id}
-              content={editorContent}
-            />
-          </div>
-        </div>
+      <ResizablePanel
+        minSize={30}
+        defaultSize={50}
+        className="bg-secondary @container"
+      >
+        <PreviewContainer resumeId={resume.id} content={editorContent} />
       </ResizablePanel>
 
       <ResizableHandle />
@@ -107,10 +105,52 @@ export function Workbench({
         {sidebar === 'chat' ? (
           <ChatContainer resumeId={resume.id} chats={chats} />
         ) : (
-          <Editor value={editorContent} onChange={handleContentChange} />
+          <Editor
+            defaultValue={resume.content}
+            onChange={handleContentChange}
+          />
         )}
       </ResizablePanel>
     </ResizablePanelGroup>
+  )
+}
+
+function PreviewContainer({
+  resumeId,
+  content,
+}: {
+  resumeId: string
+  content: string
+}) {
+  const ref = useRef<HTMLDivElement>(null)
+  const editor = useAppStore((state) => state.editor)
+
+  useEffect(() => {
+    const scrollPreview = () => {
+      if (!ref.current || !editor) return
+      const height = editor.getLayoutInfo().height
+      const scrollTop = editor.getScrollTop()
+      const scrollHeight = editor.getScrollHeight()
+      const percentage = scrollTop / (scrollHeight - height)
+
+      ref.current.scroll({
+        top: percentage * (ref.current.scrollHeight - ref.current.clientHeight),
+      })
+    }
+
+    editor?.onDidChangeCursorPosition(scrollPreview)
+    editor?.onDidScrollChange(scrollPreview)
+  }, [editor])
+
+  return (
+    <div
+      ref={ref}
+      className="h-full overflow-y-auto overflow-x-hidden scrollbar-primary scrollbar-gutter-stable"
+    >
+      <div className="mx-auto max-w-xl @2xl:max-w-2xl">
+        <PreviewWithViewTransition resumeId={resumeId} content={content} />
+      </div>
+    </div>
   )
 }
 
