@@ -1,4 +1,3 @@
-import { Nunito_Sans } from 'next/font/google'
 import Link from 'next/link'
 import { ThemeProvider } from 'next-themes'
 import { Toaster } from 'sonner'
@@ -6,13 +5,9 @@ import { ModeToggle } from '@/components/mode-toggle'
 import { Toolbar } from '@/components/toolbar'
 import { Button } from '@/components/ui/button'
 import { TooltipProvider } from '@/components/ui/tooltip'
+import { montserrat, notoSans, notoSansSC, nunitoSans } from '@/lib/fonts'
 import { AppStoreProvider } from '@/providers/app'
 import './globals.css'
-
-const nunito_sans = Nunito_Sans({
-  variable: '--font-nunito-sans',
-  subsets: ['latin'],
-})
 
 export default function RootLayout({
   children,
@@ -21,7 +16,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${nunito_sans.variable} antialiased`}>
+      <head>
+        <title>Rejume</title>
+        <link rel="icon" href="/favicon.ico" />
+      </head>
+      <body
+        className={`${nunitoSans.variable} ${notoSans.variable} ${notoSansSC.variable} antialiased`}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
@@ -46,7 +47,7 @@ export default function RootLayout({
 function Header() {
   return (
     <header className="flex items-center justify-between px-6 h-14">
-      <Link href="/" className="font-extrabold font-nunito-sans">
+      <Link href="/" className={montserrat.className}>
         Rejume
       </Link>
       <div className="flex items-center gap-4">

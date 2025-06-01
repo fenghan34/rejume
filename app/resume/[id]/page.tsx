@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: Props) {
   if (!resume) return notFound()
 
   return {
-    title: `${resume.name} - Rejume`,
+    title: resume.name,
   }
 }
 

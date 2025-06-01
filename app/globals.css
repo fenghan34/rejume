@@ -128,10 +128,6 @@
   }
 }
 
-@theme {
-  --font-nunito-sans: var(--font-nunito-sans);
-}
-
 @utility scrollbar-primary {
   @apply scrollbar-thin scrollbar-thumb-rounded-full hover:scrollbar-thumb-black/10 dark:hover:scrollbar-thumb-white/10 transition-all;
 }
@@ -147,6 +143,14 @@
 }
 
 #rejume-preview {
+  &[lang='zh-CN'] {
+    font-family: var(--font-noto-sans-sc), var(--font-noto-sans), sans-serif;
+  }
+
+  &[lang='en'] {
+    font-family: var(--font-nunito-sans), sans-serif;
+  }
+
   #rejume-preview-page {
     @apply not-first:mt-2;
     @apply bg-background dark:bg-background/60 shadow-lg;
@@ -200,5 +204,15 @@
   ul {
     /* Highlight */
     @apply list-[circle] pl-6 mt-1;
+  }
+
+  table {
+    thead {
+      @apply hidden;
+    }
+
+    tbody > tr > td:first-child {
+      @apply pr-3;
+    }
   }
 }

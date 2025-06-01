@@ -42,3 +42,10 @@ export function downloadMarkdown(markdown: string) {
 
   URL.revokeObjectURL(url)
 }
+
+export function detectLang(text: string) {
+  const zhChars = text.match(/[\u4e00-\u9fa5]/g)?.length || 0
+  const enChars = text.match(/[a-zA-Z]/g)?.length || 0
+
+  return zhChars >= enChars ? 'zh-CN' : 'en'
+}

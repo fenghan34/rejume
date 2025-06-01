@@ -23,7 +23,7 @@ export async function updateResume(
 ) {
   await queries.updateResume(id, data)
   revalidatePath('/resume')
-  revalidatePath(`/resume/${id}`)
+  revalidatePath(`/resume/${id}`, 'page')
 }
 
 export async function deleteResume(id: string) {
