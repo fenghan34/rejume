@@ -10,7 +10,7 @@ export async function getResumeById(id: string) {
   return await queries.getResumeById(id)
 }
 
-export async function createNewResume(
+export async function createResume(
   data: Pick<ResumeModel, 'name' | 'content'>,
 ) {
   await queries.createResume(data)

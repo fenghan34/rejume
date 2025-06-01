@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { ThemeProvider } from 'next-themes'
 import { Toaster } from 'sonner'
 import { ModeToggle } from '@/components/mode-toggle'
+import { CurrentResumeTitle } from '@/components/resume-title'
 import { Toolbar } from '@/components/toolbar'
 import { Button } from '@/components/ui/button'
 import { TooltipProvider } from '@/components/ui/tooltip'
@@ -50,6 +51,9 @@ function Header() {
       <Link href="/" className={montserrat.className}>
         Rejume
       </Link>
+
+      <CurrentResumeTitle />
+
       <div className="flex items-center gap-4">
         <Toolbar />
         <div>

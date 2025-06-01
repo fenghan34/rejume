@@ -44,6 +44,7 @@ export function Workbench({
   const editorContent = useAppStore((state) => state.editorContent)
   const setEditorContent = useAppStore((state) => state.setEditorContent)
   const setSaveStatus = useAppStore((state) => state.setSaveStatus)
+  const setResume = useAppStore((state) => state.setResume)
 
   const debouncedSave = useMemo(
     () =>
@@ -83,6 +84,10 @@ export function Workbench({
   useEffect(() => {
     setEditorContent(resume.content)
   }, [resume.content, setEditorContent])
+
+  useEffect(() => {
+    setResume(resume)
+  }, [resume, setResume])
 
   return (
     <ResizablePanelGroup direction="horizontal" className="rounded outline">
