@@ -2,9 +2,9 @@
 
 import { isEqual } from 'lodash'
 import { memo } from 'react'
-import { useAutoPagination } from '@/hooks/useAutoPagination'
-import { useAutoScale, UseAutoScaleOptions } from '@/hooks/useAutoScale'
-import { useRemark } from '@/hooks/useRemark'
+import { useAutoPagination } from '@/hooks/use-auto-pagination'
+import { useAutoScale, UseAutoScaleOptions } from '@/hooks/use-auto-scale'
+import { useRemark } from '@/hooks/use-remark'
 import { A4_HEIGHT, A4_WIDTH, A4_PAGE_PADDING } from '@/lib/constants'
 import { cn, detectLang } from '@/lib/utils'
 

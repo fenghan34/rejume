@@ -46,76 +46,75 @@ export function Toolbar() {
   if (!pathname.startsWith('/resume') || typeof id !== 'string') return null
 
   return (
-    <div className="flex items-center">
+    <div className="flex items-center gap-2">
       <Tabs
-        className="mr-2"
         value={sidebar}
         onValueChange={(value) =>
           setSidebar(value as WorkbenchSlice['sidebar'])
         }
       >
-        <TabsList className="">
+        <TabsList>
           <TabsTrigger value="editor" title="Editor(⌘1)">
-            {/* <SquarePen /> */}
             Editor
           </TabsTrigger>
           <TabsTrigger value="chat" title="Chat(⌘2)">
-            {/* <BotMessageSquare /> */}
             Chat
           </TabsTrigger>
         </TabsList>
       </Tabs>
 
-      <Button
-        size="sm"
-        variant="ghost"
-        title="Import from PDF"
-        className="cursor-pointer"
-        asChild
-      >
-        <Label htmlFor="pdf">
-          Import
-          <Input
-            id="pdf"
-            type="file"
-            accept="application/pdf"
-            className="hidden"
-            onChange={async (e) => {
-              const file = e.target.files?.[0]
-              if (file) {
-                toast.promise(
-                  async () => {
-                    const content = await importFromPDF(file, exampleResume)
+      <div>
+        <Button
+          size="sm"
+          variant="ghost"
+          title="Import from PDF"
+          className="cursor-pointer"
+          asChild
+        >
+          <Label htmlFor="pdf">
+            Import
+            <Input
+              id="pdf"
+              type="file"
+              accept="application/pdf"
+              className="hidden"
+              onChange={async (e) => {
+                const file = e.target.files?.[0]
+                if (file) {
+                  toast.promise(
+                    async () => {
+                      const content = await importFromPDF(file, exampleResume)
 
-                    if (!content.trim()) {
-                      throw new Error('No content found in PDF')
-                    }
+                      if (!content.trim()) {
+                        throw new Error('No content found in PDF')
+                      }
 
-                    await updateResume(id, {
-                      content,
-                    })
-                  },
-                  {
-                    loading: `Importing from PDF`,
-                    success: 'Imported successfully',
-                    error: `Failed to import from PDF. Please try again.`,
-                  },
-                )
-              }
-            }}
-          />
-        </Label>
-      </Button>
+                      await updateResume(id, {
+                        content,
+                      })
+                    },
+                    {
+                      loading: `Importing from PDF`,
+                      success: 'Imported successfully',
+                      error: `Failed to import from PDF. Please try again.`,
+                    },
+                  )
+                }
+              }}
+            />
+          </Label>
+        </Button>
 
-      <Button
-        size="sm"
-        variant="ghost"
-        className="cursor-pointer"
-        title="Export PDF (⌘P)"
-        onClick={printHandler}
-      >
-        Export
-      </Button>
+        <Button
+          size="sm"
+          variant="ghost"
+          className="cursor-pointer"
+          title="Export PDF (⌘P)"
+          onClick={printHandler}
+        >
+          Export
+        </Button>
+      </div>
     </div>
   )
 }
