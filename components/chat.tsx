@@ -5,6 +5,7 @@ import { UIMessage } from 'ai'
 import React from 'react'
 import { toast } from 'sonner'
 import { generateUUID } from '@/lib/utils'
+import { ChatGreeting, QuickActions } from './chat-greeting'
 import { MessageInput } from './message-input'
 import { MessageList } from './message-list'
 
@@ -17,27 +18,40 @@ export function Chat({
   resumeId: string
   initialMessages?: UIMessage[]
 }) {
-  const { messages, input, status, stop, handleInputChange, handleSubmit } =
-    useChat({
-      id,
-      initialMessages,
-      // maxSteps: 10,
-      sendExtraMessageFields: true,
-      generateId: generateUUID,
-      experimental_prepareRequestBody: ({ messages }) => {
-        return {
-          id,
-          resumeId,
-          message: messages[messages.length - 1],
-        }
-      },
-      onError(error) {
-        toast.error(error.message)
-      },
-    })
+  const {
+    messages,
+    input,
+    status,
+    append,
+    stop,
+    setInput,
+    handleInputChange,
+    handleSubmit,
+  } = useChat({
+    id,
+    initialMessages,
+    sendExtraMessageFields: true,
+    generateId: generateUUID,
+    experimental_prepareRequestBody: ({ messages }) => {
+      return {
+        id,
+        resumeId,
+        message: messages[messages.length - 1],
+      }
+    },
+    onError(error) {
+      console.log(error)
+      toast.error(error.message)
+    },
+  })
 
   return (
     <div className="h-full flex flex-col @container/chat relative">
+      {!messages.length && (
+        <ChatGreeting>
+          <QuickActions appendMessage={append} setInput={setInput} />
+        </ChatGreeting>
+      )}
       <MessageList messages={messages} status={status} />
       <MessageInput
         input={input}
