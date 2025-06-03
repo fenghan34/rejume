@@ -11,7 +11,7 @@ export async function getResumeById(id: string) {
 }
 
 export async function createResume(
-  data: Pick<ResumeModel, 'name' | 'content'>,
+  data: Pick<ResumeModel, 'title' | 'content'>,
 ) {
   await queries.createResume(data)
   revalidatePath('/resume')
@@ -19,7 +19,7 @@ export async function createResume(
 
 export async function updateResume(
   id: string,
-  data: Partial<Pick<ResumeModel, 'name' | 'content'>>,
+  data: Partial<Pick<ResumeModel, 'title' | 'content'>>,
 ) {
   await queries.updateResume(id, data)
   revalidatePath('/resume')

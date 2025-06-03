@@ -15,7 +15,7 @@ export function NewResumeButton() {
       }
       onClick={() =>
         createResume({
-          name: '',
+          title: '',
           content: exampleResume,
         })
       }

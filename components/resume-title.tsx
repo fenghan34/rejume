@@ -43,7 +43,7 @@ export function ResumeTitle({
       setOptimisticTitle(v)
       setEditing(false)
 
-      toast.promise(updateResume(resumeId, { name: v }), {
+      toast.promise(updateResume(resumeId, { title: v }), {
         error: 'Failed to update resume title, please try again.',
       })
     })
@@ -100,7 +100,7 @@ export function ResumeTitle({
 export function CurrentResumeTitle() {
   const { id } = useParams()
   const resumeId = useAppStore((state) => state.resume?.id)
-  const title = useAppStore((state) => state.resume?.name)
+  const title = useAppStore((state) => state.resume?.title)
 
   if (!resumeId || id !== resumeId || !title) return null
 

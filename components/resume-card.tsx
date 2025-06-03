@@ -21,7 +21,7 @@ import {
   DropdownMenu,
 } from './ui/dropdown-menu'
 
-export function ResumeCard({ id, name, content, updatedAt }: ResumeModel) {
+export function ResumeCard({ id, title, content, updatedAt }: ResumeModel) {
   return (
     <ViewTransition name={`resume-${id}`}>
       <motion.div
@@ -51,7 +51,7 @@ export function ResumeCard({ id, name, content, updatedAt }: ResumeModel) {
                 onSelect={() => {
                   toast.promise(
                     createResume({
-                      name: `${name} (Copy)`,
+                      title: `${title} (Copy)`,
                       content,
                     }),
                     {
@@ -83,8 +83,8 @@ export function ResumeCard({ id, name, content, updatedAt }: ResumeModel) {
           </Link>
         </div>
 
-        <div className="w-3/4 flex flex-col justify-center text-center space-y-0.5">
-          <ResumeTitle resumeId={id} title={name} />
+        <div className="w-4/5 flex flex-col justify-center text-center space-y-0.5">
+          <ResumeTitle resumeId={id} title={title} />
           <div
             suppressHydrationWarning
             className="text-xs text-muted-foreground"

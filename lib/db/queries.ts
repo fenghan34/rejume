@@ -1,13 +1,13 @@
 import 'server-only'
-
 import type { ChatModel, MessageModel, ResumeModel } from './schema'
 import { desc, eq } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
+import { z } from 'zod'
 import { chats, messages, resumes } from './schema'
 
 const client = postgres(process.env.DATABASE_URL!)
-const db = drizzle({
+export const db = drizzle({
   client,
   casing: 'snake_case',
 })
@@ -17,12 +17,14 @@ export const getResumeList = async () => {
 }
 
 export const createResume = async (
-  data: Pick<ResumeModel, 'name' | 'content'>,
+  data: Pick<ResumeModel, 'title' | 'content'>,
 ) => {
   return await db.insert(resumes).values(data)
 }
 
 export const getResumeById = async (id: string) => {
+  const { success } = z.string().uuid().safeParse(id)
+  if (!success) return null
   const data = await db.select().from(resumes).where(eq(resumes.id, id))
   if (data.length === 0) return null
   return data[0]
@@ -30,7 +32,7 @@ export const getResumeById = async (id: string) => {
 
 export const updateResume = async (
   id: string,
-  data: Partial<Pick<ResumeModel, 'name' | 'content'>>,
+  data: Partial<Pick<ResumeModel, 'title' | 'content'>>,
 ) => {
   return await db
     .update(resumes)
