@@ -9,8 +9,11 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core'
 
-export const resumes = pgTable('resume', {
+export const resumes = pgTable('resumes', {
   id: uuid().primaryKey().defaultRandom(),
+  userId: text()
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
   title: text().notNull(),
   content: text().notNull(),
   createdAt: timestamp().defaultNow().notNull(),
@@ -23,7 +26,7 @@ export const resumesRelations = relations(resumes, ({ many }) => ({
   chats: many(chats),
 }))
 
-export const chats = pgTable('chat', {
+export const chats = pgTable('chats', {
   id: uuid().primaryKey().defaultRandom(),
   resumeId: uuid()
     .notNull()
@@ -39,7 +42,7 @@ export const chatsRelations = relations(chats, ({ many }) => ({
   messages: many(messages),
 }))
 
-export const messages = pgTable('message', {
+export const messages = pgTable('messages', {
   id: uuid().primaryKey().defaultRandom(),
   chatId: uuid()
     .notNull()
@@ -53,7 +56,7 @@ export const messages = pgTable('message', {
 
 export type MessageModel = InferSelectModel<typeof messages>
 
-export const user = pgTable('user', {
+export const users = pgTable('users', {
   id: text().primaryKey(),
   name: text().notNull(),
   email: text().notNull().unique(),
@@ -69,7 +72,9 @@ export const user = pgTable('user', {
     .notNull(),
 })
 
-export const session = pgTable('session', {
+export type UserModel = InferSelectModel<typeof users>
+
+export const sessions = pgTable('sessions', {
   id: text().primaryKey(),
   expiresAt: timestamp().notNull(),
   token: text().notNull().unique(),
@@ -79,16 +84,16 @@ export const session = pgTable('session', {
   userAgent: text(),
   userId: text()
     .notNull()
-    .references(() => user.id, { onDelete: 'cascade' }),
+    .references(() => users.id, { onDelete: 'cascade' }),
 })
 
-export const account = pgTable('account', {
+export const accounts = pgTable('accounts', {
   id: text().primaryKey(),
   accountId: text().notNull(),
   providerId: text().notNull(),
   userId: text()
     .notNull()
-    .references(() => user.id, { onDelete: 'cascade' }),
+    .references(() => users.id, { onDelete: 'cascade' }),
   accessToken: text(),
   refreshToken: text(),
   idToken: text(),
@@ -100,7 +105,7 @@ export const account = pgTable('account', {
   updatedAt: timestamp().notNull(),
 })
 
-export const verification = pgTable('verification', {
+export const verifications = pgTable('verifications', {
   id: text().primaryKey(),
   identifier: text().notNull(),
   value: text().notNull(),
