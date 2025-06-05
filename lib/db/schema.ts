@@ -72,8 +72,6 @@ export const users = pgTable('users', {
     .notNull(),
 })
 
-export type UserModel = InferSelectModel<typeof users>
-
 export const sessions = pgTable('sessions', {
   id: text().primaryKey(),
   expiresAt: timestamp().notNull(),

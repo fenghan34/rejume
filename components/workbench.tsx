@@ -4,7 +4,6 @@ import { debounce } from 'lodash'
 import dynamic from 'next/dynamic'
 import React, {
   useMemo,
-  useCallback,
   useEffect,
   // @ts-expect-error ViewTransition is experimental
   unstable_ViewTransition as ViewTransition,
@@ -12,7 +11,7 @@ import React, {
 } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { toast } from 'sonner'
-import { updateResume } from '@/app/resume/actions'
+import { updateResume } from '@/app/dashboard/actions'
 import { ChatModel, ResumeModel } from '@/lib/db/schema'
 import { useAppStore } from '@/providers/app'
 import { ChatContainer } from './chat-container'
@@ -49,32 +48,29 @@ export function Workbench({
   const debouncedSave = useMemo(
     () =>
       debounce(
-        async (content) => {
-          if (content !== resume.content) {
-            try {
-              setSaveStatus('saving')
-              await updateResume(resume.id, { content })
-              setSaveStatus('saved')
-            } catch (error) {
-              console.error(error)
-              setSaveStatus('error')
-              toast.error('Failed to save resume')
-            }
+        async (content: string) => {
+          try {
+            setSaveStatus('saving')
+            await updateResume(resume.id, { content })
+            setSaveStatus('saved')
+          } catch (error) {
+            console.error(error)
+            setSaveStatus('error')
+            toast.error('Failed to save resume')
           }
         },
         AUTO_SAVE_DELAY,
         { leading: false },
       ),
-    [resume.content, resume.id, setSaveStatus],
+    [resume.id, setSaveStatus],
   )
 
-  const handleContentChange = useCallback(
-    (value: string = '') => {
+  const handleContentChange = (value = '') => {
+    if (value !== editorContent) {
       setEditorContent(value)
       debouncedSave(value)
-    },
-    [setEditorContent, debouncedSave],
-  )
+    }
+  }
 
   useHotkeys('meta+s, ctrl+s', () => debouncedSave(editorContent), {
     preventDefault: true,
@@ -110,10 +106,7 @@ export function Workbench({
         {sidebar === 'chat' ? (
           <ChatContainer resumeId={resume.id} chats={chats} />
         ) : (
-          <Editor
-            defaultValue={resume.content}
-            onChange={handleContentChange}
-          />
+          <Editor value={editorContent} onChange={handleContentChange} />
         )}
       </ResizablePanel>
     </ResizablePanelGroup>

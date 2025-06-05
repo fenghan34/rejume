@@ -9,7 +9,7 @@ import {
   useState,
 } from 'react'
 import { toast } from 'sonner'
-import { updateResume } from '@/app/resume/actions'
+import { updateResume } from '@/app/dashboard/actions'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 import { useAppStore } from '@/providers/app'

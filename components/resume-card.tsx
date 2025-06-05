@@ -9,7 +9,7 @@ import React, {
   unstable_ViewTransition as ViewTransition,
 } from 'react'
 import { toast } from 'sonner'
-import { createResume, deleteResume } from '@/app/resume/actions'
+import { createResume, deleteResume } from '@/app/dashboard/actions'
 import { ResumeModel } from '@/lib/db/schema'
 import { Preview } from './preview'
 import { ResumeTitle } from './resume-title'
@@ -77,7 +77,7 @@ export function ResumeCard({ id, title, content, updatedAt }: ResumeModel) {
 
           <Link
             className="w-60 h-fit block aspect-[calc(210/297)] border overflow-hidden rounded"
-            href={`/resume/${id}`}
+            href={`/dashboard/${id}`}
           >
             <Preview content={content} className="pointer-events-none" />
           </Link>

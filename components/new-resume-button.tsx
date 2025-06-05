@@ -1,7 +1,7 @@
 'use client'
 
 import { Plus } from 'lucide-react'
-import { createResume } from '@/app/resume/actions'
+import { createResume } from '@/app/dashboard/actions'
 import exampleResume from '@/examples/en.md'
 import { Button } from './ui/button'
 
