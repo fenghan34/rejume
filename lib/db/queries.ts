@@ -12,12 +12,16 @@ export const db = drizzle({
   casing: 'snake_case',
 })
 
-export const getResumeList = async () => {
-  return await db.select().from(resumes).orderBy(desc(resumes.createdAt))
+export const getResumeList = async (userId: string) => {
+  return await db
+    .select()
+    .from(resumes)
+    .where(eq(resumes.userId, userId))
+    .orderBy(desc(resumes.createdAt))
 }
 
 export const createResume = async (
-  data: Pick<ResumeModel, 'title' | 'content'>,
+  data: Pick<ResumeModel, 'title' | 'content' | 'userId'>,
 ) => {
   return await db.insert(resumes).values(data)
 }

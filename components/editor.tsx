@@ -12,15 +12,14 @@ import { useAppStore } from '@/providers/app'
 loader.config({ paths: { vs: `${window.origin}/monaco-editor` } })
 
 export function Editor({
-  defaultValue,
+  value,
   onChange,
-}: Pick<EditorProps, 'defaultValue' | 'onChange'>) {
+}: Pick<EditorProps, 'value' | 'onChange'>) {
   const { theme } = useTheme()
   const setEditor = useAppStore((state) => state.setEditor)
 
   const handleOnMount = useCallback<OnMount>(
     (editor, monaco) => {
-      editor.focus()
       setEditor(editor)
       setUpSpellchecker(editor, monaco, { lang: 'en_us' })
       setUpSelectionTools(editor, monaco)
@@ -32,7 +31,7 @@ export function Editor({
     <CodeEditor
       language="markdown"
       theme={theme === 'light' ? 'vs' : 'vs-dark'}
-      defaultValue={defaultValue}
+      value={value}
       onChange={onChange}
       onMount={handleOnMount}
       options={{
