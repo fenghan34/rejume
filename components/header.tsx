@@ -19,9 +19,10 @@ export function Header() {
         <div className="flex items-center gap-4">
           <div>
             <Button
-              className="cursor-pointer size-8"
+              className="cursor-pointer"
               variant="ghost"
               title="GitHub"
+              size="icon"
               asChild
             >
               <Link href="https://github.com/fenghan34/rejume" target="_blank">

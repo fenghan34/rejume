@@ -38,7 +38,7 @@ export function Toolbar() {
     [print],
   )
 
-  if (!resume || pathname === '/dashboard') return null
+  if (!resume || ['/dashboard', '/'].includes(pathname)) return null
 
   return (
     <div className="flex items-center gap-2">

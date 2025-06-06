@@ -8,11 +8,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Skeleton } from '@/components/ui/skeleton'
 import { useSession, signOut } from '@/lib/auth/client'
 
 export function UserAvatar() {
   const router = useRouter()
-  const { data: session } = useSession()
+  const { data: session, isPending } = useSession()
+
+  if (isPending) {
+    return <Skeleton className="size-8 rounded-full animate-pulse" />
+  }
 
   if (!session?.user) {
     return null
@@ -28,12 +33,13 @@ export function UserAvatar() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar className="size-8 cursor-pointer">
+        <Avatar className="cursor-pointer">
           <AvatarImage src={image || undefined} alt={name || 'User'} />
           <AvatarFallback>{initials}</AvatarFallback>
+          <span className="sr-only">{name}</span>
         </Avatar>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="start" className="min-w-auto">
         <DropdownMenuItem
           className="cursor-pointer"
           onSelect={() => {
