@@ -12,28 +12,27 @@ export function Header() {
     <header className="flex items-center justify-between px-6 h-14">
       <Logo />
 
-      <CurrentResumeTitle />
+      <div className="grow flex items-center justify-center">
+        <CurrentResumeTitle />
+      </div>
 
-      <div className="flex items-center gap-4">
-        <Toolbar />
-        <div className="flex items-center gap-4">
-          <div>
-            <Button
-              className="cursor-pointer"
-              variant="ghost"
-              title="GitHub"
-              size="icon"
-              asChild
-            >
-              <Link href="https://github.com/fenghan34/rejume" target="_blank">
-                <GitHub />
-              </Link>
-            </Button>
-            <ModeToggle />
-          </div>
+      <Toolbar />
 
-          <UserAvatar />
-        </div>
+      <div className="flex items-center gap-2">
+        <Button
+          className="cursor-pointer size-8"
+          variant="ghost"
+          title="GitHub"
+          asChild
+        >
+          <Link href="https://github.com/fenghan34/rejume" target="_blank">
+            <GitHub />
+          </Link>
+        </Button>
+
+        <ModeToggle />
+
+        <UserAvatar />
       </div>
     </header>
   )

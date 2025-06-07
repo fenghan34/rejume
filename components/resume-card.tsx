@@ -78,6 +78,7 @@ export function ResumeCard({ id, title, content, updatedAt }: ResumeModel) {
           <Link
             className="w-60 h-fit block aspect-[calc(210/297)] border overflow-hidden rounded"
             href={`/dashboard/${id}`}
+            prefetch
           >
             <Preview content={content} className="pointer-events-none" />
           </Link>

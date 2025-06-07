@@ -1,10 +1,11 @@
 'use client'
 
+import type { ChatModel, ResumeModel } from '@/lib/db/schema'
 import { debounce } from 'lodash'
 import dynamic from 'next/dynamic'
 import React, {
-  useMemo,
   useEffect,
+  useState,
   // @ts-expect-error ViewTransition is experimental
   unstable_ViewTransition as ViewTransition,
   useRef,
@@ -12,7 +13,6 @@ import React, {
 import { useHotkeys } from 'react-hotkeys-hook'
 import { toast } from 'sonner'
 import { updateResume } from '@/app/dashboard/actions'
-import { ChatModel, ResumeModel } from '@/lib/db/schema'
 import { useAppStore } from '@/providers/app'
 import { ChatContainer } from './chat-container'
 import { Preview } from './preview'
@@ -29,7 +29,6 @@ const Editor = dynamic(
   },
 )
 
-const AUTO_SAVE_DELAY = 3000
 export const PREVIEW_CLASS = 'preview-panel'
 
 export function Workbench({
@@ -39,51 +38,56 @@ export function Workbench({
   resume: ResumeModel
   chats: ChatModel[]
 }) {
+  const editor = useAppStore((state) => state.editor)
   const sidebar = useAppStore((state) => state.sidebar)
-  const editorContent = useAppStore((state) => state.editorContent)
-  const setEditorContent = useAppStore((state) => state.setEditorContent)
-  const setSaveStatus = useAppStore((state) => state.setSaveStatus)
   const setResume = useAppStore((state) => state.setResume)
 
-  const debouncedSave = useMemo(
-    () =>
-      debounce(
-        async (content: string) => {
-          try {
-            setSaveStatus('saving')
-            await updateResume(resume.id, { content })
-            setSaveStatus('saved')
-          } catch (error) {
-            console.error(error)
-            setSaveStatus('error')
-            toast.error('Failed to save resume')
-          }
-        },
-        AUTO_SAVE_DELAY,
-        { leading: false },
-      ),
-    [resume.id, setSaveStatus],
-  )
-
-  const handleContentChange = (value = '') => {
-    if (value !== editorContent) {
-      setEditorContent(value)
-      debouncedSave(value)
-    }
-  }
-
-  useHotkeys('meta+s, ctrl+s', () => debouncedSave(editorContent), {
+  // Disable browser's save hotkey
+  useHotkeys('meta+s, ctrl+s', () => {}, {
     preventDefault: true,
     enableOnFormTags: ['input', 'textarea', 'select'],
   })
 
   useEffect(() => {
-    setEditorContent(resume.content)
-  }, [resume.content, setEditorContent])
-
-  useEffect(() => {
     setResume(resume)
   }, [resume, setResume])
+
+  useEffect(() => {
+    if (!editor) return
+
+    const save = async (content: string, beforeUnload = false) => {
+      try {
+        localStorage.setItem(resume.id, content)
+        await updateResume(resume.id, { content })
+
+        if (!beforeUnload) {
+          localStorage.removeItem(resume.id)
+        }
+      } catch (error) {
+        console.error(error)
+        toast.error('Failed to save resume')
+      }
+    }
+
+    const cache = localStorage.getItem(resume.id)
+    if (cache) {
+      editor?.setValue(cache)
+      save(cache)
+    }
+
+    const debouncedSave = debounce(save, 3000)
+    const onEditorChange = editor?.onDidChangeModelContent(() => {
+      debouncedSave(editor.getValue())
+    })
+
+    const beforeUnloadHandler = () => save(editor.getValue(), true)
+    window.addEventListener('beforeunload', beforeUnloadHandler)
+
+    return () => {
+      onEditorChange?.dispose()
+      window.removeEventListener('beforeunload', beforeUnloadHandler)
+    }
+  }, [editor, resume.id])
 
   return (
     <ResizablePanelGroup direction="horizontal" className="rounded outline">
@@ -92,7 +96,12 @@ export function Workbench({
         defaultSize={50}
         className="bg-secondary @container"
       >
-        <PreviewContainer resumeId={resume.id} content={editorContent} />
+        <PreviewWrapper>
+          <PreviewWithViewTransition
+            resumeId={resume.id}
+            defaultContent={resume.content}
+          />
+        </PreviewWrapper>
       </ResizablePanel>
 
       <ResizableHandle />
@@ -106,20 +115,14 @@ export function Workbench({
         {sidebar === 'chat' ? (
           <ChatContainer resumeId={resume.id} chats={chats} />
         ) : (
-          <Editor value={editorContent} onChange={handleContentChange} />
+          <Editor defaultValue={resume.content} />
         )}
       </ResizablePanel>
     </ResizablePanelGroup>
   )
 }
 
-function PreviewContainer({
-  resumeId,
-  content,
-}: {
-  resumeId: string
-  content: string
-}) {
+function PreviewWrapper({ children }: { children: React.ReactNode }) {
   const ref = useRef<HTMLDivElement>(null)
   const editor = useAppStore((state) => state.editor)
 
@@ -143,22 +146,33 @@ function PreviewContainer({
   return (
     <div
       ref={ref}
-      className="h-full overflow-y-auto overflow-x-hidden scrollbar-primary scrollbar-gutter-stable"
+      className="h-full overflow-y-auto overflow-x-hidden scrollbar-primary scrollbar-gutter-stable will-change-scroll"
     >
-      <div className="mx-auto max-w-xl @2xl:max-w-2xl">
-        <PreviewWithViewTransition resumeId={resumeId} content={content} />
-      </div>
+      <div className="mx-auto max-w-xl @2xl:max-w-2xl">{children}</div>
     </div>
   )
 }
 
 function PreviewWithViewTransition({
   resumeId,
-  content,
+  defaultContent,
 }: {
   resumeId: string
-  content: string
+  defaultContent: string
 }) {
+  const [content, setContent] = useState(defaultContent)
+  const editor = useAppStore((state) => state.editor)
+
+  useEffect(() => {
+    const onEditorChange = editor?.onDidChangeModelContent(() => {
+      setContent(editor?.getValue() || '')
+    })
+
+    return () => {
+      onEditorChange?.dispose()
+    }
+  }, [editor])
+
   return (
     <ViewTransition name={`resume-${resumeId}`}>
       <Preview className={PREVIEW_CLASS} content={content} />

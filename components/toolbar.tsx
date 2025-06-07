@@ -6,11 +6,7 @@ import { usePathname } from 'next/navigation'
 import { ComponentProps, useCallback } from 'react'
 import { useReactToPrint } from 'react-to-print'
 import { toast } from 'sonner'
-import {
-  createResume,
-  importFromPDF,
-  updateResume,
-} from '@/app/dashboard/actions'
+import { importFromPDF } from '@/app/dashboard/actions'
 import exampleResume from '@/examples/en.md'
 import { cn, downloadMarkdown } from '@/lib/utils'
 import { useAppStore } from '@/providers/app'
@@ -29,7 +25,7 @@ import { PREVIEW_CLASS } from './workbench'
 export function Toolbar() {
   const pathname = usePathname()
   const sidebar = useAppStore((state) => state.sidebar)
-  const resume = useAppStore((state) => state.resume)
+  const editor = useAppStore((state) => state.editor)
   const setSidebar = useAppStore((state) => state.setSidebar)
 
   const print = useReactToPrint({})
@@ -38,10 +34,10 @@ export function Toolbar() {
     [print],
   )
 
-  if (!resume || ['/dashboard', '/'].includes(pathname)) return null
+  if (['/dashboard', '/'].includes(pathname)) return null
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center justify-end gap-2">
       <Tabs
         value={sidebar}
         onValueChange={(value) =>
@@ -59,7 +55,7 @@ export function Toolbar() {
       </Tabs>
 
       <div>
-        <ImportButton resumeId={resume.id} />
+        <ImportButton />
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -77,7 +73,7 @@ export function Toolbar() {
               Export as PDF
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => downloadMarkdown(resume.content)}
+              onClick={() => downloadMarkdown(editor?.getValue() || '')}
               title="Export as Markdown"
             >
               Export as Markdown
@@ -90,11 +86,13 @@ export function Toolbar() {
 }
 
 export function ImportButton({
-  resumeId,
   className,
   children,
   ...rest
 }: { resumeId?: string } & ComponentProps<typeof Button>) {
+  const editor = useAppStore((state) => state.editor)
+  const resumeId = useAppStore((state) => state.resume?.id)
+
   const importHandler = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0]
@@ -113,17 +111,7 @@ export function ImportButton({
                 break
             }
 
-            if (resumeId) {
-              await updateResume(resumeId, {
-                title: file.name,
-                content,
-              })
-            } else {
-              await createResume({
-                title: file.name,
-                content,
-              })
-            }
+            editor?.setValue(content)
           },
           {
             loading: `Importing from file ${file.name}`,
@@ -133,8 +121,10 @@ export function ImportButton({
         )
       }
     },
-    [resumeId],
+    [editor],
   )
+
+  if (!resumeId || !editor) return null
 
   return (
     <Button

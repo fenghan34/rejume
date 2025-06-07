@@ -8,13 +8,10 @@ import { setUpSelectionTools } from '@/lib/monaco/selection-tools'
 import { setUpSpellchecker } from '@/lib/monaco/spellchecker'
 import { useAppStore } from '@/providers/app'
 
-// NOTE: I manually copied the monaco-editor/min/vs folder to the public folder as a workaround to not load from the default CDN
+// Load from public folder instead of the default CDN
 loader.config({ paths: { vs: `${window.origin}/monaco-editor` } })
 
-export function Editor({
-  value,
-  onChange,
-}: Pick<EditorProps, 'value' | 'onChange'>) {
+export function Editor({ defaultValue }: Pick<EditorProps, 'defaultValue'>) {
   const { theme } = useTheme()
   const setEditor = useAppStore((state) => state.setEditor)
 
@@ -31,14 +28,14 @@ export function Editor({
     <CodeEditor
       language="markdown"
       theme={theme === 'light' ? 'vs' : 'vs-dark'}
-      value={value}
-      onChange={onChange}
+      defaultValue={defaultValue}
       onMount={handleOnMount}
       options={{
         fontSize: 14,
         wordWrap: 'on',
         padding: { top: 15, bottom: 400 },
         lineNumbers: 'off',
+        unicodeHighlight: { ambiguousCharacters: false },
         automaticLayout: true,
         smoothScrolling: true,
         scrollBeyondLastLine: false,
