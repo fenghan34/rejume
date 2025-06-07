@@ -5,7 +5,6 @@ import CodeEditor, { loader } from '@monaco-editor/react'
 import { useTheme } from 'next-themes'
 import { useCallback } from 'react'
 import { setUpSelectionTools } from '@/lib/monaco/selection-tools'
-import { setUpSpellchecker } from '@/lib/monaco/spellchecker'
 import { useAppStore } from '@/providers/app'
 
 // Load from public folder instead of the default CDN
@@ -18,7 +17,6 @@ export function Editor({ defaultValue }: Pick<EditorProps, 'defaultValue'>) {
   const handleOnMount = useCallback<OnMount>(
     (editor, monaco) => {
       setEditor(editor)
-      setUpSpellchecker(editor, monaco, { lang: 'en_us' })
       setUpSelectionTools(editor, monaco)
     },
     [setEditor],

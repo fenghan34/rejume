@@ -87,9 +87,6 @@ importers:
       drizzle-orm:
         specifier: ^0.43.1
         version: 0.43.1(@electric-sql/pglite@0.3.0)(@libsql/client@0.15.4)(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(kysely@0.28.2)(pg@8.15.6)(postgres@3.4.5)
-      hunspell-asm:
-        specifier: ^4.0.2
-        version: 4.0.2
       immer:
         specifier: ^10.1.1
         version: 10.1.1
