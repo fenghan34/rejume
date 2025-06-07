@@ -42,8 +42,8 @@ export function UserAvatar() {
       <DropdownMenuContent align="start" className="min-w-auto">
         <DropdownMenuItem
           className="cursor-pointer"
-          onSelect={() => {
-            signOut()
+          onSelect={async () => {
+            await signOut()
             router.replace('/login')
           }}
         >

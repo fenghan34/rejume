@@ -2,8 +2,8 @@
 
 import type { WorkbenchSlice } from '@/stores/workbench-slice'
 import { ChevronDown } from 'lucide-react'
-import { usePathname } from 'next/navigation'
 import { ComponentProps, useCallback } from 'react'
+import { useHotkeys } from 'react-hotkeys-hook'
 import { useReactToPrint } from 'react-to-print'
 import { toast } from 'sonner'
 import { importFromPDF } from '@/app/dashboard/actions'
@@ -23,7 +23,6 @@ import { Tabs, TabsList, TabsTrigger } from './ui/tabs'
 import { PREVIEW_CLASS } from './workbench'
 
 export function Toolbar() {
-  const pathname = usePathname()
   const sidebar = useAppStore((state) => state.sidebar)
   const editor = useAppStore((state) => state.editor)
   const setSidebar = useAppStore((state) => state.setSidebar)
@@ -34,10 +33,13 @@ export function Toolbar() {
     [print],
   )
 
-  if (['/dashboard', '/'].includes(pathname)) return null
+  useHotkeys('meta+p', printHandler, {
+    preventDefault: true,
+    enableOnFormTags: ['input', 'textarea', 'select'],
+  })
 
   return (
-    <div className="flex items-center justify-end gap-2">
+    <div className={cn('flex items-center justify-end gap-2')}>
       <Tabs
         value={sidebar}
         onValueChange={(value) =>
@@ -91,7 +93,6 @@ export function ImportButton({
   ...rest
 }: { resumeId?: string } & ComponentProps<typeof Button>) {
   const editor = useAppStore((state) => state.editor)
-  const resumeId = useAppStore((state) => state.resume?.id)
 
   const importHandler = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -123,8 +124,6 @@ export function ImportButton({
     },
     [editor],
   )
-
-  if (!resumeId || !editor) return null
 
   return (
     <Button

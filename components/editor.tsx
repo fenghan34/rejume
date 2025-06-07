@@ -18,6 +18,7 @@ export function Editor({ defaultValue }: Pick<EditorProps, 'defaultValue'>) {
     (editor, monaco) => {
       setEditor(editor)
       setUpSelectionTools(editor, monaco)
+      editor.onDidDispose(() => setEditor(null))
     },
     [setEditor],
   )
