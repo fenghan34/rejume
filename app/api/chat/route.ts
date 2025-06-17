@@ -1,22 +1,28 @@
 import {
   appendClientMessage,
   appendResponseMessages,
+  createDataStreamResponse,
   Message,
   streamText,
 } from 'ai'
-import { generateTitleFromUserMessage } from '@/app/resume/actions'
-import { model } from '@/lib/ai/model'
 import { systemPrompt } from '@/lib/ai/prompt'
+import { providers } from '@/lib/ai/providers'
+import { verifySession } from '@/lib/auth/server'
 import {
   getChatById,
   getMessagesByChatId,
+  getResumeById,
   saveChat,
   saveMessage,
 } from '@/lib/db/queries'
 import { generateUUID } from '@/lib/utils'
 import { PostRequestBody, postRequestBodySchema } from './schema'
 
+export const maxDuration = 30
+
 export async function POST(req: Request) {
+  await verifySession()
+
   let requestBody: PostRequestBody
 
   try {
@@ -31,21 +37,21 @@ export async function POST(req: Request) {
 
   const { id, resumeId, message } = requestBody
 
-  const chat = await getChatById(id)
-  if (!chat) {
-    const title = await generateTitleFromUserMessage({ message })
-    await saveChat({
-      id,
-      title,
-      resumeId,
+  const resume = await getResumeById(resumeId)
+  if (!resume) {
+    return new Response(JSON.stringify({ error: 'Invalid request body' }), {
+      status: 400,
     })
   }
 
-  const previousMessages = await getMessagesByChatId(id)
-  const messages = appendClientMessage({
-    messages: previousMessages as Message[],
-    message,
-  })
+  const chat = await getChatById(id)
+  if (!chat) {
+    await saveChat({
+      id,
+      title: resume.title,
+      resumeId,
+    })
+  }
 
   await saveMessage({
     id: message.id,
@@ -56,32 +62,43 @@ export async function POST(req: Request) {
     attachments: message.experimental_attachments ?? [],
   })
 
-  const result = streamText({
-    model,
-    messages,
-    system: systemPrompt,
-    experimental_generateMessageId: generateUUID,
-    onFinish: async ({ response }) => {
-      const [, assistantMessage] = appendResponseMessages({
-        messages: [message],
-        responseMessages: response.messages,
-      })
-
-      await saveMessage({
-        id: assistantMessage.id,
-        chatId: id,
-        role: 'assistant',
-        content: assistantMessage.content,
-        parts: assistantMessage.parts,
-        attachments: assistantMessage.experimental_attachments ?? [],
-      })
-    },
-    onError(error) {
-      console.log(error)
-    },
+  const previousMessages = await getMessagesByChatId(id)
+  const messages = appendClientMessage({
+    messages: previousMessages as Message[],
+    message,
   })
 
-  return result.toDataStreamResponse()
+  return createDataStreamResponse({
+    execute: async (dataStream) => {
+      const result = streamText({
+        model: providers.openrouter('openai/gpt-4o-mini'),
+        system: systemPrompt(resume.content),
+        messages,
+        abortSignal: req.signal,
+        experimental_generateMessageId: generateUUID,
+        onFinish: async ({ response }) => {
+          const [, assistantMessage] = appendResponseMessages({
+            messages: [message],
+            responseMessages: response.messages,
+          })
+          await saveMessage({
+            id: assistantMessage.id,
+            chatId: id,
+            role: 'assistant',
+            content: assistantMessage.content,
+            parts: assistantMessage.parts,
+            attachments: assistantMessage.experimental_attachments ?? [],
+          })
+        },
+      })
+
+      result.mergeIntoDataStream(dataStream)
+    },
+    onError: (error) => {
+      console.error(error)
+      return error instanceof Error ? error.message : String(error)
+    },
+  })
 }
 
 export async function GET(req: Request) {

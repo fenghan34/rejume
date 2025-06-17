@@ -98,6 +98,7 @@ export function Workbench({
       >
         <PreviewWrapper>
           <PreviewWithViewTransition
+            key={resume.updatedAt.toISOString()}
             resumeId={resume.id}
             defaultContent={resume.content}
           />
