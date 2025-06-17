@@ -1,41 +1,72 @@
 'use client'
 
-import { UIMessage } from 'ai'
-import { useEffect, useState } from 'react'
-import { ChatModel } from '@/lib/db/schema'
+import type { ChatModel } from '@/lib/db/schema'
+import type { UIMessage } from 'ai'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import useSWR, { useSWRConfig } from 'swr'
+import { deleteChat } from '@/app/dashboard/actions'
 import { generateUUID } from '@/lib/utils'
 import { Chat } from './chat'
+import { ChatHeader } from './chat-header'
+import { ChatHistory } from './chat-history'
 
-export function ChatContainer({
-  resumeId,
-  chats,
-}: {
-  resumeId: string
-  chats: ChatModel[]
-}) {
-  const [initialMessages, setInitialMessages] = useState<UIMessage[]>([])
+export function getChatHistoryKey(resumeId: string) {
+  return `/api/chat-history?resumeId=${resumeId}`
+}
 
-  // Not support multiple chats yet
-  const chatId = chats[0]?.id
+const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
-  useEffect(() => {
-    if (!chatId) return
-    const fetchMessages = async () => {
-      const response = await fetch(`/api/chat?id=${chatId}`)
-      const data = await response.json()
-      setInitialMessages(data)
+export function ChatContainer({ resumeId }: { resumeId: string }) {
+  const key = getChatHistoryKey(resumeId)
+  const [currentChat, setCurrentChat] = useState<ChatModel | null>(null)
+  const { mutate } = useSWRConfig()
+  const { data: chats, isLoading } = useSWR<ChatModel[]>(key, fetcher, {
+    onSuccess: (data) => {
+      if (data.length > 0) {
+        setCurrentChat(data[0])
+      } else {
+        setCurrentChat(null)
+      }
+    },
+  })
+
+  const { data: initialMessages } = useSWR<UIMessage[]>(() => {
+    if (!currentChat?.id) return null
+    return `/api/chat?id=${currentChat.id}`
+  }, fetcher)
+
+  const handleDeleteChat = async (chat: ChatModel) => {
+    try {
+      mutate(key, () => deleteChat(chat.id), {
+        optimisticData: chats?.filter(({ id }) => id !== chat.id),
+        rollbackOnError: true,
+      })
+    } catch (error) {
+      console.error(error)
+      toast.error('Failed to delete chat, please try again.')
     }
-    fetchMessages()
-  }, [chatId])
+  }
 
   return (
-    <div className="h-full">
-      <Chat
-        id={chatId || generateUUID()}
-        showGreeting={chats.length === 0}
-        resumeId={resumeId}
-        initialMessages={initialMessages}
-      />
+    <div className="h-full flex flex-col">
+      <ChatHeader chat={currentChat} setChat={setCurrentChat}>
+        <ChatHistory
+          chats={chats}
+          currentChat={currentChat}
+          onSelectChat={setCurrentChat}
+          onDeleteChat={handleDeleteChat}
+        />
+      </ChatHeader>
+
+      <div className="flex-1 overflow-hidden">
+        <Chat
+          id={currentChat?.id || generateUUID()}
+          showGreeting={!currentChat && !isLoading}
+          resumeId={resumeId}
+          initialMessages={initialMessages}
+        />
+      </div>
     </div>
   )
 }

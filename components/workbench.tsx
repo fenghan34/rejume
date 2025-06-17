@@ -1,6 +1,6 @@
 'use client'
 
-import type { ChatModel, ResumeModel } from '@/lib/db/schema'
+import type { ResumeModel } from '@/lib/db/schema'
 import { debounce } from 'lodash'
 import dynamic from 'next/dynamic'
 import React, {
@@ -31,13 +31,7 @@ const Editor = dynamic(
 
 export const PREVIEW_CLASS = 'preview-panel'
 
-export function Workbench({
-  resume,
-  chats,
-}: {
-  resume: ResumeModel
-  chats: ChatModel[]
-}) {
+export function Workbench({ resume }: { resume: ResumeModel }) {
   const editor = useAppStore((state) => state.editor)
   const sidebar = useAppStore((state) => state.sidebar)
   const setResume = useAppStore((state) => state.setResume)
@@ -114,7 +108,7 @@ export function Workbench({
         collapsedSize={5}
       >
         {sidebar === 'chat' ? (
-          <ChatContainer resumeId={resume.id} chats={chats} />
+          <ChatContainer resumeId={resume.id} />
         ) : (
           <Editor defaultValue={resume.content} />
         )}

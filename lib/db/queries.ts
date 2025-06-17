@@ -54,14 +54,32 @@ export const saveChat = async (
   return await db.insert(chats).values(data)
 }
 
+export const deleteChat = async (id: string) => {
+  return await db.delete(chats).where(eq(chats.id, id))
+}
+
 export const getChatById = async (id: string) => {
   const data = await db.select().from(chats).where(eq(chats.id, id))
   if (data.length === 0) return null
   return data[0]
 }
 
+export const updateChat = async (
+  chatId: string,
+  data: Partial<Pick<ChatModel, 'title'>>,
+) => {
+  return await db
+    .update(chats)
+    .set({ ...data, updatedAt: new Date() })
+    .where(eq(chats.id, chatId))
+}
+
 export const getChatsByResumeId = async (id: string) => {
-  return await db.select().from(chats).where(eq(chats.resumeId, id))
+  return await db
+    .select()
+    .from(chats)
+    .where(eq(chats.resumeId, id))
+    .orderBy(desc(chats.updatedAt))
 }
 
 export const saveMessage = async (data: Omit<MessageModel, 'createdAt'>) => {
@@ -71,10 +89,12 @@ export const saveMessage = async (data: Omit<MessageModel, 'createdAt'>) => {
     .where(eq(messages.id, data.id))
 
   if (result.length > 0) {
-    return await db.update(messages).set(data).where(eq(messages.id, data.id))
+    await db.update(messages).set(data).where(eq(messages.id, data.id))
+  } else {
+    await db.insert(messages).values(data).returning()
   }
 
-  return await db.insert(messages).values(data).returning()
+  await updateChat(data.chatId, {})
 }
 
 export const getMessagesByChatId = async (id: string) => {

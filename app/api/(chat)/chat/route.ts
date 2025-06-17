@@ -5,6 +5,7 @@ import {
   Message,
   streamText,
 } from 'ai'
+import { generateTitleFromUserMessage } from '@/app/dashboard/actions'
 import { systemPrompt } from '@/lib/ai/prompt'
 import { providers } from '@/lib/ai/providers'
 import { verifySession } from '@/lib/auth/server'
@@ -48,7 +49,7 @@ export async function POST(req: Request) {
   if (!chat) {
     await saveChat({
       id,
-      title: resume.title,
+      title: await generateTitleFromUserMessage({ message }),
       resumeId,
     })
   }
@@ -102,6 +103,8 @@ export async function POST(req: Request) {
 }
 
 export async function GET(req: Request) {
+  await verifySession()
+
   const { searchParams } = new URL(req.url)
   const id = searchParams.get('id')
   if (!id) {

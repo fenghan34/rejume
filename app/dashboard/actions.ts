@@ -61,6 +61,11 @@ export async function generateTitleFromUserMessage({
   return title
 }
 
+export async function deleteChat(id: string) {
+  await verifySession()
+  await queries.deleteChat(id)
+}
+
 export async function importFromPDF(file: File, exampleResume: string) {
   await verifySession()
   const { text } = await generateText({
