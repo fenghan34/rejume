@@ -32,6 +32,7 @@ export function ChatContainer({
     <div className="h-full">
       <Chat
         id={chatId || generateUUID()}
+        showGreeting={chats.length === 0}
         resumeId={resumeId}
         initialMessages={initialMessages}
       />

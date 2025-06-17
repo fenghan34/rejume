@@ -50,20 +50,24 @@ function PureMessage({
       animate={{ y: 0, opacity: 1 }}
       className="group/message space-y-1"
     >
-      <div className="flex group-data-[role=user]/message:justify-end group-data-[role=assistant]/message:justify-start">
-        {message.parts.map((part, i) => {
+      <div className="flex flex-col group-data-[role=user]/message:items-end group-data-[role=assistant]/message:items-start">
+        {message.parts.map((part, index) => {
           switch (part.type) {
             case 'text':
               return (
                 <div
-                  key={`${message.id}-${part.type}-${i}`}
+                  key={`${message.id}-${part.type}-${index}`}
                   className={cn(
-                    'h-fit prose prose-sm @4xl/chat:prose-base dark:prose-invert max-w-none break-words overflow-x-hidden',
+                    'w-full h-fit prose prose-sm prose-code:text-[0.95em] @4xl/chat:prose-base dark:prose-invert max-w-none break-words overflow-x-hidden',
                     message.role === 'user' &&
-                      'bg-primary text-primary-foreground max-w-[80%] rounded-xl px-3 py-2',
+                      'w-auto bg-primary/5 max-w-[80%] rounded-xl px-3 py-2',
                   )}
                 >
-                  <Markdown>{part.text}</Markdown>
+                  {message.role === 'user' ? (
+                    part.text
+                  ) : (
+                    <Markdown>{part.text}</Markdown>
+                  )}
                 </div>
               )
           }

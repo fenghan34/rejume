@@ -13,9 +13,11 @@ export function Chat({
   id,
   resumeId,
   initialMessages,
+  showGreeting,
 }: {
   id: string
   resumeId: string
+  showGreeting: boolean
   initialMessages?: UIMessage[]
 }) {
   const {
@@ -47,12 +49,13 @@ export function Chat({
 
   return (
     <div className="h-full flex flex-col @container/chat relative">
-      {!messages.length && (
+      {showGreeting && messages.length === 0 ? (
         <ChatGreeting>
           <QuickActions appendMessage={append} setInput={setInput} />
         </ChatGreeting>
+      ) : (
+        <MessageList messages={messages} status={status} />
       )}
-      <MessageList messages={messages} status={status} />
       <MessageInput
         input={input}
         status={status}

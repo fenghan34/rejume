@@ -1,6 +1,6 @@
 import type { Message } from 'ai'
 import { Check, Copy } from 'lucide-react'
-import { useEffect, useState, memo } from 'react'
+import { useState, memo } from 'react'
 import { toast } from 'sonner'
 import {
   Tooltip,
@@ -10,8 +10,6 @@ import {
 import { cn } from '@/lib/utils'
 import { useAppStore } from '@/providers/app'
 import { Button } from './ui/button'
-
-const COPY_MESSAGE_TIMEOUT = 2000
 
 function PureMessageActions({
   message,
@@ -24,19 +22,7 @@ function PureMessageActions({
   const copiedMessageId = useAppStore((state) => state.copiedMessageId)
   const setCopiedMessageId = useAppStore((state) => state.setCopiedMessageId)
 
-  useEffect(() => {
-    let timeout: number
-    if (copied) {
-      timeout = window.setTimeout(() => {
-        setCopied(false)
-      }, COPY_MESSAGE_TIMEOUT)
-    }
-    return () => {
-      clearTimeout(timeout)
-    }
-  }, [copied, message.id])
-
-  const handleCopy = () => {
+  const handleCopy = async () => {
     const textFromParts = message.parts
       ?.filter((part) => part.type === 'text')
       .map((part) => part.text)
@@ -44,9 +30,12 @@ function PureMessageActions({
       .trim()
 
     if (textFromParts) {
-      navigator.clipboard.writeText(textFromParts)
+      await navigator.clipboard.writeText(textFromParts)
       setCopied(true)
       setCopiedMessageId(message.id)
+      setTimeout(() => {
+        setCopied(false)
+      }, 2000)
     } else {
       toast.error('No text to copy')
     }

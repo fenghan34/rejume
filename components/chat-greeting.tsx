@@ -5,7 +5,7 @@ import { Button } from './ui/button'
 
 export function ChatGreeting({ children }: { children?: React.ReactNode }) {
   return (
-    <div className="absolute bottom-40 left-0 right-0 px-8">
+    <div className="flex-1 flex flex-col justify-end p-8">
       <div className="mx-auto w-full max-w-3xl space-y-36">
         <div className="space-y-2">
           <motion.div
@@ -33,8 +33,6 @@ export function ChatGreeting({ children }: { children?: React.ReactNode }) {
   )
 }
 
-type ActionType = 'appendMessage' | 'setInput'
-
 export function QuickActions({
   appendMessage,
   setInput,
@@ -42,30 +40,26 @@ export function QuickActions({
   appendMessage: UseChatHelpers['append']
   setInput: UseChatHelpers['setInput']
 }) {
-  const actions: { title: string; prompt: string; type: ActionType }[] = [
+  const actions = [
     {
       title: 'Review my resume',
       prompt:
         'Please review my resume and suggest high-level improvements. Focus on structure, clarity, tone, and any outdated phrasing. Let me know what sections or bullet points could be stronger.',
-      type: 'appendMessage',
     },
     {
       title: 'Optimize my resume for ATS',
       prompt:
         'Can you optimize my resume for applicant tracking systems (ATS)? Suggest improvements to formatting, keyword usage, and phrasing that will help my resume get parsed and ranked correctly.',
-      type: 'appendMessage',
     },
     {
       title: 'Tailor my resume to a specific job',
-      prompt: `I want to tailor my resume to the following job description. Please suggest edits to better align with the role’s responsibilities, required skills, and language.
-Job description: [Paste here]`,
-      type: 'setInput',
+      prompt: `I want to tailor my resume to the following job description. Please suggest edits to better align with the role’s responsibilities, required skills, and language.\n\nJob description: \n[Paste here]`,
+      input: true,
     },
     {
       title: 'Make my resume more achievement-focused',
       prompt:
         'Please help rewrite my resume to be more achievement-focused. Emphasize outcomes, metrics, and impact where possible instead of just listing responsibilities.',
-      type: 'appendMessage',
     },
   ]
 
@@ -83,12 +77,12 @@ Job description: [Paste here]`,
             variant="outline"
             className="w-full h-full block py-2 @3xl/chat:py-4 cursor-pointer text-left whitespace-normal"
             onClick={async () => {
-              if (action.type === 'setInput') {
+              if (action.input) {
                 setInput(action.prompt)
                 return
               }
 
-              appendMessage({
+              await appendMessage({
                 id: generateUUID(),
                 role: 'user',
                 content: '',

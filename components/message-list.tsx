@@ -15,7 +15,7 @@ import React, {
 import { Message, PendingMessage } from './message'
 import { Button } from './ui/button'
 
-const PADDING = 24
+const PADDING = 4 * 6
 
 function PureMessageList({
   messages,
@@ -50,22 +50,19 @@ function PureMessageList({
     return ref.current.clientHeight - PADDING * 3
   }, [])
 
+  const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+    if (!(e.target instanceof HTMLDivElement)) return
+    const { scrollHeight, scrollTop, clientHeight } = e.target
+    setIsAtBottom(scrollHeight - scrollTop - clientHeight < PADDING * 3)
+  }, [])
+
   return (
     <div
       ref={ref}
       className="flex-1 overflow-y-auto scrollbar-gutter-stable scrollbar-primary will-change-scroll"
-      onScroll={(e) => {
-        const { scrollHeight, scrollTop, clientHeight } =
-          e.target as HTMLDivElement
-        setIsAtBottom(scrollHeight - scrollTop - clientHeight < PADDING * 3)
-      }}
+      onScroll={handleScroll}
     >
-      <div
-        className="max-w-3xl mx-auto box-content"
-        style={{
-          padding: `${PADDING}px ${PADDING}px ${PADDING * 2}px ${PADDING}px`,
-        }}
-      >
+      <div className="max-w-3xl mx-auto box-content p-6 pb-12 space-y-2">
         {messages.map((message, index) => {
           const isLast = index === messages.length - 1
           return (
@@ -115,7 +112,7 @@ function ScrollToBottomButton({ onClick }: { onClick: () => void }) {
     >
       <Button
         variant="outline"
-        className="rounded-full size-8 cursor-pointer"
+        className="rounded-full size-8 cursor-pointer dark:bg-background dark:hover:bg-accent"
         onClick={onClick}
       >
         <ArrowDown />

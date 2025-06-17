@@ -56,7 +56,7 @@ function rehypeHeading3() {
           node.children[0].type === 'text' &&
           node.children[0].value.includes('|')
         ) {
-          const [name, position, date] = node.children[0].value.split('|')
+          const [name, position] = node.children[0].value.split('|')
           node.children = [
             {
               type: 'element',
@@ -70,10 +70,13 @@ function rehypeHeading3() {
               children: [{ type: 'text', value: position }],
               properties: {},
             },
+          ]
+        } else {
+          node.children = [
             {
               type: 'element',
-              tagName: 'span',
-              children: [{ type: 'text', value: date }],
+              tagName: 'strong',
+              children: node.children,
               properties: {},
             },
           ]
