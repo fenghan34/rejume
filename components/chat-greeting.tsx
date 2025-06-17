@@ -5,9 +5,9 @@ import { Button } from './ui/button'
 
 export function ChatGreeting({ children }: { children?: React.ReactNode }) {
   return (
-    <div className="flex-1 flex flex-col justify-end p-8">
-      <div className="mx-auto w-full max-w-3xl space-y-36">
-        <div className="space-y-2">
+    <div className="flex-1 flex flex-col justify-end px-8 pb-6">
+      <div className="mx-auto w-full max-w-3xl h-full flex flex-col">
+        <div className="space-y-2 flex-1 flex flex-col justify-center">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}

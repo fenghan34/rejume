@@ -63,9 +63,7 @@ function PureMessageActions({
             {copied ? <Check /> : <Copy />}
           </Button>
         </TooltipTrigger>
-        <TooltipContent className="px-1.5 py-0.5 font-medium" side="bottom">
-          Copy
-        </TooltipContent>
+        <TooltipContent side="bottom">Copy</TooltipContent>
       </Tooltip>
     </div>
   )

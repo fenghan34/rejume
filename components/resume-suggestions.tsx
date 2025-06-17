@@ -85,12 +85,16 @@ function SuggestionItem({ suggestion }: { suggestion: ResumeSuggestion }) {
       className="rounded-sm border overflow-hidden group"
     >
       <div className="flex items-center justify-between px-3 py-1.5 bg-primary/5 hover:bg-transparent transition-colors">
-        <div className="inline-flex items-center gap-1">
-          {status === 'applied' ? <Check size={12} /> : <Sparkles size={12} />}
+        <div className="inline-flex items-center gap-2">
+          {status === 'applied' ? (
+            <Check className="size-3" />
+          ) : (
+            <Sparkles className="size-3" />
+          )}
           <span className="font-medium text-xs">{suggestion.section}</span>
         </div>
 
-        <div className="flex items-center">
+        <div className="flex items-center gap-0.5">
           <Button
             variant="ghost"
             size="icon"

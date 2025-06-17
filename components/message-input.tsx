@@ -1,6 +1,6 @@
 import { UseChatHelpers } from '@ai-sdk/react'
 import { Paperclip, Square, ArrowUp } from 'lucide-react'
-import { memo } from 'react'
+import { memo, useEffect, useRef } from 'react'
 import { cn } from '@/lib/utils'
 import { Button } from './ui/button'
 import { Textarea } from './ui/textarea'
@@ -15,10 +15,17 @@ function PureMessageInput({
   UseChatHelpers,
   'input' | 'status' | 'stop' | 'handleInputChange' | 'handleSubmit'
 >) {
+  const ref = useRef<HTMLTextAreaElement>(null)
   const isLoading = status === 'submitted' || status === 'streaming'
 
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.focus()
+    }
+  }, [input])
+
   return (
-    <div className="flex justify-center p-8 pt-0 z-10">
+    <div className="flex justify-center px-8 pb-6 z-10">
       <form
         onSubmit={handleSubmit}
         onKeyDown={(e) => {
@@ -30,6 +37,7 @@ function PureMessageInput({
         className="mx-auto p-2 w-full max-w-3xl rounded-2xl shadow-sm focus-within:ring border"
       >
         <Textarea
+          ref={ref}
           autoFocus
           value={input}
           onChange={handleInputChange}

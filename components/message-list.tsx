@@ -62,7 +62,7 @@ function PureMessageList({
       className="flex-1 overflow-y-auto scrollbar-gutter-stable scrollbar-primary will-change-scroll"
       onScroll={handleScroll}
     >
-      <div className="max-w-3xl mx-auto box-content p-6 pb-12 space-y-2">
+      <div className="max-w-3xl mx-auto box-content p-6 space-y-2">
         {messages.map((message, index) => {
           const isLast = index === messages.length - 1
           return (
