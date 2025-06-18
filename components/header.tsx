@@ -19,18 +19,20 @@ export function Header() {
       <Toolbar />
 
       <div className="flex items-center gap-2">
-        <Button
-          className="cursor-pointer size-8"
-          variant="ghost"
-          title="GitHub"
-          asChild
-        >
-          <Link href="https://github.com/fenghan34/rejume" target="_blank">
-            <GitHub />
-          </Link>
-        </Button>
+        <div className="space-x-0.5">
+          <Button
+            className="cursor-pointer size-8"
+            variant="ghost"
+            title="GitHub"
+            asChild
+          >
+            <Link href="https://github.com/fenghan34/rejume" target="_blank">
+              <GitHub />
+            </Link>
+          </Button>
 
-        <ModeToggle />
+          <ModeToggle />
+        </div>
 
         <UserAvatar />
       </div>

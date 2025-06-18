@@ -2,7 +2,7 @@
   "name": "rejume",
   "version": "0.0.0",
   "private": true,
-  "description": "An AI-powered resume generator",
+  "description": "An AI-powered resume builder",
   "license": "MIT",
   "author": "Han Feng <fenghan770@gmail.com>",
   "scripts": {
@@ -175,8 +175,7 @@
     "onlyBuiltDependencies": [
       "esbuild",
       "sharp",
-      "simple-git-hooks",
-      "supabase"
+      "simple-git-hooks"
     ]
   }
 }
