@@ -1,6 +1,5 @@
 'use client'
 
-import type { ResumeSuggestion } from '@/lib/ai/tools'
 import {
   Check,
   ChevronsUpDownIcon,
@@ -11,6 +10,7 @@ import {
 import React, { memo, useState } from 'react'
 import { toast } from 'sonner'
 import { updateResume } from '@/app/dashboard/actions'
+import { ResumeSuggestion } from '@/lib/ai/utils'
 import { useAppStore } from '@/providers/app'
 import { Markdown } from './markdown'
 import { Button } from './ui/button'
@@ -20,11 +20,11 @@ import {
   CollapsibleTrigger,
 } from './ui/collapsible'
 
-interface ResumeSuggestionsProps {
+function PureResumeSuggestions({
+  suggestions,
+}: {
   suggestions: ResumeSuggestion[]
-}
-
-function PureResumeSuggestions({ suggestions }: ResumeSuggestionsProps) {
+}) {
   return (
     <div className="space-y-4">
       {suggestions.map((suggestion) => (

@@ -1,5 +1,12 @@
 import { generateUUID } from '../utils'
-import { ResumeSuggestion } from './tools'
+
+export type ResumeSuggestion = {
+  id: string
+  section: string
+  original: string
+  suggested: string
+  explanation: string
+}
 
 export function parseSuggestions(content: string): ResumeSuggestion[] | null {
   try {
@@ -13,7 +20,7 @@ export function parseSuggestions(content: string): ResumeSuggestion[] | null {
 
     return suggestions.map((suggestion) => ({
       id: suggestion.id ?? generateUUID(),
-      section: suggestion.section ?? 'Unknown Section',
+      section: suggestion.section ?? '',
       original: suggestion.original ?? '',
       suggested: suggestion.suggested ?? '',
       explanation: suggestion.explanation ?? '',
