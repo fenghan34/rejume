@@ -4,10 +4,7 @@ import { formatDistance } from 'date-fns'
 import { Ellipsis } from 'lucide-react'
 import { motion } from 'motion/react'
 import Link from 'next/link'
-import React, {
-  // @ts-expect-error ViewTransition is experimental
-  unstable_ViewTransition as ViewTransition,
-} from 'react'
+import React, { unstable_ViewTransition as ViewTransition } from 'react'
 import { toast } from 'sonner'
 import { createResume, deleteResume } from '@/app/dashboard/actions'
 import { ResumeModel } from '@/lib/db/schema'

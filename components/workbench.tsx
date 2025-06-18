@@ -6,7 +6,6 @@ import dynamic from 'next/dynamic'
 import React, {
   useEffect,
   useState,
-  // @ts-expect-error ViewTransition is experimental
   unstable_ViewTransition as ViewTransition,
   useRef,
 } from 'react'
