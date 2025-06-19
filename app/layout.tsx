@@ -1,9 +1,6 @@
 import { ThemeProvider } from 'next-themes'
 import { Toaster } from 'sonner'
-import { Header } from '@/components/header'
-import { TooltipProvider } from '@/components/ui/tooltip'
 import { notoSans, notoSansSC, nunitoSans } from '@/lib/fonts'
-import { AppStoreProvider } from '@/providers/app'
 import './globals.css'
 
 export default function RootLayout({
@@ -26,15 +23,7 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
-          <TooltipProvider>
-            <AppStoreProvider>
-              <div className="flex flex-col h-screen">
-                <Header />
-                <main className="flex-1 overflow-hidden">{children}</main>
-              </div>
-            </AppStoreProvider>
-          </TooltipProvider>
-
+          {children}
           <Toaster position="top-center" />
         </ThemeProvider>
       </body>
