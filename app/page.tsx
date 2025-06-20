@@ -28,9 +28,13 @@ export default async function LandingPage() {
 
                 <Button size="sm" variant="outline" asChild>
                   {session ? (
-                    <Link href="/dashboard">Dashboard</Link>
+                    <Link prefetch href="/dashboard">
+                      Dashboard
+                    </Link>
                   ) : (
-                    <Link href="/login">Sign in</Link>
+                    <Link prefetch href="/login">
+                      Sign in
+                    </Link>
                   )}
                 </Button>
               </div>
@@ -51,7 +55,7 @@ export default async function LandingPage() {
                 {' '}
                 resume{' '}
               </span>
-              <span className="block">it’s expression</span>
+              <span className="block">it&apos;s expression</span>
             </h1>
 
             <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
@@ -60,7 +64,7 @@ export default async function LandingPage() {
             </p>
 
             <Button size="lg" asChild>
-              <Link href={session ? '/dashboard' : '/login'}>
+              <Link prefetch href={session ? '/dashboard' : '/login'}>
                 Start your resume
               </Link>
             </Button>
@@ -139,7 +143,7 @@ export default async function LandingPage() {
               Ready to create your standout resume?
             </h2>
             <Button size="lg" variant="secondary" asChild>
-              <Link href={session ? '/dashboard' : '/login'}>
+              <Link prefetch href={session ? '/dashboard' : '/login'}>
                 Start Building Now
                 <ArrowRight />
               </Link>

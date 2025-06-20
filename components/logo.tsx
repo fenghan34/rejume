@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 
 export function Logo({ className }: { className?: string }) {
   return (
-    <Link href="/" className={cn(montserrat.className, className)}>
+    <Link prefetch href="/" className={cn(montserrat.className, className)}>
       Rejume
     </Link>
   )
