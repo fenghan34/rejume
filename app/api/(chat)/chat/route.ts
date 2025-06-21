@@ -22,7 +22,7 @@ import { PostRequestBody, postRequestBodySchema } from './schema'
 
 export const maxDuration = 30
 
-async function secretPOST(req: NextRequest) {
+export const POST = withAuth(async (req: NextRequest) => {
   let requestBody: PostRequestBody
 
   try {
@@ -99,6 +99,4 @@ async function secretPOST(req: NextRequest) {
       return error instanceof Error ? error.message : String(error)
     },
   })
-}
-
-export const POST = withAuth(secretPOST)
+})

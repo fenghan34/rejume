@@ -1,6 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   DropdownMenu,
@@ -30,6 +31,16 @@ export function UserAvatar() {
     .join('')
     .toUpperCase()
 
+  const handleSignOut = async () => {
+    const { error } = await signOut()
+    if (error) {
+      console.error(error)
+      toast.error(error.message)
+    } else {
+      router.replace('/login')
+    }
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -40,13 +51,7 @@ export function UserAvatar() {
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="min-w-auto">
-        <DropdownMenuItem
-          className="cursor-pointer"
-          onSelect={async () => {
-            await signOut()
-            router.replace('/login')
-          }}
-        >
+        <DropdownMenuItem className="cursor-pointer" onSelect={handleSignOut}>
           Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>

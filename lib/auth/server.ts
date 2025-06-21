@@ -1,4 +1,5 @@
 import 'server-only'
+import type { User } from 'better-auth'
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { headers } from 'next/headers'
@@ -84,7 +85,7 @@ export const verifySession = async () => {
   return session
 }
 
-type Handler = (req: NextRequest, context?: unknown) => Promise<Response>
+type Handler = (req: NextRequest, context: { user: User }) => Promise<Response>
 
 export function withAuth(handler: Handler): Handler {
   return async (req, context) => {
@@ -96,6 +97,6 @@ export function withAuth(handler: Handler): Handler {
       })
     }
 
-    return handler(req, context)
+    return handler(req, { ...context, user: session.user })
   }
 }

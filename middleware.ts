@@ -6,9 +6,7 @@ export async function middleware(request: NextRequest) {
 
   if (!sessionCookie) {
     const { pathname, origin } = request.nextUrl
-    const redirect = pathname !== '/dashboard' ? `?redirect=${pathname}` : ''
-    const url = new URL(`/login${redirect}`, origin)
-
+    const url = new URL(`/login?redirectTo=${pathname}`, origin)
     return NextResponse.redirect(url)
   }
 

@@ -3,7 +3,7 @@ import { NextRequest } from 'next/server'
 import { providers } from '@/lib/ai/providers'
 import { withAuth } from '@/lib/auth/server'
 
-async function secretPOST(req: NextRequest) {
+export const POST = withAuth(async (req: NextRequest) => {
   const { messages } = await req.json()
 
   return createDataStreamResponse({
@@ -20,6 +20,4 @@ async function secretPOST(req: NextRequest) {
       return error instanceof Error ? error.message : String(error)
     },
   })
-}
-
-export const POST = withAuth(secretPOST)
+})

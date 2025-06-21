@@ -1,23 +1,24 @@
 'use client'
 
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useState } from 'react'
 import { toast } from 'sonner'
 import { Google, GitHub, Spinner } from '@/components/icons'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { signIn, signUp, useSession } from '@/lib/auth/client'
+import { signIn, signUp } from '@/lib/auth/client'
 
 export function AuthForm({ type }: { type: 'login' | 'signup' }) {
   const router = useRouter()
-  const { data: session } = useSession()
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams.get('redirectTo') || '/dashboard'
   const [loading, setLoading] = useState(false)
   const isSignup = type === 'signup'
 
   const getCallbackURL = () => {
-    return new URL('/dashboard', window.location.origin).href
+    return new URL(redirectTo, window.location.origin).href
   }
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -48,6 +49,8 @@ export function AuthForm({ type }: { type: 'login' | 'signup' }) {
 
     if (result.error) {
       toast.error(result.error.message)
+    } else {
+      router.replace(redirectTo)
     }
   }
 
@@ -62,15 +65,10 @@ export function AuthForm({ type }: { type: 'login' | 'signup' }) {
     setLoading(false)
 
     if (error) {
+      console.error(error)
       toast.error(error.message)
     }
   }
-
-  useEffect(() => {
-    if (session?.user?.id) {
-      router.push('/dashboard')
-    }
-  }, [router, session?.user?.id])
 
   return (
     <div className="w-full max-w-md p-6 space-y-8">

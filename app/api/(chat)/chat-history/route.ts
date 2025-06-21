@@ -2,7 +2,8 @@ import { NextRequest } from 'next/server'
 import { withAuth } from '@/lib/auth/server'
 import { getChatsByResumeId } from '@/lib/db/queries'
 
-async function secretGET(req: NextRequest) {
+export const GET = withAuth(async (req: NextRequest, context) => {
+  console.log(context)
   const searchParams = req.nextUrl.searchParams
   const resumeId = searchParams.get('resumeId')
 
@@ -18,6 +19,4 @@ async function secretGET(req: NextRequest) {
     status: 200,
     headers: { 'Content-Type': 'application/json' },
   })
-}
-
-export const GET = withAuth(secretGET)
+})
