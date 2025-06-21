@@ -5,6 +5,7 @@ import { Toolbar } from '@/components/toolbar'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { UserAvatar } from '@/components/user-avatar'
 import { AppStoreProvider } from '@/providers/app'
+import { SWRProvider } from '@/providers/swr-provider'
 
 export default function DashboardLayout({
   children,
@@ -14,24 +15,26 @@ export default function DashboardLayout({
   return (
     <TooltipProvider>
       <AppStoreProvider>
-        <div className="flex flex-col h-screen">
-          <header className="flex items-center justify-between px-6 h-14">
-            <Logo />
+        <SWRProvider>
+          <div className="flex flex-col h-screen">
+            <header className="flex items-center justify-between px-6 h-14">
+              <Logo />
 
-            <div className="grow flex items-center justify-center">
-              <CurrentResumeTitle />
-            </div>
+              <div className="grow flex items-center justify-center">
+                <CurrentResumeTitle />
+              </div>
 
-            <Toolbar />
+              <Toolbar />
 
-            <div className="flex items-center gap-2">
-              <ModeToggle />
+              <div className="flex items-center gap-2">
+                <ModeToggle />
 
-              <UserAvatar />
-            </div>
-          </header>
-          <main className="flex-1 overflow-hidden">{children}</main>
-        </div>
+                <UserAvatar />
+              </div>
+            </header>
+            <main className="flex-1 overflow-hidden">{children}</main>
+          </div>
+        </SWRProvider>
       </AppStoreProvider>
     </TooltipProvider>
   )

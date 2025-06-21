@@ -15,13 +15,11 @@ export function getChatHistoryKey(resumeId: string) {
   return `/api/chat-history?resumeId=${resumeId}`
 }
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json())
-
 export function ChatContainer({ resumeId }: { resumeId: string }) {
   const key = getChatHistoryKey(resumeId)
   const [currentChat, setCurrentChat] = useState<ChatModel | null>(null)
   const { mutate } = useSWRConfig()
-  const { data: chats, isLoading } = useSWR<ChatModel[]>(key, fetcher, {
+  const { data: chats, isLoading } = useSWR<ChatModel[]>(key, {
     onSuccess: (data) => {
       if (data.length > 0) {
         setCurrentChat(data[0])
@@ -34,7 +32,7 @@ export function ChatContainer({ resumeId }: { resumeId: string }) {
   const { data: initialMessages } = useSWR<UIMessage[]>(() => {
     if (!currentChat?.id) return null
     return `/api/messages?chatId=${currentChat.id}`
-  }, fetcher)
+  })
 
   const handleDeleteChat = async (chat: ChatModel) => {
     try {
