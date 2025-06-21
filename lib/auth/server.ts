@@ -3,6 +3,7 @@ import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { NextRequest } from 'next/server'
 import { Resend } from 'resend'
 import { db } from '../db/queries'
 import { accounts, sessions, users, verifications } from '../db/schema'
@@ -19,6 +20,14 @@ export const auth = betterAuth({
       verification: verifications,
     },
   }),
+  session: {
+    expiresIn: 60 * 60 * 24 * 7, // 7 days
+    updateAge: 60 * 60 * 24, // every 1 day the session expiration is updated
+    cookieCache: {
+      enabled: true,
+      maxAge: 5 * 60, // 5 minutes
+    },
+  },
   emailAndPassword: {
     autoSignIn: true,
     enabled: true,
@@ -73,4 +82,20 @@ export const verifySession = async () => {
   }
 
   return session
+}
+
+type Handler = (req: NextRequest, context?: unknown) => Promise<Response>
+
+export function withAuth(handler: Handler): Handler {
+  return async (req, context) => {
+    const session = await getSession()
+    if (!session) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+
+    return handler(req, context)
+  }
 }

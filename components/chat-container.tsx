@@ -33,7 +33,7 @@ export function ChatContainer({ resumeId }: { resumeId: string }) {
 
   const { data: initialMessages } = useSWR<UIMessage[]>(() => {
     if (!currentChat?.id) return null
-    return `/api/chat?id=${currentChat.id}`
+    return `/api/messages?chatId=${currentChat.id}`
   }, fetcher)
 
   const handleDeleteChat = async (chat: ChatModel) => {

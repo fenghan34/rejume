@@ -1,7 +1,9 @@
 import { createDataStreamResponse, streamText } from 'ai'
+import { NextRequest } from 'next/server'
 import { providers } from '@/lib/ai/providers'
+import { withAuth } from '@/lib/auth/server'
 
-export async function POST(req: Request) {
+async function secretPOST(req: NextRequest) {
   const { messages } = await req.json()
 
   return createDataStreamResponse({
@@ -19,3 +21,5 @@ export async function POST(req: Request) {
     },
   })
 }
+
+export const POST = withAuth(secretPOST)

@@ -1,20 +1,20 @@
 import { NextRequest } from 'next/server'
 import { withAuth } from '@/lib/auth/server'
-import { getChatsByResumeId } from '@/lib/db/queries'
+import { getMessagesByChatId } from '@/lib/db/queries'
 
 async function secretGET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams
-  const resumeId = searchParams.get('resumeId')
+  const chatId = searchParams.get('chatId')
 
-  if (!resumeId) {
+  if (!chatId) {
     return new Response(JSON.stringify({ error: 'Bad request' }), {
       status: 400,
       headers: { 'Content-Type': 'application/json' },
     })
   }
 
-  const chats = await getChatsByResumeId(resumeId)
-  return new Response(JSON.stringify(chats), {
+  const messages = await getMessagesByChatId(chatId)
+  return new Response(JSON.stringify(messages), {
     status: 200,
     headers: { 'Content-Type': 'application/json' },
   })

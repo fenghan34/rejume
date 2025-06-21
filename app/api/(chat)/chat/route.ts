@@ -5,10 +5,11 @@ import {
   Message,
   streamText,
 } from 'ai'
+import { NextRequest } from 'next/server'
 import { generateTitleFromUserMessage } from '@/app/dashboard/actions'
 import { systemPrompt } from '@/lib/ai/prompt'
 import { providers } from '@/lib/ai/providers'
-import { verifySession } from '@/lib/auth/server'
+import { withAuth } from '@/lib/auth/server'
 import {
   getChatById,
   getMessagesByChatId,
@@ -21,9 +22,7 @@ import { PostRequestBody, postRequestBodySchema } from './schema'
 
 export const maxDuration = 30
 
-export async function POST(req: Request) {
-  await verifySession()
-
+async function secretPOST(req: NextRequest) {
   let requestBody: PostRequestBody
 
   try {
@@ -102,17 +101,4 @@ export async function POST(req: Request) {
   })
 }
 
-export async function GET(req: Request) {
-  await verifySession()
-
-  const { searchParams } = new URL(req.url)
-  const id = searchParams.get('id')
-  if (!id) {
-    return new Response(JSON.stringify({ error: 'Missing id' }), {
-      status: 400,
-    })
-  }
-
-  const messages = await getMessagesByChatId(id)
-  return new Response(JSON.stringify(messages), { status: 200 })
-}
+export const POST = withAuth(secretPOST)
