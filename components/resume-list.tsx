@@ -1,10 +1,6 @@
 'use client'
 
-import {
-  useQueryClient,
-  useMutation,
-  useSuspenseQuery,
-} from '@tanstack/react-query'
+import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query'
 import { Plus } from 'lucide-react'
 import { toast } from 'sonner'
 import {
@@ -22,7 +18,7 @@ export function ResumeList() {
   const queryClient = useQueryClient()
   const queryKey = ['resumes']
 
-  const { data, error } = useSuspenseQuery<ResumeModel[]>({
+  const { data, error } = useQuery<ResumeModel[]>({
     queryKey,
     queryFn: getResumeList,
   })

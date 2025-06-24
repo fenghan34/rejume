@@ -1,17 +1,22 @@
 'use client'
 
-import type { ResumeModel } from '@/lib/db/schema'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { debounce } from 'lodash'
 import dynamic from 'next/dynamic'
+import { notFound } from 'next/navigation'
 import React, {
   useEffect,
   useState,
   unstable_ViewTransition as ViewTransition,
   useRef,
+  useMemo,
+  useCallback,
 } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { toast } from 'sonner'
-import { updateResume } from '@/app/dashboard/actions'
+import { updateResume, getResumeById } from '@/app/dashboard/actions'
+import { ResumeModel } from '@/lib/db/schema'
+import { MonacoEditor } from '@/lib/monaco/types'
 import { useAppStore } from '@/providers/app'
 import { ChatContainer } from './chat-container'
 import { Preview } from './preview'
@@ -25,15 +30,80 @@ const Editor = dynamic(
   () => import('@/components/editor').then((module) => module.Editor),
   {
     ssr: false,
+    loading: () => (
+      <div className="flex h-full w-full items-center justify-center">
+        Loading...
+      </div>
+    ),
   },
 )
 
 export const PREVIEW_CLASS = 'preview-panel'
 
-export function Workbench({ resume }: { resume: ResumeModel }) {
-  const editor = useAppStore((state) => state.editor)
+export function getResumeQueryKey(id: string) {
+  return ['resumes', id]
+}
+
+export function Workbench({ id }: { id: string }) {
+  const [editor, setEditor] = useState<MonacoEditor | null>(null)
   const sidebar = useAppStore((state) => state.sidebar)
-  const setResume = useAppStore((state) => state.setResume)
+
+  const queryKey = getResumeQueryKey(id)
+  const queryClient = useQueryClient()
+
+  const { data: resume } = useQuery({
+    queryKey,
+    queryFn: () => getResumeById(id),
+  })
+
+  const { mutateAsync } = useMutation({
+    mutationFn: (content: string) => updateResume(id, { content }),
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey })
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey })
+      localStorage.removeItem(id)
+    },
+    onError: (error) => {
+      console.error(error)
+      toast.error('Failed to save resume')
+    },
+  })
+
+  const debouncedMutateAsync = useMemo(
+    () => debounce(mutateAsync, 3000),
+    [mutateAsync],
+  )
+
+  const save = useCallback(
+    (content: string) => {
+      localStorage.setItem(
+        id,
+        JSON.stringify({
+          content,
+          timestamp: Date.now(),
+        }),
+      )
+      queryClient.setQueryData(queryKey, (prev: ResumeModel) => ({
+        ...prev,
+        content,
+      }))
+      debouncedMutateAsync(content)
+    },
+    [id, queryClient, queryKey, debouncedMutateAsync],
+  )
+
+  const handleOnMountEditor = (editor: MonacoEditor) => {
+    setEditor(editor)
+    const onChange = editor.onDidChangeModelContent(() => {
+      save(editor.getValue())
+    })
+    editor.onDidDispose(() => {
+      setEditor(null)
+      onChange.dispose()
+    })
+  }
 
   // Disable browser's save hotkey
   useHotkeys('meta+s, ctrl+s', () => {}, {
@@ -42,83 +112,76 @@ export function Workbench({ resume }: { resume: ResumeModel }) {
   })
 
   useEffect(() => {
-    setResume(resume)
-  }, [resume, setResume])
+    if (!editor || !resume?.updatedAt) return
 
-  useEffect(() => {
-    if (!editor) return
-
-    const save = async (content: string, beforeUnload = false) => {
+    // Restore unsaved changes from local storage
+    const unsaved = localStorage.getItem(id)
+    if (unsaved) {
       try {
-        localStorage.setItem(resume.id, content)
-        await updateResume(resume.id, { content })
-
-        if (!beforeUnload) {
-          localStorage.removeItem(resume.id)
+        const { content, timestamp } = JSON.parse(unsaved)
+        if (timestamp > new Date(resume.updatedAt).getTime()) {
+          editor.setValue(content)
         }
-      } catch (error) {
-        console.error(error)
-        toast.error('Failed to save resume')
+      } catch {
+        localStorage.removeItem(id)
       }
     }
+  }, [editor, id, resume?.updatedAt])
 
-    const cache = localStorage.getItem(resume.id)
-    if (cache) {
-      editor?.setValue(cache)
-      save(cache)
-    }
-
-    const debouncedSave = debounce(save, 3000)
-    const onEditorChange = editor?.onDidChangeModelContent(() => {
-      debouncedSave(editor.getValue())
-    })
-
-    const beforeUnloadHandler = () => save(editor.getValue(), true)
-    window.addEventListener('beforeunload', beforeUnloadHandler)
-
+  useEffect(() => {
     return () => {
-      onEditorChange?.dispose()
-      window.removeEventListener('beforeunload', beforeUnloadHandler)
+      debouncedMutateAsync.cancel()
     }
-  }, [editor, resume.id])
+  }, [debouncedMutateAsync])
+
+  if (!resume) return notFound()
 
   return (
-    <ResizablePanelGroup direction="horizontal" className="rounded outline">
-      <ResizablePanel
-        minSize={30}
-        defaultSize={50}
-        className="bg-secondary @container"
-      >
-        <PreviewWrapper>
-          <PreviewWithViewTransition
-            key={resume.updatedAt.toISOString()}
-            resumeId={resume.id}
-            defaultContent={resume.content}
-          />
-        </PreviewWrapper>
-      </ResizablePanel>
+    <div className="h-full px-6 pb-6 pt-px">
+      <ResizablePanelGroup direction="horizontal" className="rounded outline">
+        <ResizablePanel
+          minSize={30}
+          defaultSize={50}
+          className="bg-secondary @container"
+        >
+          <PreviewWrapper editor={editor}>
+            <PreviewWithViewTransition
+              resumeId={resume.id}
+              content={resume.content}
+            />
+          </PreviewWrapper>
+        </ResizablePanel>
 
-      <ResizableHandle />
+        <ResizableHandle />
 
-      <ResizablePanel
-        minSize={30}
-        defaultSize={50}
-        collapsible
-        collapsedSize={5}
-      >
-        {sidebar === 'chat' ? (
-          <ChatContainer resumeId={resume.id} />
-        ) : (
-          <Editor defaultValue={resume.content} />
-        )}
-      </ResizablePanel>
-    </ResizablePanelGroup>
+        <ResizablePanel
+          minSize={30}
+          defaultSize={50}
+          collapsible
+          collapsedSize={5}
+        >
+          {sidebar === 'chat' ? (
+            <ChatContainer resumeId={resume.id} />
+          ) : (
+            <Editor
+              defaultValue={resume.content}
+              onMount={handleOnMountEditor}
+            />
+          )}
+        </ResizablePanel>
+      </ResizablePanelGroup>
+    </div>
   )
 }
 
-function PreviewWrapper({ children }: { children: React.ReactNode }) {
+function PreviewWrapper({
+  children,
+  editor,
+}: {
+  children: React.ReactNode
+  editor: MonacoEditor | null
+}) {
   const ref = useRef<HTMLDivElement>(null)
-  const editor = useAppStore((state) => state.editor)
 
   useEffect(() => {
     const scrollPreview = () => {
@@ -149,24 +212,11 @@ function PreviewWrapper({ children }: { children: React.ReactNode }) {
 
 function PreviewWithViewTransition({
   resumeId,
-  defaultContent,
+  content,
 }: {
   resumeId: string
-  defaultContent: string
+  content: string
 }) {
-  const [content, setContent] = useState(defaultContent)
-  const editor = useAppStore((state) => state.editor)
-
-  useEffect(() => {
-    const onEditorChange = editor?.onDidChangeModelContent(() => {
-      setContent(editor?.getValue() || '')
-    })
-
-    return () => {
-      onEditorChange?.dispose()
-    }
-  }, [editor])
-
   return (
     <ViewTransition name={`resume-${resumeId}`}>
       <Preview className={PREVIEW_CLASS} content={content} />
