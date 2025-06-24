@@ -85,9 +85,14 @@ export const verifySession = async () => {
   return session
 }
 
-type Handler = (req: NextRequest, context: { user: User }) => Promise<Response>
+type Handler<T> = (
+  req: NextRequest,
+  context: { user: User; params: T },
+) => Promise<Response>
 
-export function withAuth(handler: Handler): Handler {
+export function withAuth<T = Promise<unknown>>(
+  handler: Handler<T>,
+): Handler<T> {
   return async (req, context) => {
     const session = await getSession()
     if (!session) {
