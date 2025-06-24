@@ -1,23 +1,56 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Trash2, History } from 'lucide-react'
 import { useState } from 'react'
+import { toast } from 'sonner'
+import { deleteChat, getChatsByResumeId } from '@/app/dashboard/actions'
 import { ChatModel } from '@/lib/db/schema'
 import { cn } from '@/lib/utils'
 import { Button } from './ui/button'
 import { Popover, PopoverTrigger, PopoverContent } from './ui/popover'
 import { Tooltip, TooltipTrigger, TooltipContent } from './ui/tooltip'
 
+export type ChatHistoryProps = {
+  resumeId: string
+  currentChat?: ChatModel
+  setChatId: (chatId?: string) => void
+}
+
+export function getChatsQueryKey(resumeId: string) {
+  return ['chats', resumeId]
+}
+
 export function ChatHistory({
-  chats,
+  resumeId,
   currentChat,
-  onSelectChat,
-  onDeleteChat,
-}: {
-  chats?: ChatModel[]
-  currentChat: ChatModel | null
-  onSelectChat: (chat: ChatModel) => void
-  onDeleteChat: (chat: ChatModel) => void
-}) {
+  setChatId,
+}: ChatHistoryProps) {
   const [isOpen, setIsOpen] = useState(false)
+  const queryClient = useQueryClient()
+  const queryKey = getChatsQueryKey(resumeId)
+
+  const { data: chats } = useQuery({
+    queryKey,
+    queryFn: () => getChatsByResumeId(resumeId),
+  })
+
+  const deleteChatMutation = useMutation({
+    mutationFn: (chat: ChatModel) => deleteChat(chat.id),
+    onMutate: async (chat) => {
+      await queryClient.cancelQueries({ queryKey })
+
+      const previousChats = queryClient.getQueryData(queryKey)
+      queryClient.setQueryData(queryKey, (prev?: ChatModel[]) =>
+        prev?.filter(({ id }) => id !== chat.id),
+      )
+
+      return { previousChats }
+    },
+    onError: (_, __, context) => {
+      toast.error('Failed to delete chat, please try again.')
+      queryClient.setQueryData(queryKey, context!.previousChats)
+    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey }),
+  })
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -53,7 +86,7 @@ export function ChatHistory({
                   { 'bg-accent': chat.id === currentChat?.id },
                 )}
                 onClick={() => {
-                  onSelectChat(chat)
+                  setChatId(chat.id)
                   setIsOpen(false)
                 }}
               >
@@ -72,9 +105,10 @@ export function ChatHistory({
                   )}
                   onClick={(e) => {
                     e.stopPropagation()
-                    onDeleteChat(chat)
+                    deleteChatMutation.mutate(chat)
                     if (chats.length === 1) {
                       setIsOpen(false)
+                      setChatId()
                     }
                   }}
                 >

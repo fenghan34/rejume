@@ -5,8 +5,6 @@ import { Ellipsis } from 'lucide-react'
 import { motion } from 'motion/react'
 import Link from 'next/link'
 import React, { unstable_ViewTransition as ViewTransition } from 'react'
-import { toast } from 'sonner'
-import { createResume, deleteResume } from '@/app/dashboard/actions'
 import { ResumeModel } from '@/lib/db/schema'
 import { Preview } from './preview'
 import { ResumeTitle } from './resume-title'
@@ -18,7 +16,19 @@ import {
   DropdownMenu,
 } from './ui/dropdown-menu'
 
-export function ResumeCard({ id, title, content, updatedAt }: ResumeModel) {
+export function ResumeCard({
+  id,
+  title,
+  content,
+  updatedAt,
+  onDelete,
+  onDuplicate,
+  onUpdate,
+}: Omit<ResumeModel, 'createdAt' | 'userId'> & {
+  onDelete: (id: string) => void
+  onDuplicate: (data: Pick<ResumeModel, 'title' | 'content'>) => void
+  onUpdate: (data: Pick<ResumeModel, 'title' | 'id'>) => void
+}) {
   return (
     <ViewTransition name={`resume-${id}`}>
       <motion.div
@@ -45,27 +55,18 @@ export function ResumeCard({ id, title, content, updatedAt }: ResumeModel) {
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuItem
-                onSelect={() => {
-                  toast.promise(
-                    createResume({
-                      title: `${title} (Copy)`,
-                      content,
-                    }),
-                    {
-                      error: 'Failed to duplicate resume, please try again.',
-                    },
-                  )
-                }}
+                onSelect={() =>
+                  onDuplicate({
+                    title,
+                    content,
+                  })
+                }
               >
                 Duplicate
               </DropdownMenuItem>
               <DropdownMenuItem
                 variant="destructive"
-                onSelect={() => {
-                  toast.promise(deleteResume(id), {
-                    error: 'Failed to delete resume, please try again.',
-                  })
-                }}
+                onSelect={() => onDelete(id)}
               >
                 Delete
               </DropdownMenuItem>
@@ -82,7 +83,10 @@ export function ResumeCard({ id, title, content, updatedAt }: ResumeModel) {
         </div>
 
         <div className="w-4/5 flex flex-col justify-center text-center space-y-0.5">
-          <ResumeTitle resumeId={id} title={title} />
+          <ResumeTitle
+            value={title}
+            onSave={(v) => onUpdate({ id, title: v })}
+          />
           <div
             suppressHydrationWarning
             className="text-xs text-muted-foreground"

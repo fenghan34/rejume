@@ -1,68 +1,48 @@
 'use client'
 
-import type { ChatModel } from '@/lib/db/schema'
-import type { UIMessage } from 'ai'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { UIMessage } from 'ai'
 import { useState } from 'react'
-import { toast } from 'sonner'
-import useSWR, { useSWRConfig } from 'swr'
-import { deleteChat } from '@/app/dashboard/actions'
+import { getChatById } from '@/app/dashboard/actions'
 import { generateUUID } from '@/lib/utils'
 import { Chat } from './chat'
 import { ChatHeader } from './chat-header'
-import { ChatHistory } from './chat-history'
-
-export function getChatHistoryKey(resumeId: string) {
-  return `/api/chat-history?resumeId=${resumeId}`
-}
+import { getChatsQueryKey } from './chat-history'
 
 export function ChatContainer({ resumeId }: { resumeId: string }) {
-  const key = getChatHistoryKey(resumeId)
-  const [currentChat, setCurrentChat] = useState<ChatModel | null>(null)
-  const { mutate } = useSWRConfig()
-  const { data: chats, isLoading } = useSWR<ChatModel[]>(key, {
-    onSuccess: (data) => {
-      if (data.length > 0) {
-        setCurrentChat(data[0])
-      } else {
-        setCurrentChat(null)
-      }
-    },
+  const queryClient = useQueryClient()
+  const [chatId, setChatId] = useState<string>()
+
+  const { data: chat } = useQuery({
+    queryKey: ['chat', chatId],
+    queryFn: () => getChatById(chatId!),
+    enabled: !!chatId,
   })
 
-  const { data: initialMessages } = useSWR<UIMessage[]>(() => {
-    if (!currentChat?.id) return null
-    return `/api/messages?chatId=${currentChat.id}`
-  })
-
-  const handleDeleteChat = async (chat: ChatModel) => {
-    try {
-      mutate(key, () => deleteChat(chat.id), {
-        optimisticData: chats?.filter(({ id }) => id !== chat.id),
-        rollbackOnError: true,
-      })
-    } catch (error) {
-      console.error(error)
-      toast.error('Failed to delete chat, please try again.')
-    }
-  }
+  const id = chatId || generateUUID()
 
   return (
     <div className="h-full flex flex-col">
-      <ChatHeader chat={currentChat} setChat={setCurrentChat}>
-        <ChatHistory
-          chats={chats}
-          currentChat={currentChat}
-          onSelectChat={setCurrentChat}
-          onDeleteChat={handleDeleteChat}
-        />
-      </ChatHeader>
+      <ChatHeader
+        resumeId={resumeId}
+        currentChat={chat}
+        setChatId={setChatId}
+      />
 
       <div className="flex-1 overflow-hidden">
         <Chat
-          id={currentChat?.id || generateUUID()}
-          showGreeting={!currentChat && !isLoading}
+          id={id}
+          showGreeting
           resumeId={resumeId}
-          initialMessages={initialMessages}
+          initialMessages={chat?.messages as UIMessage[]}
+          onFinish={() => {
+            if (!chatId) {
+              setChatId(id)
+              queryClient.invalidateQueries({
+                queryKey: getChatsQueryKey(resumeId),
+              })
+            }
+          }}
         />
       </div>
     </div>

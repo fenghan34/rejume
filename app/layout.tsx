@@ -1,6 +1,7 @@
 import { ThemeProvider } from 'next-themes'
 import { Toaster } from 'sonner'
 import { notoSans, notoSansSC, nunitoSans } from '@/lib/fonts'
+import { ReactQueryProvider } from '@/providers/react-query-provider'
 import './globals.css'
 
 export default function RootLayout({
@@ -23,7 +24,7 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
-          {children}
+          <ReactQueryProvider>{children}</ReactQueryProvider>
           <Toaster position="top-center" />
         </ThemeProvider>
       </body>
