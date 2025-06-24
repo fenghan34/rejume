@@ -7,7 +7,7 @@ import { ComponentProps, useCallback } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { useReactToPrint } from 'react-to-print'
 import { toast } from 'sonner'
-import { importFromPDF } from '@/app/dashboard/actions'
+import { importResumeFromPDF } from '@/app/dashboard/actions'
 import exampleResume from '@/examples/en.md'
 import { cn, downloadMarkdown } from '@/lib/utils'
 import { useAppStore } from '@/providers/app'
@@ -109,7 +109,7 @@ export function ImportButton({
 
             switch (file.type) {
               case 'application/pdf':
-                content = await importFromPDF(file, exampleResume)
+                content = await importResumeFromPDF(file, exampleResume)
                 break
               case 'text/markdown':
                 content = await file.text()

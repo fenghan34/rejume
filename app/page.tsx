@@ -12,32 +12,30 @@ export default async function LandingPage() {
     <>
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
         <header className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="max-w-6xl mx-auto px-4 py-4">
-            <div className="flex items-center justify-between">
-              <Logo />
+          <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
+            <Logo />
 
-              <div className="flex items-center space-x-2">
-                <Button variant="ghost" size="icon" className="size-8" asChild>
-                  <Link
-                    href="https://github.com/fenghan34/rejume"
-                    target="_blank"
-                  >
-                    <GitHub className="size-5" />
+            <div className="flex items-center space-x-2">
+              <Button variant="ghost" size="icon" className="size-8" asChild>
+                <Link
+                  href="https://github.com/fenghan34/rejume"
+                  target="_blank"
+                >
+                  <GitHub className="size-5" />
+                </Link>
+              </Button>
+
+              <Button size="sm" variant="outline" asChild>
+                {session ? (
+                  <Link prefetch href="/dashboard">
+                    Dashboard
                   </Link>
-                </Button>
-
-                <Button size="sm" variant="outline" asChild>
-                  {session ? (
-                    <Link prefetch href="/dashboard">
-                      Dashboard
-                    </Link>
-                  ) : (
-                    <Link prefetch href="/login">
-                      Sign in
-                    </Link>
-                  )}
-                </Button>
-              </div>
+                ) : (
+                  <Link prefetch href="/login">
+                    Sign in
+                  </Link>
+                )}
+              </Button>
             </div>
           </div>
         </header>

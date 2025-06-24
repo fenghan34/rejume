@@ -1,32 +1,50 @@
-import { generateUUID } from '../utils'
+import 'server-only'
+import { UIMessage, generateText } from 'ai'
+import { providers } from './providers'
 
-export type ResumeSuggestion = {
-  id: string
-  section: string
-  original: string
-  suggested: string
-  explanation: string
+export async function generateTitleFromUserMessage({
+  message,
+}: {
+  message: UIMessage
+}) {
+  const { text } = await generateText({
+    model: providers.openrouter('meta-llama/llama-4-maverick:free'),
+    system: `\n
+    - you will generate a short title based on the first message a user begins a conversation with
+    - ensure it is not more than 80 characters long
+    - the title should be a summary of the user's message
+    - do not use quotes or colons`,
+    prompt: JSON.stringify(message),
+  })
+
+  return text
 }
 
-export function parseSuggestions(content: string): ResumeSuggestion[] | null {
-  try {
-    const jsonMatch = content.trim().match(/^\[\s*\{[\s\S]*\}\s*\]$/)
-    if (!jsonMatch) return null
+export async function generateResumeFromPDF(file: File, exampleResume: string) {
+  const { text } = await generateText({
+    model: providers.openrouter('meta-llama/llama-4-maverick:free'),
+    system: `You are a helpful assistant that extracts and structures all relevant information including personal details, work experience, education, skills, and any other sections present from the OCR of user's resume PDF.
+      - you should return the information in Markdown format
+      - you should return the information in the same language as the resume
+      - you should format the information clearly in the same format as the example below
 
-    const jsonStr = jsonMatch[0]
-    const suggestions = JSON.parse(jsonStr) as ResumeSuggestion[]
+      Example output:
+      ${exampleResume}
+      `,
+    messages: [
+      {
+        role: 'user',
+        content: [
+          {
+            type: 'file',
+            filename: file.name,
+            mimeType: 'application/pdf',
+            data: await file.bytes(),
+          },
+        ],
+      },
+    ],
+  })
 
-    if (!Array.isArray(suggestions)) return []
-
-    return suggestions.map((suggestion) => ({
-      id: suggestion.id ?? generateUUID(),
-      section: suggestion.section ?? '',
-      original: suggestion.original ?? '',
-      suggested: suggestion.suggested ?? '',
-      explanation: suggestion.explanation ?? '',
-    }))
-  } catch {
-    console.error('Failed to parse suggestions:', content)
-    return []
-  }
+  return text
 }

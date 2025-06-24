@@ -10,7 +10,6 @@ import {
 import React, { memo, useState } from 'react'
 import { toast } from 'sonner'
 import { updateResume } from '@/app/dashboard/actions'
-import { ResumeSuggestion } from '@/lib/ai/utils'
 import { useAppStore } from '@/providers/app'
 import { Markdown } from './markdown'
 import { Button } from './ui/button'
@@ -19,6 +18,14 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from './ui/collapsible'
+
+export type ResumeSuggestion = {
+  id: string
+  section: string
+  original: string
+  suggested: string
+  explanation: string
+}
 
 function PureResumeSuggestions({
   suggestions,

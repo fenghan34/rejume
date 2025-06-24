@@ -6,9 +6,9 @@ import {
   streamText,
 } from 'ai'
 import { NextRequest } from 'next/server'
-import { generateTitleFromUserMessage } from '@/app/dashboard/actions'
 import { systemPrompt } from '@/lib/ai/prompt'
 import { providers } from '@/lib/ai/providers'
+import { generateTitleFromUserMessage } from '@/lib/ai/utils'
 import { withAuth } from '@/lib/auth/server'
 import {
   getChatById,
