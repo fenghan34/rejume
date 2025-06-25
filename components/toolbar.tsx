@@ -2,7 +2,6 @@
 
 import type { WorkbenchSlice } from '@/stores/workbench-slice'
 import { ChevronDown } from 'lucide-react'
-import { usePathname } from 'next/navigation'
 import { ComponentProps, useCallback } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { useReactToPrint } from 'react-to-print'
@@ -24,7 +23,6 @@ import { Tabs, TabsList, TabsTrigger } from './ui/tabs'
 import { PREVIEW_CLASS } from './workbench'
 
 export function Toolbar() {
-  const pathname = usePathname()
   const sidebar = useAppStore((state) => state.sidebar)
   const editor = useAppStore((state) => state.editor)
   const setSidebar = useAppStore((state) => state.setSidebar)
@@ -39,8 +37,6 @@ export function Toolbar() {
     preventDefault: true,
     enableOnFormTags: ['input', 'textarea', 'select'],
   })
-
-  if (pathname === '/dashboard') return null
 
   return (
     <div className={cn('flex items-center justify-end gap-2')}>

@@ -151,3 +151,4 @@ function SuggestionItem({ suggestion }: { suggestion: ResumeSuggestion }) {
 }
 
 export const ResumeSuggestions = memo(PureResumeSuggestions)
+ResumeSuggestions.displayName = 'MemoizedResumeSuggestions'
