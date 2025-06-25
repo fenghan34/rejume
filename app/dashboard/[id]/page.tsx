@@ -1,4 +1,5 @@
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
+import { cookies } from 'next/headers'
 import { notFound } from 'next/navigation'
 import { cache } from 'react'
 import { Workbench } from '@/components/workbench'
@@ -30,9 +31,18 @@ export default async function ResumePage({ params }: Props) {
     queryFn: () => getResumeByIdFn(id),
   })
 
+  const cookieStore = await cookies()
+  const defaultMode = cookieStore.get('mode')?.value
+
+  async function setCookie(name: string, value: string) {
+    'use server'
+    const cookieStore = await cookies()
+    cookieStore.set(name, value)
+  }
+
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Workbench id={id} />
+      <Workbench id={id} defaultMode={defaultMode} setCookie={setCookie} />
     </HydrationBoundary>
   )
 }

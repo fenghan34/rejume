@@ -1,15 +1,13 @@
 'use client'
 
-import type { WorkbenchSlice } from '@/stores/workbench-slice'
 import { ChevronDown } from 'lucide-react'
-import { ComponentProps, useCallback } from 'react'
+import { useCallback } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
 import { useReactToPrint } from 'react-to-print'
 import { toast } from 'sonner'
-import { importResumeFromPDF } from '@/app/dashboard/actions'
-import exampleResume from '@/examples/en.md'
+import { MonacoEditor } from '@/lib/monaco/types'
 import { cn, downloadMarkdown } from '@/lib/utils'
-import { useAppStore } from '@/providers/app'
+import { useWorkbenchContext } from '@/providers/workbench'
 import { Button } from './ui/button'
 import {
   DropdownMenu,
@@ -22,11 +20,15 @@ import { Label } from './ui/label'
 import { Tabs, TabsList, TabsTrigger } from './ui/tabs'
 import { PREVIEW_CLASS } from './workbench'
 
-export function Toolbar() {
-  const sidebar = useAppStore((state) => state.sidebar)
-  const editor = useAppStore((state) => state.editor)
-  const setSidebar = useAppStore((state) => state.setSidebar)
-
+export function Toolbar({
+  editor,
+  mode,
+  handleModeChange,
+}: {
+  editor: MonacoEditor | null
+  mode: string
+  handleModeChange: (mode: string) => void
+}) {
   const print = useReactToPrint({})
   const printHandler = useCallback(
     () => print(() => document.querySelector(`.${PREVIEW_CLASS}`)),
@@ -40,12 +42,7 @@ export function Toolbar() {
 
   return (
     <div className={cn('flex items-center justify-end gap-2')}>
-      <Tabs
-        value={sidebar}
-        onValueChange={(value) =>
-          setSidebar(value as WorkbenchSlice['sidebar'])
-        }
-      >
+      <Tabs value={mode} onValueChange={handleModeChange}>
         <TabsList>
           <TabsTrigger value="editor" title="Editor">
             Editor
@@ -87,13 +84,8 @@ export function Toolbar() {
   )
 }
 
-export function ImportButton({
-  className,
-  children,
-  ...rest
-}: { resumeId?: string } & ComponentProps<typeof Button>) {
-  const editor = useAppStore((state) => state.editor)
-
+export function ImportButton() {
+  const { updateResumeContent } = useWorkbenchContext()
   const importHandler = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0]
@@ -104,42 +96,38 @@ export function ImportButton({
             let content = ''
 
             switch (file.type) {
-              case 'application/pdf':
-                content = await importResumeFromPDF(file, exampleResume)
-                break
               case 'text/markdown':
                 content = await file.text()
                 break
             }
 
-            editor?.setValue(content)
+            updateResumeContent(content)
           },
           {
-            loading: `Importing from file ${file.name}`,
+            loading: `Importing from ${file.name}...`,
             success: `Imported successfully`,
-            error: `Failed to import from file ${file.name}. Please try again.`,
+            error: `Failed to import from ${file.name}. Please try again.`,
           },
         )
       }
     },
-    [editor],
+    [updateResumeContent],
   )
 
   return (
     <Button
       size="sm"
       variant="ghost"
-      className={cn('cursor-pointer', className)}
+      className="cursor-pointer"
       title="Import"
       asChild
-      {...rest}
     >
       <Label htmlFor="import">
-        {children || 'Import'}
+        Import
         <Input
           id="import"
           type="file"
-          accept="application/pdf, text/markdown"
+          accept="text/markdown"
           className="hidden"
           onChange={importHandler}
         />

@@ -8,7 +8,6 @@ import {
   TooltipContent,
 } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
-import { useAppStore } from '@/providers/app'
 import { Button } from './ui/button'
 
 function PureMessageActions({
@@ -19,8 +18,6 @@ function PureMessageActions({
   loading: boolean
 }) {
   const [copied, setCopied] = useState(false)
-  const copiedMessageId = useAppStore((state) => state.copiedMessageId)
-  const setCopiedMessageId = useAppStore((state) => state.setCopiedMessageId)
 
   const handleCopy = async () => {
     const textFromParts = message.parts
@@ -32,7 +29,6 @@ function PureMessageActions({
     if (textFromParts) {
       await navigator.clipboard.writeText(textFromParts)
       setCopied(true)
-      setCopiedMessageId(message.id)
       setTimeout(() => {
         setCopied(false)
       }, 2000)
@@ -46,7 +42,6 @@ function PureMessageActions({
       className={cn(
         'flex group-data-[role=user]/message:justify-end group-data-[role=assistant]/message:justify-start opacity-0 group-hover/message:opacity-100 transition-opacity duration-200 ease-in-out transform group-data-[role=user]/message:translate-x-1.5 group-data-[role=assistant]/message:-translate-x-1.5',
         {
-          'opacity-100': copiedMessageId === message.id,
           '!opacity-0': loading,
           'group-last/message:opacity-100': message.role === 'assistant',
           'group-last/message:opacity-0': message.role === 'user',

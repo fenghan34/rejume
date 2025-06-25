@@ -1,16 +1,8 @@
 'use client'
 
-import {
-  Check,
-  ChevronsUpDownIcon,
-  Copy,
-  Loader2,
-  Sparkles,
-} from 'lucide-react'
+import { Check, ChevronsUpDownIcon, Copy, Sparkles } from 'lucide-react'
 import React, { memo, useState } from 'react'
-import { toast } from 'sonner'
-import { updateResume } from '@/app/dashboard/actions'
-import { useAppStore } from '@/providers/app'
+import { useWorkbenchContext } from '@/providers/workbench'
 import { Markdown } from './markdown'
 import { Button } from './ui/button'
 import {
@@ -32,49 +24,48 @@ function PureResumeSuggestions({
 }: {
   suggestions: ResumeSuggestion[]
 }) {
+  const { resume, updateResumeContent } = useWorkbenchContext()
+
+  const getStatus = (suggestion: ResumeSuggestion) => {
+    if (resume.content.includes(suggestion.suggested)) {
+      return 'applied'
+    }
+    if (resume.content.includes(suggestion.original)) {
+      return 'pending'
+    }
+    return 'outdated'
+  }
+
+  const onApply = ({ original, suggested }: ResumeSuggestion) => {
+    const newContent = resume.content.replace(original, suggested)
+    updateResumeContent(newContent)
+  }
+
   return (
     <div className="space-y-4">
       {suggestions.map((suggestion) => (
-        <SuggestionItem key={suggestion.id} suggestion={suggestion} />
+        <SuggestionItem
+          key={suggestion.id}
+          suggestion={suggestion}
+          status={getStatus(suggestion)}
+          onApply={onApply}
+        />
       ))}
     </div>
   )
 }
 
-function SuggestionItem({ suggestion }: { suggestion: ResumeSuggestion }) {
+function SuggestionItem({
+  suggestion,
+  status,
+  onApply,
+}: {
+  suggestion: ResumeSuggestion
+  status: 'pending' | 'applied' | 'outdated'
+  onApply: (suggestion: ResumeSuggestion) => void
+}) {
   const [copied, setCopied] = useState(false)
-  const resume = useAppStore((state) => state.resume)
-  const [status, setStatus] = useState<
-    'pending' | 'applied' | 'outdated' | 'applying'
-  >(() => {
-    if (resume?.content.includes(suggestion.suggested)) {
-      return 'applied'
-    }
-    if (resume?.content.includes(suggestion.original)) {
-      return 'pending'
-    }
-    return 'outdated'
-  })
   const [open, setOpen] = useState(() => status === 'pending')
-
-  const handleApplySuggestion = async () => {
-    if (!resume) return
-
-    setStatus('applying')
-
-    const newContent = resume.content.replace(
-      suggestion.original,
-      suggestion.suggested,
-    )
-
-    try {
-      await updateResume(resume.id, { content: newContent })
-      setStatus('applied')
-    } catch (error) {
-      toast.error('Failed to apply suggestion, please try again.')
-      console.error(error)
-    }
-  }
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(suggestion.suggested)
@@ -115,19 +106,14 @@ function SuggestionItem({ suggestion }: { suggestion: ResumeSuggestion }) {
             )}
           </Button>
 
-          {status === 'pending' || status === 'applying' ? (
+          {status === 'pending' ? (
             <Button
               variant="ghost"
               size="icon"
               className="size-6 cursor-pointer text-xs w-auto p-1.5"
-              disabled={status === 'applying'}
-              onClick={handleApplySuggestion}
+              onClick={() => onApply(suggestion)}
             >
-              {status === 'applying' ? (
-                <Loader2 className="size-3 animate-spin" />
-              ) : (
-                'Apply'
-              )}
+              Apply
             </Button>
           ) : (
             <CollapsibleTrigger asChild>
