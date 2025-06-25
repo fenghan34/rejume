@@ -31,6 +31,7 @@ export const resumes = pgTable('resumes', {
     .references(() => users.id, { onDelete: 'cascade' }),
   title: text().notNull(),
   content: text().notNull(),
+  isPublic: boolean().notNull().default(false),
   createdAt: timestamp().defaultNow().notNull(),
   updatedAt: timestamp().defaultNow().notNull(),
 })

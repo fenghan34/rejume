@@ -24,7 +24,7 @@ export async function createResume(
 
 export async function updateResume(
   id: string,
-  data: Partial<Pick<ResumeModel, 'title' | 'content'>>,
+  data: Partial<Pick<ResumeModel, 'title' | 'content' | 'isPublic'>>,
 ) {
   await verifySession()
   await queries.updateResume(id, data)

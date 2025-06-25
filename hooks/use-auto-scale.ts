@@ -5,6 +5,7 @@ import { RefObject, useLayoutEffect, useRef } from 'react'
 type HeightScalingMode = 'stretch' | 'scale'
 
 export type UseAutoScaleOptions = {
+  enabled?: boolean
   minScale?: number
   maxScale?: number
   heightScaling?: HeightScalingMode
@@ -14,6 +15,7 @@ export type UseAutoScaleOptions = {
  * Automatically scales a container based on its parent's width while preserving the content layout
  *
  * @param options - The options for the auto scale hook
+ * @param options.enabled
  * @param options.minScale - The minimum scale of the container, default is 0
  * @param options.maxScale - The maximum scale of the container, default is 10
  * @param options.heightScaling - How to handle height scaling: 'scale' (default, maintain original height), 'stretch' (match parent height)
@@ -23,13 +25,23 @@ export function useAutoScale(
   options?: UseAutoScaleOptions,
 ): RefObject<HTMLDivElement | null> {
   const ref = useRef<HTMLDivElement>(null)
-  const { minScale = 0, maxScale = 10, heightScaling = 'scale' } = options || {}
+  const {
+    enabled = true,
+    minScale = 0,
+    maxScale = 10,
+    heightScaling = 'scale',
+  } = options || {}
 
   useLayoutEffect(() => {
     const container = ref.current
     const parent = container?.parentElement
 
     if (!container || !parent) return
+    if (!enabled) {
+      container.style.visibility = 'visible'
+      container.style.height = 'auto'
+      return
+    }
 
     // Store original styles
     const originalStyles = {
@@ -78,7 +90,7 @@ export function useAutoScale(
         container.style[key as keyof typeof originalStyles] = value
       })
     }
-  }, [maxScale, minScale, heightScaling])
+  }, [maxScale, minScale, heightScaling, enabled])
 
   return ref
 }

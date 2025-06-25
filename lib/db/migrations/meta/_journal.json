@@ -43,6 +43,13 @@
       "when": 1749027884512,
       "tag": "0005_luxuriant_mongoose",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1750846468497,
+      "tag": "0006_fantastic_sentry",
+      "breakpoints": true
     }
   ]
 }
