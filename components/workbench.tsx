@@ -73,6 +73,8 @@ export function Workbench({
   const { data: resume } = useQuery({
     queryKey,
     queryFn: () => getResumeById(id),
+    // Disable stale time to avoid race condition
+    staleTime: Infinity,
   })
 
   const { mutateAsync } = useMutation({
@@ -81,7 +83,6 @@ export function Workbench({
       await queryClient.cancelQueries({ queryKey })
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey })
       localStorage.removeItem(id)
     },
     onError: (error) => {

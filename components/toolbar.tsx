@@ -8,6 +8,7 @@ import { useHotkeys } from 'react-hotkeys-hook'
 import { useReactToPrint } from 'react-to-print'
 import { toast } from 'sonner'
 import { updateResume } from '@/app/dashboard/actions'
+import { ResumeModel } from '@/lib/db/schema'
 import { MonacoEditor } from '@/lib/monaco/types'
 import { cn, downloadMarkdown } from '@/lib/utils'
 import { useWorkbenchContext } from '@/providers/workbench'
@@ -149,7 +150,11 @@ function PublishButton() {
 
   const { isPending, mutateAsync } = useMutation({
     mutationFn: (isPublic: boolean) => updateResume(resume.id, { isPublic }),
-    onSuccess: () => {
+    onSuccess: (_, isPublic) => {
+      queryClient.setQueryData(['resumes', resume.id], (old: ResumeModel) => ({
+        ...old,
+        isPublic,
+      }))
       queryClient.invalidateQueries({ queryKey: ['resumes', resume.id] })
     },
   })
