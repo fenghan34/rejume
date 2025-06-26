@@ -9,7 +9,6 @@ import { notFound } from 'next/navigation'
 import React, {
   useEffect,
   useState,
-  unstable_ViewTransition as ViewTransition,
   useRef,
   useMemo,
   useCallback,
@@ -214,10 +213,7 @@ export function Workbench({
                 className="bg-secondary @container"
               >
                 <PreviewWrapper editor={editor}>
-                  <PreviewWithViewTransition
-                    resumeId={resume.id}
-                    content={resume.content}
-                  />
+                  <Preview className={PREVIEW_CLASS} content={resume.content} />
                 </PreviewWrapper>
               </ResizablePanel>
 
@@ -279,19 +275,5 @@ function PreviewWrapper({
     >
       <div className="mx-auto max-w-xl @2xl:max-w-2xl">{children}</div>
     </div>
-  )
-}
-
-function PreviewWithViewTransition({
-  resumeId,
-  content,
-}: {
-  resumeId: string
-  content: string
-}) {
-  return (
-    <ViewTransition name={`resume-${resumeId}`}>
-      <Preview className={PREVIEW_CLASS} content={content} />
-    </ViewTransition>
   )
 }
