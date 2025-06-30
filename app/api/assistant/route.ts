@@ -9,7 +9,7 @@ export const POST = withAuth(async (req: NextRequest) => {
   return createDataStreamResponse({
     execute: (dataStream) => {
       const result = streamText({
-        model: providers.openrouter('meta-llama/llama-4-maverick:free'),
+        model: providers.openrouter('openai/gpt-4o-mini'),
         messages,
         abortSignal: req.signal,
       })
