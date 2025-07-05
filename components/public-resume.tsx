@@ -13,7 +13,7 @@ export function PublicResume({ content }: { content: string }) {
         autoScaleOptions={{ enabled: false }}
       />
 
-      <ModeToggle className="absolute top-2 right-4" />
+      <ModeToggle className="fixed top-2 right-4" />
     </div>
   )
 }

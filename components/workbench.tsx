@@ -274,7 +274,7 @@ function PreviewWrapper({
       ref={ref}
       className="h-full overflow-y-auto overflow-x-hidden scrollbar-primary scrollbar-gutter-stable will-change-scroll"
     >
-      <div className="mx-auto max-w-xl @2xl:max-w-2xl">{children}</div>
+      <div className="mx-auto max-w-3xl">{children}</div>
     </div>
   )
 }
