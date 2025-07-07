@@ -158,6 +158,10 @@
     & > *:not(h1, h2) {
       @apply ml-3;
     }
+
+    &:not(:first-child) > *:first-child {
+      @apply mt-0;
+    }
   }
 
   h1 {
