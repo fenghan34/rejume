@@ -224,3 +224,15 @@
     }
   }
 }
+
+@keyframes dashboard-progress {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+.animate-dashboard-progress {
+  animation: dashboard-progress 1.2s linear infinite;
+}
